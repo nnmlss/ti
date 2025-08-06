@@ -15,7 +15,7 @@ import {
   Box,
 } from '@mui/material';
 import Grid from '@mui/material/Grid'; // v2 grid
-import type { FlyingSite, WindDirection } from './types';
+import type { FlyingSite, WindDirection, LocalizedText } from './types';
 
 const windDirections: WindDirection[] = [
   'N',
@@ -46,9 +46,9 @@ const initialSiteState: Omit<FlyingSite, '_id'> = {
   accomodations: { bg: [], en: [] },
   alternatives: { bg: '', en: '' },
   access: { bg: '', en: '' },
-  landingFields: '',
+  landingFields: { bg: '', en: '' },
   tracklogs: [],
-  localPilotsClubs: '',
+  localPilotsClubs: { bg: '', en: '' },
 };
 
 function SiteForm() {
@@ -62,7 +62,7 @@ function SiteForm() {
   };
 
   const handleNestedChange = (
-    field: 'title' | 'alternatives' | 'access',
+    field: 'title' | 'alternatives' | 'access' | 'landingFields' | 'localPilotsClubs',
     subField: 'bg' | 'en',
     value: string
   ) => {
@@ -71,7 +71,7 @@ function SiteForm() {
       [field]: {
         ...prev[field],
         [subField]: value,
-      },
+      } as LocalizedText,
     }));
   };
 
@@ -197,7 +197,7 @@ function SiteForm() {
                 fullWidth
                 label='Longitude'
                 type='number'
-                inputProps={{ step: 'any' }}
+                InputProps={{ inputProps: { step: 'any' } }}
                 value={formData.location.coordinates[0]}
                 onChange={(e) => handleCoordinateChange(0, e.target.value)}
                 required
@@ -208,7 +208,7 @@ function SiteForm() {
                 fullWidth
                 label='Latitude'
                 type='number'
-                inputProps={{ step: 'any' }}
+                InputProps={{ inputProps: { step: 'any' } }}
                 value={formData.location.coordinates[1]}
                 onChange={(e) => handleCoordinateChange(1, e.target.value)}
                 required
@@ -281,24 +281,54 @@ function SiteForm() {
           </Grid>
 
           {/* Landing Fields */}
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            label='Landing Fields'
-            value={formData.landingFields}
-            onChange={(e) => handleInputChange('landingFields', e.target.value)}
-            sx={{ mt: 2 }}
-          />
+          <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
+            Landing Fields
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                label='Landing Fields (Bulgarian)'
+                value={formData.landingFields?.bg}
+                onChange={(e) => handleNestedChange('landingFields', 'bg', e.target.value)}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                label='Landing Fields (English)'
+                value={formData.landingFields?.en}
+                onChange={(e) => handleNestedChange('landingFields', 'en', e.target.value)}
+              />
+            </Grid>
+          </Grid>
 
           {/* Local Pilots Clubs */}
-          <TextField
-            fullWidth
-            label='Local Pilots Clubs'
-            value={formData.localPilotsClubs}
-            onChange={(e) => handleInputChange('localPilotsClubs', e.target.value)}
-            sx={{ mt: 2 }}
-          />
+          <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
+            Local Pilots Clubs
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                label='Local Pilots Clubs (Bulgarian)'
+                value={formData.localPilotsClubs?.bg}
+                onChange={(e) => handleNestedChange('localPilotsClubs', 'bg', e.target.value)}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                label='Local Pilots Clubs (English)'
+                value={formData.localPilotsClubs?.en}
+                onChange={(e) => handleNestedChange('localPilotsClubs', 'en', e.target.value)}
+              />
+            </Grid>
+          </Grid>
 
           {/* Tracklogs */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>

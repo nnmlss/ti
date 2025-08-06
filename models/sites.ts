@@ -53,7 +53,7 @@ export interface FlyingSite {
   };
   alternatives?: LocalizedText;
   access?: LocalizedText;
-  landingFields?: string;
+  landingFields?: LocalizedText;
   tracklogs?: string[];
-  localPilotsClubs?: string;
+  localPilotsClubs?: LocalizedText;
 }

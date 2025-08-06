@@ -1,0 +1,28 @@
+{
+  "name": "takeoff-info",
+  "version": "1.0.0",
+  "description": "Nodejs driven API for paragliding sites in Bulgaria",
+  "license": "ISC",
+  "author": "Borislav Denizov",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc-watch --onSuccess \"node app.js\"",
+    "start-server": "node app.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-validation": "^4.1.1",
+    "mongoose": "^8.17.0",
+    "nodemailer": "^7.0.5",
+    "pdfkit": "^0.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.2.0",
+    "nodemon": "^3.1.10",
+    "tsc-watch": "^7.1.1"
+  }
+}

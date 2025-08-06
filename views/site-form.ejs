@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Flying Site</title>
+    <!-- Material-UI CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@mui/material@latest/umd/material-ui.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .wind-direction-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const {
+            Container, Paper, Typography, TextField, FormControl, InputLabel,
+            Select, MenuItem, FormGroup, FormControlLabel, Checkbox, Button,
+            Grid, Box, Chip, IconButton, Card, CardContent, Divider
+        } = mui;
+
+        const windDirections = [
+            'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
+            'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'
+        ];
+
+        function SiteForm() {
+            const [formData, setFormData] = React.useState({
+                title: { bg: '', en: '' },
+                windDirection: [],
+                location: { type: 'Point', coordinates: [0, 0] },
+                altitude: '',
+                accessOptions: [{ _id: 1, bg: [''], en: [''] }],
+                galleryImages: [],
+                accomodations: { bg: [''], en: [''] },
+                alternatives: { bg: '', en: '' },
+                access: { bg: '', en: '' },
+                landingFields: '',
+                tracklogs: [''],
+                localPilotsClubs: ''
+            });
+
+            const handleInputChange = (field, value) => {
+                setFormData(prev => ({
+                    ...prev,
+                    [field]: value
+                }));
+            };
+
+            const handleNestedChange = (field, subField, value) => {
+                setFormData(prev => ({
+                    ...prev,
+                    [field]: {
+                        ...prev[field],
+                        [subField]: value
+                    }
+                }));
+            };
+
+            const handleWindDirectionChange = (direction) => {
+                setFormData(prev => ({
+                    ...prev,
+                    windDirection: prev.windDirection.includes(direction)
+                        ? prev.windDirection.filter(d => d !== direction)
+                        : [...prev.windDirection, direction]
+                }));
+            };
+
+            const handleCoordinateChange = (index, value) => {
+                const newCoordinates = [...formData.location.coordinates];
+                newCoordinates[index] = parseFloat(value) || 0;
+                setFormData(prev => ({
+                    ...prev,
+                    location: {
+                        ...prev.location,
+                        coordinates: newCoordinates
+                    }
+                }));
+            };
+
+            const addAccessOption = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    accessOptions: [...prev.accessOptions, {
+                        _id: prev.accessOptions.length + 1,
+                        bg: [''],
+                        en: ['']
+                    }]
+                }));
+            };
+
+            const updateAccessOption = (index, lang, textIndex, value) => {
+                const newAccessOptions = [...formData.accessOptions];
+                newAccessOptions[index][lang][textIndex] = value;
+                setFormData(prev => ({
+                    ...prev,
+                    accessOptions: newAccessOptions
+                }));
+            };
+
+            const addTracklog = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    tracklogs: [...prev.tracklogs, '']
+                }));
+            };
+
+            const updateTracklog = (index, value) => {
+                const newTracklogs = [...formData.tracklogs];
+                newTracklogs[index] = value;
+                setFormData(prev => ({
+                    ...prev,
+                    tracklogs: newTracklogs
+                }));
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                try {
+                    const response = await fetch('/add-site', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        alert('Site added successfully!');
+                        // Reset form or redirect
+                    } else {
+                        alert('Error adding site');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error adding site');
+                }
+            };
+
+            return (
+                <Container maxWidth="md">
+                    <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
+                        <Typography variant="h4" component="h1" gutterBottom>
+                            Add Flying Site
+                        </Typography>
+
+                        <form onSubmit={handleSubmit}>
+                            {/* Title Section */}
+                            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+                                Site Title
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Title (Bulgarian)"
+                                        value={formData.title.bg}
+                                        onChange={(e) => handleNestedChange('title', 'bg', e.target.value)}
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Title (English)"
+                                        value={formData.title.en}
+                                        onChange={(e) => handleNestedChange('title', 'en', e.target.value)}
+                                        required
+                                    />
+                                </Grid>
+                            </Grid>
+
+                            {/* Wind Direction Section */}
+                            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+                                Wind Directions
+                            </Typography>
+                            <div className="wind-direction-grid">
+                                {windDirections.map(direction => (
+                                    <FormControlLabel
+                                        key={direction}
+                                        control={
+                                            <Checkbox
+                                                checked={formData.windDirection.includes(direction)}
+                                                onChange={() => handleWindDirectionChange(direction)}
+                                            />
+                                        }
+                                        label={direction}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Location Section */}
+                            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+                                Location
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Longitude"
+                                        type="number"
+                                        inputProps={{ step: "any" }}
+                                        value={formData.location.coordinates[0]}
+                                        onChange={(e) => handleCoordinateChange(0, e.target.value)}
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label="Latitude"
+                                        type="number"
+                                        inputProps={{ step: "any" }}
+                                        value={formData.location.coordinates[1]}
+                                        onChange={(e) => handleCoordinateChange(1, e.target.value)}
+                                        required
+                                    />
+                                </Grid>
+                            </Grid>
+
+                            {/* Altitude */}
+                            <TextField
+                                fullWidth
+                                label="Altitude (meters)"
+                                type="number"
+                                value={formData.altitude}
+                                onChange={(e) => handleInputChange('altitude', e.target.value)}
+                                sx={{ mt: 2 }}
+                            />
+
+                            {/* Access Description */}
+                            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+                                Access Description
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        rows={4}
+                                        label="Access (Bulgarian)"
+                                        value={formData.access.bg}
+                                        onChange={(e) => handleNestedChange('access', 'bg', e.target.value)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        rows={4}
+                                        label="Access (English)"
+                                        value={formData.access.en}
+                                        onChange={(e) => handleNestedChange('access', 'en', e.target.value)}
+                                    />
+                                </Grid>
+                            </Grid>
+
+                            {/* Alternatives */}
+                            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+                                Alternatives
+                            </Typography>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        rows={3}
+                                        label="Alternatives (Bulgarian)"
+                                        value={formData.alternatives.bg}
+                                        onChange={(e) => handleNestedChange('alternatives', 'bg', e.target.value)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        rows={3}
+                                        label="Alternatives (English)"
+                                        value={formData.alternatives.en}
+                                        onChange={(e) => handleNestedChange('alternatives', 'en', e.target.value)}
+                                    />
+                                </Grid>
+                            </Grid>
+
+                            {/* Landing Fields */}
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={3}
+                                label="Landing Fields"
+                                value={formData.landingFields}
+                                onChange={(e) => handleInputChange('landingFields', e.target.value)}
+                                sx={{ mt: 2 }}
+                            />
+
+                            {/* Local Pilots Clubs */}
+                            <TextField
+                                fullWidth
+                                label="Local Pilots Clubs"
+                                value={formData.localPilotsClubs}
+                                onChange={(e) => handleInputChange('localPilotsClubs', e.target.value)}
+                                sx={{ mt: 2 }}
+                            />
+
+                            {/* Tracklogs */}
+                            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
+                                Tracklogs
+                            </Typography>
+                            {formData.tracklogs.map((tracklog, index) => (
+                                <TextField
+                                    key={index}
+                                    fullWidth
+                                    label={`Tracklog URL ${index + 1}`}
+                                    value={tracklog}
+                                    onChange={(e) => updateTracklog(index, e.target.value)}
+                                    sx={{ mt: 1 }}
+                                />
+                            ))}
+                            <Button
+                                variant="outlined"
+                                onClick={addTracklog}
+                                sx={{ mt: 1 }}
+                            >
+                                Add Tracklog
+                            </Button>
+
+                            {/* Submit Button */}
+                            <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    size="large"
+                                    sx={{ px: 4 }}
+                                >
+                                    Add Site
+                                </Button>
+                            </Box>
+                        </form>
+                    </Paper>
+                </Container>
+            );
+        }
+
+        ReactDOM.render(<SiteForm />, document.getElementById('root'));
+    </script>
+</body>
+
+</html>

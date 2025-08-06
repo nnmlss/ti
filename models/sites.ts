@@ -21,16 +21,16 @@ export interface LocalizedText {
   en?: string;
 }
 
-export interface GalleryImage {
-  path: string;
-  author: string;
-  width: number;
-  height: number;
-}
-
 export interface Location {
   type: 'Point';
-  coordinates: [number, number]; // [longitude, latitude]
+  coordinates: [number | null, number | null]; // [longitude, latitude]
+}
+
+export interface GalleryImage {
+  path: string;
+  author?: string;
+  width?: number;
+  height?: number;
 }
 
 export interface AccessOption {
@@ -39,21 +39,53 @@ export interface AccessOption {
   en?: string[];
 }
 
+export interface LandingFieldInfo {
+  description?: string;
+  location?: Location;
+}
+
 export interface FlyingSite {
-  _id: number;
+  _id: string;
   title: LocalizedText;
   windDirection: WindDirection[];
   location: Location;
   accessOptions: AccessOption[];
-  altitude?: number;
+  altitude?: number | null;
   galleryImages?: GalleryImage[];
   accomodations?: {
     bg?: string[];
     en?: string[];
   };
-  alternatives?: LocalizedText;
+  alternatives?: {
+    bg?: string[];
+    en?: string[];
+  };
   access?: LocalizedText;
-  landingFields?: LocalizedText;
+  landingFields?: {
+    bg?: LandingFieldInfo[];
+    en?: LandingFieldInfo[];
+  };
   tracklogs?: string[];
-  localPilotsClubs?: LocalizedText;
+  localPilotsClubs?: {
+    bg?: string[];
+    en?: string[];
+  };
 }
+
+// Temporary in-memory state (will be replaced with MongoDB)
+export let sitesState = {
+  sites: [
+    {
+      _id: '1',
+      title: { bg: 'София', en: 'Sofia' },
+      windDirection: ['N'],
+      location: { type: 'Point', coordinates: [23.324, 42.697] },
+      accessOptions: [],
+    },
+  ] as FlyingSite[],
+  getNextId() {
+    return this.sites.length > 0
+      ? Math.max(...this.sites.map((s) => parseInt(s._id) || 0)) + 1
+      : 1;
+  },
+};

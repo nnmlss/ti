@@ -94,7 +94,7 @@ function EditSite({ site }: EditSiteProps) {
             onClick={() => addBilingualArrayItem(field, 'bg')}
             startIcon={<AddCircleOutlineIcon />}
           >
-            Add more
+            Add
           </Button>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
@@ -115,7 +115,7 @@ function EditSite({ site }: EditSiteProps) {
             onClick={() => addBilingualArrayItem(field, 'en')}
             startIcon={<AddCircleOutlineIcon />}
           >
-            Add more
+            Add
           </Button>
         </Grid>
       </Grid>
@@ -176,7 +176,7 @@ function EditSite({ site }: EditSiteProps) {
             </Paper>
           ))}
           <Button onClick={() => addLandingField('bg')} startIcon={<AddCircleOutlineIcon />}>
-            Add more Landing Fields
+            Add Landing Fields
           </Button>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
@@ -227,7 +227,7 @@ function EditSite({ site }: EditSiteProps) {
             </Paper>
           ))}
           <Button onClick={() => addLandingField('en')} startIcon={<AddCircleOutlineIcon />}>
-            Add more Landing Fields
+            Add Landing Fields
           </Button>
         </Grid>
       </Grid>
@@ -404,7 +404,7 @@ function EditSite({ site }: EditSiteProps) {
             startIcon={<AddCircleOutlineIcon />}
             sx={{ mt: 1 }}
           >
-            Add more Tracklogs
+            Add Tracklogs
           </Button>
           {/* Submit Button */}
           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>

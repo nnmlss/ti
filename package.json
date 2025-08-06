@@ -7,9 +7,12 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc-watch --onSuccess \"node app.js\"",
-    "start-server": "node app.js"
+    "start": "concurrently \"npm:start:backend\" \"npm:start:frontend\"",
+    "start:backend": "tsc-watch --onSuccess \"node dist/app.js\"",
+    "start:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "tsc",
+    "build:frontend": "cd frontend && npm run build"
   },
   "dependencies": {
     "ejs": "^3.1.10",
@@ -22,6 +25,7 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.2.0",
+    "concurrently": "^9.2.0",
     "nodemon": "^3.1.10",
     "tsc-watch": "^7.1.1"
   }

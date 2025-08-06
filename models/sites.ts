@@ -1,3 +1,5 @@
+import mongoose, { Schema, Document } from 'mongoose';
+
 export type WindDirection =
   | 'N'
   | 'NNE'
@@ -45,7 +47,6 @@ export interface LandingFieldInfo {
 }
 
 export interface FlyingSite {
-  _id: string;
   title: LocalizedText;
   windDirection: WindDirection[];
   location: Location;
@@ -72,20 +73,84 @@ export interface FlyingSite {
   };
 }
 
-// Temporary in-memory state (will be replaced with MongoDB)
-export let sitesState = {
-  sites: [
+export interface FlyingSiteDocument extends FlyingSite, Document {}
+
+const LocationSchema = new Schema({
+  type: { type: String, enum: ['Point'], required: true },
+  coordinates: { type: [Number], required: true },
+});
+
+const LocalizedTextSchema = new Schema({
+  bg: { type: String },
+  en: { type: String },
+});
+
+const GalleryImageSchema = new Schema({
+  path: { type: String, required: true },
+  author: { type: String },
+  width: { type: Number },
+  height: { type: Number },
+});
+
+const AccessOptionSchema = new Schema({
+  _id: { type: Number, required: true },
+  bg: [{ type: String }],
+  en: [{ type: String }],
+});
+
+const LandingFieldInfoSchema = new Schema({
+  description: { type: String },
+  location: LocationSchema,
+});
+
+const FlyingSiteSchema = new Schema({
+  title: { type: LocalizedTextSchema, required: true },
+  windDirection: [
     {
-      _id: '1',
-      title: { bg: 'София', en: 'Sofia' },
-      windDirection: ['N'],
-      location: { type: 'Point', coordinates: [23.324, 42.697] },
-      accessOptions: [],
+      type: String,
+      enum: [
+        'N',
+        'NNE',
+        'NE',
+        'ENE',
+        'E',
+        'ESE',
+        'SE',
+        'SSE',
+        'S',
+        'SSW',
+        'SW',
+        'WSW',
+        'W',
+        'WNW',
+        'NW',
+        'NNW',
+      ],
+      required: true,
     },
-  ] as FlyingSite[],
-  getNextId() {
-    return this.sites.length > 0
-      ? Math.max(...this.sites.map((s) => parseInt(s._id) || 0)) + 1
-      : 1;
+  ],
+  location: { type: LocationSchema, required: true },
+  accessOptions: [AccessOptionSchema],
+  altitude: { type: Number },
+  galleryImages: [GalleryImageSchema],
+  accomodations: {
+    bg: [{ type: String }],
+    en: [{ type: String }],
   },
-};
+  alternatives: {
+    bg: [{ type: String }],
+    en: [{ type: String }],
+  },
+  access: LocalizedTextSchema,
+  landingFields: {
+    bg: [LandingFieldInfoSchema],
+    en: [LandingFieldInfoSchema],
+  },
+  tracklogs: [{ type: String }],
+  localPilotsClubs: {
+    bg: [{ type: String }],
+    en: [{ type: String }],
+  },
+});
+
+export const Site = mongoose.model<FlyingSiteDocument>('Site', FlyingSiteSchema, 'paragliding');

@@ -45,7 +45,7 @@ export interface LandingFieldInfo {
 }
 
 export interface FlyingSite {
-  _id: number;
+  _id: string;
   title: LocalizedText;
   windDirection: WindDirection[];
   location: Location;

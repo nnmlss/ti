@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="665.54669"
+   height="669.33331"
+   viewBox="0 0 665.54669 669.33331"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5">
+      <path
+         d="m 1165.57,3940 h 3288 V 0 h -3288 z"
+         transform="translate(0,-2.4999999e-5)"
+         id="path5" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath6">
+      <path
+         d="M 0,2 V 353 H 490 V 2 Z"
+         id="path6" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4">
+      <path
+         d="M 0,2 V 353 H 490 V 2 Z"
+         id="path4" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2">
+      <path
+         d="M 0,2 V 353 H 490 V 2 Z"
+         id="path2" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2-4">
+      <path
+         d="M 0,1 V 232 H 320 V 1 Z"
+         id="path2-4" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2-5">
+      <path
+         d="M 0,3 V 374 H 340 V 3 Z"
+         id="path2-9" />
+    </clipPath>
+  </defs>
+  <g
+     id="g1">
+    <path
+       id="path1"
+       d="m 315.82,284.629 c -2.968,28.992 -7.699,51.601 -15.199,60.473 -30.82,36.519 -246.871,39.179 -271.3593,0 C 23.2383,335.488 19.0195,312.988 16.2109,284.551 7.10938,283.5 0,275.84 0,266.43 v -35.551 c 0,-7.891 5,-14.57 11.9883,-17.149 -1.6367,-56.011 -0.3086,-114.4097 2.1914,-143.4292 0,-22.4297 15.0391,-18.7227 15.0391,-18.7227 h 14.1406 v -24.207 c 0,-9.6094 9.8789,-17.39063 22.0703,-17.39063 12.2305,0 22.1094,7.78123 22.1094,17.39063 v 24.207 H 251.801 v -24.207 c 0,-9.6094 9.918,-17.39063 22.109,-17.39063 12.18,0 22.11,7.78123 22.11,17.39063 v 24.207 h 4.601 c 0,0 17.738,-2.4179 18.867,8.1328 0,28.9493 1.84,93.1601 0.313,153.7501 7.469,2.34 12.898,9.18 12.898,17.418 v 35.551 c 0,9.609 -7.469,17.422 -16.879,18.199 z M 81.9883,339.91 h 165.902 V 314.7889 H 81.9883 Z M 84.3789,80.1797 c -13.0508,0 -23.5976,10.5508 -23.5976,23.5503 0,13.008 10.5468,23.598 23.5976,23.598 13,0 23.5901,-10.59 23.5901,-23.598 0,-12.9995 -10.5901,-23.5503 -23.5901,-23.5503 z m 162.6091,0 c -13.008,0 -23.59,10.5508 -23.59,23.5503 0,13.008 10.582,23.598 23.59,23.598 13.012,0 23.602,-10.59 23.602,-23.598 0,-12.9995 -10.59,-23.5503 -23.602,-23.5503 z M 276.949,183.34 H 52.929 v 117.539 h 224.02 z"
+       style="fill:#48486A;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       transform="matrix(1.6959185,0,0,-1.6959185,50.658152,672.05697)"
+       clip-path="url(#clipPath2-5)" />
+  </g>
+</svg>

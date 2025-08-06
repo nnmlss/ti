@@ -18,7 +18,7 @@ export function HomePage() {
 
   return (
     <Container
-      maxWidth='md'
+      maxWidth={false}
       sx={{ border: '1px dotted white', justifyContent: 'space-between' }}
     >
       <Box sx={{ my: 4, display: 'flex', justifyContent: 'space-between' }}>

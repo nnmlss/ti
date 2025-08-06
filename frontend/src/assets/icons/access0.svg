@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="665.54669"
+   height="669.33331"
+   viewBox="0 0 665.54669 669.33331"
+   sodipodi:docname="access0.svg"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5">
+      <path
+         d="m 1165.57,3940 h 3288 V 0 h -3288 z"
+         transform="translate(0,-2.4999999e-5)"
+         id="path5" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath6">
+      <path
+         d="M 0,2 V 353 H 490 V 2 Z"
+         id="path6" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4">
+      <path
+         d="M 0,2 V 353 H 490 V 2 Z"
+         id="path4" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2">
+      <path
+         d="M 0,2 V 353 H 490 V 2 Z"
+         id="path2" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2-4">
+      <path
+         d="M 0,1 V 232 H 320 V 1 Z"
+         id="path2-4" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2-5">
+      <path
+         d="M 0,3 V 374 H 340 V 3 Z"
+         id="path2-9" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.61553786"
+     inkscape:cx="41.427183"
+     inkscape:cy="211.19741"
+     inkscape:window-width="1920"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="36"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1">
+    <inkscape:page
+       x="0"
+       y="0"
+       inkscape:label="1"
+       id="page1"
+       width="665.54669"
+       height="669.33331"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     id="g1"
+     inkscape:groupmode="layer"
+     inkscape:label="1">
+    <g
+       id="group-R5"
+       transform="matrix(1.1140258,0,0,1.1140258,174.62496,95.310648)">
+      <g
+         id="g7"
+         transform="translate(-6.7053492)">
+        <path
+           id="path2-7"
+           d="m 2067.97,2181.5 -300.23,56.75 -308.95,438.67 1.02,7.46 c 11.02,83.79 -11.8,168.52 -63.28,235.55 -51.53,67.03 -127.46,110.82 -211.26,121.83 -92.77,12.11 -180.73,-17.77 -246.829,-73.79 l 42.46951,535.8138 c 0,62.77 -3.949,290.46 -223.949,319.19 l -250,31.27 c -220,0 -309.258,-118.44 -309.258,-181.21 L 135.805,1981.25 c 64.199,-326.31 386.468,-299.8 547.718,-315.54 L 659.184,1609.11 468.324,888.012 38.4844,310.512 C -25.5859,224.379 -7.88672,102.621 78.3633,38.5195 113.125,12.5391 153.914,0 194.262,0 253.633,0 312.113,27.1094 350.355,78.3594 L 802.582,685.941 c 14.801,19.879 25.703,42.379 32.031,66.289 L 964.734,1243.56 1320.9,916.531 1272.31,207.738 C 1264.97,100.59 1345.71,7.82031 1452.93,0.46875 1457.35,0.121094 1461.96,0 1466.49,0 c 101.25,0 186.72,78.5586 193.63,181.141 l 55.08,802.109 c 4.06,58.9 -18.98,116.6 -62.54,156.52 l -367.93,337.73 111.92,724.93 154.64,-219.5 c 30.43,-43.08 79.81,-68.71 132.43,-68.71 l 319.45,-56.75 13.59,0.45 c 51.25,2.5 72.73,1.48 116.02,13.46 v 0 c 57.07,25.04 97.22,81.8 97.22,148.12 0,89.5 -72.53,162 -162.03,162"
+           style="fill:#48486A;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           sodipodi:nodetypes="cccccccccccccccccscccccccscccccccccsssc"
+           transform="matrix(0.13333333,0,0,-0.13333333,0,498.66667)" />
+        <path
+           id="path3"
+           d="m 1366.1,3112.07 c 173.48,0 314.02,140.58 314.02,314.02 0,173.36 -140.54,313.91 -314.02,313.91 -173.24,0 -313.95,-140.55 -313.95,-313.91 0,-173.44 140.71,-314.02 313.95,-314.02 v 0"
+           style="fill:#48486A;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           transform="matrix(0.13333333,0,0,-0.13333333,0,498.66667)"
+           sodipodi:nodetypes="cssssc" />
+      </g>
+    </g>
+  </g>
+</svg>

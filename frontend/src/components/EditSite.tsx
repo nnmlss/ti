@@ -12,6 +12,7 @@ import {
 import Grid from '@mui/material/Grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import type { WindDirection, FlyingSite } from '../types';
 import { useEditSiteForm } from '../hooks/useEditSiteForm';
 
@@ -75,6 +76,7 @@ function EditSite({ site }: EditSiteProps) {
       <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
         {title}
       </Typography>
+
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
           {(formData[field]?.bg || []).map((item, index) => (
@@ -237,9 +239,20 @@ function EditSite({ site }: EditSiteProps) {
   return (
     <Container maxWidth='md'>
       <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
-        <Typography variant='h4' component='h1' gutterBottom>
-          {site ? 'Edit Flying Site' : 'Add Flying Site'}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
+          <Button
+            variant='outlined'
+            color='info'
+            onClick={() => window.history.back()}
+            sx={{ mr: 1 }}
+            size='large'
+          >
+            <ArrowBackIosNewIcon />
+          </Button>
+          <Typography variant='h4' component='h1' gutterBottom>
+            {site ? 'Edit Flying Site' : 'Add Flying Site'}
+          </Typography>
+        </Box>
         <form onSubmit={handleSubmit}>
           {/* Title Section */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>

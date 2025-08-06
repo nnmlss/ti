@@ -34,6 +34,14 @@ const windDirections: WindDirection[] = [
   'NNW',
 ];
 
+const accessOptions = [
+  { _id: 0, bg: 'hike and fly', en: 'hike and fly' },
+  { _id: 1, bg: 'автомобил', en: 'automobile' },
+  { _id: 2, bg: 'автобус', en: 'bus' },
+  { _id: 3, bg: '4х4', en: '4x4' },
+  { _id: 4, bg: 'лифт', en: 'chairlift' },
+];
+
 interface EditSiteProps {
   site?: FlyingSite; // You can replace 'any' with a more specific 'FlyingSite' type
 }
@@ -50,6 +58,7 @@ function EditSite({ site }: EditSiteProps) {
     addLandingField,
     removeLandingField,
     handleWindDirectionChange,
+    handleAccessOptionChange,
     handleCoordinateChange,
     handleInputChange,
     addTracklog,
@@ -275,6 +284,31 @@ function EditSite({ site }: EditSiteProps) {
               </Grid>
             ))}
           </Grid>
+
+          {/* Access Options Section */}
+          <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
+            Access Options
+          </Typography>
+          <Grid container spacing={1}>
+            {accessOptions.map((option) => (
+              <Grid size={{ xs: 12, sm: 6 }} key={option._id}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.accessOptions.some(
+                        (selected) => selected._id === option._id
+                      )}
+                      onChange={() =>
+                        handleAccessOptionChange(option._id, option.bg, option.en)
+                      }
+                    />
+                  }
+                  label={`${option.bg} / ${option.en}`}
+                />
+              </Grid>
+            ))}
+          </Grid>
+
           {/* Location Section */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
             Location

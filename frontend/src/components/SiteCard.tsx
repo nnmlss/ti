@@ -11,7 +11,9 @@ export function SiteCard({ site }: SiteCardProps) {
     <Card sx={{ mb: 2 }}>
       <CardContent>
         <Typography variant='h5' component='div'>
-          {site.title.en} / {site.title.bg}
+          {site.title.bg}
+          {site.title.bg && site.title.en ? ' / ' : ''}
+          {site.title.en}
         </Typography>
         <Typography sx={{ mb: 1.5 }} color='text.secondary'>
           Wind Directions: {site.windDirection.join(', ')}

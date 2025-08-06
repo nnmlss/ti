@@ -29,7 +29,7 @@ router.post('/sites', async (req, res, next) => {
 // GET /api/sites/:id - Get a single site
 router.get('/sites/:id', async (req, res, next) => {
   try {
-    const site = await Site.findById(req.params.id);
+    const site = await Site.findOne({ _id: parseInt(req.params.id) });
     if (!site) {
       return res.status(404).json({ error: 'Site not found' });
     }
@@ -43,10 +43,14 @@ router.get('/sites/:id', async (req, res, next) => {
 // PUT /api/sites/:id - Update an existing site
 router.put('/sites/:id', async (req, res, next) => {
   try {
-    const updatedSite = await Site.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedSite = await Site.findOneAndUpdate(
+      { _id: parseInt(req.params.id) },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     if (!updatedSite) {
       return res.status(404).json({ error: 'Site not found' });
@@ -62,7 +66,7 @@ router.put('/sites/:id', async (req, res, next) => {
 // DELETE /api/sites/:id - Delete a site
 router.delete('/sites/:id', async (req, res, next) => {
   try {
-    const deletedSite = await Site.findByIdAndDelete(req.params.id);
+    const deletedSite = await Site.findOneAndDelete({ _id: parseInt(req.params.id) });
 
     if (!deletedSite) {
       return res.status(404).json({ error: 'Site not found' });

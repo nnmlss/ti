@@ -20,7 +20,7 @@ export function HomePage() {
       <Typography variant='h4' component='h1' gutterBottom sx={{ mt: 2 }}>
         Flying Sites
       </Typography>
-      {sites && sites.map((site) => <SiteCard key={site._id} site={site} />)}
+      {sites && sites.map((site, index) => <SiteCard key={index} site={site} />)}
       <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
         <Button
           component={Link}

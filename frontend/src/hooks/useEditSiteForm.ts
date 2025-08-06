@@ -148,6 +148,27 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     }));
   };
 
+  const handleAccessOptionChange = (optionId: number, bg: string, en: string) => {
+    setFormData((prev) => {
+      const currentOptions = prev.accessOptions || [];
+      const existingIndex = currentOptions.findIndex((option) => option._id === optionId);
+
+      if (existingIndex >= 0) {
+        // Remove if already selected
+        return {
+          ...prev,
+          accessOptions: currentOptions.filter((option) => option._id !== optionId),
+        };
+      } else {
+        // Add if not selected
+        return {
+          ...prev,
+          accessOptions: [...currentOptions, { _id: optionId, bg: [bg], en: [en] }],
+        };
+      }
+    });
+  };
+
   const handleCoordinateChange = (index: 0 | 1, value: string) => {
     const newCoordinates = [...formData.location.coordinates] as [number | null, number | null];
     const parsedValue = parseFloat(value);
@@ -216,6 +237,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     addLandingField,
     removeLandingField,
     handleWindDirectionChange,
+    handleAccessOptionChange,
     handleCoordinateChange,
     addTracklog,
     updateTracklog,

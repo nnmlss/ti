@@ -3,6 +3,12 @@ import { Site } from '../models/sites.js';
 
 const router = Router();
 
+// Function to get the next numeric ID
+async function getNextId(): Promise<number> {
+  const lastSite = await Site.findOne().sort({ _id: -1 });
+  return lastSite ? (lastSite._id as number) + 1 : 1;
+}
+
 // GET /api/sites - List all sites
 router.get('/sites', async (req, res, next) => {
   try {
@@ -17,7 +23,11 @@ router.get('/sites', async (req, res, next) => {
 // POST /api/sites - Create a new site
 router.post('/sites', async (req, res, next) => {
   try {
-    const newSite = new Site(req.body);
+    const nextId = await getNextId();
+    const newSite = new Site({
+      ...req.body,
+      _id: nextId,
+    });
     const savedSite = await newSite.save();
     res.status(201).json(savedSite);
     next();

@@ -8,6 +8,7 @@ import {
   Button,
   Box,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,6 +16,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import type { WindDirection, FlyingSite } from '../types';
 import { useEditSiteForm } from '../hooks/useEditSiteForm';
+import { NotificationDialog } from './NotificationDialog';
 
 const windDirections: WindDirection[] = [
   'N',
@@ -66,6 +68,7 @@ function EditSite({ site }: EditSiteProps) {
     updateTracklog,
     removeTracklog,
     handleSubmit,
+    notificationDialog,
   } = useEditSiteForm(site);
 
   const renderBilingualArrayFields = (
@@ -425,14 +428,29 @@ function EditSite({ site }: EditSiteProps) {
               type='submit'
               variant='contained'
               size='large'
-              sx={{ px: 4 }}
+              sx={{
+                px: 4,
+                '& .MuiCircularProgress-root': {
+                  color: 'white',
+                },
+              }}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Saving...' : site ? 'Update Site' : 'Add Site'}
+              {isSubmitting ? (
+                <CircularProgress size={24} />
+              ) : site ? (
+                'Update Site'
+              ) : (
+                'Add Site'
+              )}
             </Button>
           </Box>
         </form>
       </Paper>
+      <NotificationDialog
+        notification={notificationDialog.notification}
+        onClose={notificationDialog.hideNotification}
+      />
     </Container>
   );
 }

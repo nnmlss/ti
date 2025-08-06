@@ -1,0 +1,61 @@
+import { useEffect } from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  Alert,
+  AlertTitle,
+} from '@mui/material';
+import type { NotificationState } from '../hooks/useNotificationDialog';
+
+interface NotificationDialogProps {
+  notification: NotificationState;
+  onClose: () => void;
+}
+
+export function NotificationDialog({ notification, onClose }: NotificationDialogProps) {
+  const { open, message, severity, title, onAutoClose } = notification;
+
+  const handleClose = () => {
+    if (onAutoClose) {
+      onAutoClose();
+    }
+    onClose();
+  };
+
+  useEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        handleClose();
+      }, 7000); // 7 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [open, onClose, onAutoClose]);
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      aria-labelledby='notification-dialog-title'
+      aria-describedby='notification-dialog-description'
+      maxWidth='sm'
+      fullWidth
+    >
+      <DialogContent>
+        <Alert severity={severity}>
+          {title && <AlertTitle>{title}</AlertTitle>}
+          {message}
+        </Alert>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color='primary' variant='contained'>
+          OK
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}

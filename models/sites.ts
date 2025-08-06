@@ -104,7 +104,6 @@ const LandingFieldInfoSchema = new Schema({
 });
 
 const FlyingSiteSchema = new Schema({
-  _id: { type: Schema.Types.Mixed },
   title: { type: LocalizedTextSchema, required: true },
   windDirection: [
     {

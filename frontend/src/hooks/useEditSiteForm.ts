@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAddSiteMutation, useUpdateSiteMutation } from '../store/apiSlice';
+import { useNotificationDialog } from './useNotificationDialog';
 import type { FlyingSite, WindDirection, LocalizedText } from '../types';
 
 const initialSiteState: Omit<FlyingSite, '_id'> = {
@@ -10,20 +11,21 @@ const initialSiteState: Omit<FlyingSite, '_id'> = {
   altitude: null,
   accessOptions: [],
   galleryImages: [],
-  accomodations: { bg: [''], en: [''] },
-  alternatives: { bg: [''], en: [''] },
+  accomodations: { bg: [], en: [] },
+  alternatives: { bg: [], en: [] },
   access: { bg: '', en: '' },
   landingFields: {
-    bg: [{ description: '', location: { type: 'Point', coordinates: [null, null] } }],
-    en: [{ description: '', location: { type: 'Point', coordinates: [null, null] } }],
+    bg: [],
+    en: [],
   },
-  tracklogs: [''],
-  localPilotsClubs: { bg: [''], en: [''] },
+  tracklogs: [],
+  localPilotsClubs: { bg: [], en: [] },
 };
 
 export const useEditSiteForm = (site?: FlyingSite) => {
   const [formData, setFormData] = useState<Omit<FlyingSite, '_id'>>(initialSiteState);
   const navigate = useNavigate();
+  const { showSuccess, showError, ...notificationDialog } = useNotificationDialog();
 
   const [addSite, { isLoading: isAdding }] = useAddSiteMutation();
   const [updateSite, { isLoading: isUpdating }] = useUpdateSiteMutation();
@@ -204,24 +206,64 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // The data cleaning logic can be kept as it is
-    const cleanedFormData = {
-      ...formData,
-      // ... (all the cleaning logic from your original hook)
-    };
+    // Clean data - remove empty fields
+    const cleanedFormData = { ...formData } as any;
+
+    // Remove empty arrays and objects
+    if (
+      cleanedFormData.accomodations?.bg?.length === 0 &&
+      cleanedFormData.accomodations?.en?.length === 0
+    ) {
+      delete cleanedFormData.accomodations;
+    }
+    if (
+      cleanedFormData.alternatives?.bg?.length === 0 &&
+      cleanedFormData.alternatives?.en?.length === 0
+    ) {
+      delete cleanedFormData.alternatives;
+    }
+    if (
+      cleanedFormData.localPilotsClubs?.bg?.length === 0 &&
+      cleanedFormData.localPilotsClubs?.en?.length === 0
+    ) {
+      delete cleanedFormData.localPilotsClubs;
+    }
+    if (cleanedFormData.tracklogs?.length === 0) {
+      delete cleanedFormData.tracklogs;
+    }
+    if (
+      cleanedFormData.landingFields?.bg?.length === 0 &&
+      cleanedFormData.landingFields?.en?.length === 0
+    ) {
+      delete cleanedFormData.landingFields;
+    }
+    if (cleanedFormData.accessOptions?.length === 0) {
+      delete cleanedFormData.accessOptions;
+    }
+    if (cleanedFormData.galleryImages?.length === 0) {
+      delete cleanedFormData.galleryImages;
+    }
+    if (cleanedFormData.windDirection?.length === 0) {
+      delete cleanedFormData.windDirection;
+    }
+    if (cleanedFormData.access?.bg === '' && cleanedFormData.access?.en === '') {
+      delete cleanedFormData.access;
+    }
+    if (cleanedFormData.altitude === null) {
+      delete cleanedFormData.altitude;
+    }
 
     try {
       if (site) {
         await updateSite({ _id: site._id, ...cleanedFormData }).unwrap();
-        alert('Site updated successfully!');
+        showSuccess('Site updated successfully!', undefined, () => navigate('/'));
       } else {
         await addSite(cleanedFormData).unwrap();
-        alert('Site added successfully!');
+        showSuccess('Site added successfully!', undefined, () => navigate('/'));
       }
-      navigate('/'); // Navigate back to the home page on success
     } catch (error) {
       console.error('Failed to save the site:', error);
-      alert('Error saving site');
+      showError('Error saving site. Please try again.');
     }
   };
 
@@ -243,5 +285,6 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     updateTracklog,
     removeTracklog,
     handleSubmit,
+    notificationDialog,
   };
 };

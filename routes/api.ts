@@ -21,8 +21,18 @@ router.post('/sites', async (req, res, next) => {
     const savedSite = await newSite.save();
     res.status(201).json(savedSite);
     next();
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create site' });
+  } catch (error: any) {
+    console.error('POST /sites error:', error);
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    if (error.errors) {
+      console.error('Validation errors:', error.errors);
+    }
+    res.status(500).json({
+      error: 'Failed to create site',
+      message: error.message,
+      name: error.name,
+    });
   }
 });
 

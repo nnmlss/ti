@@ -1,12 +1,18 @@
-import EditSite from './components/EditSite';
-import './index.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HomePage } from './pages/HomePage';
+import { AddSitePage } from './pages/AddSitePage';
+import { EditSitePage } from './pages/EditSitePage';
 
 function App() {
-  // Example: Pass an existing site object to EditSite to see it in edit mode
-  // const sampleSite = { _id: 1, ... };
-  // return <EditSite site={sampleSite} />;
-
-  return <EditSite />;
+  return (
+    <Router>
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/add-site' element={<AddSitePage />} />
+        <Route path='/edit-site/:id' element={<EditSitePage />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

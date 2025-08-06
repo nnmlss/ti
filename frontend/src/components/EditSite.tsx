@@ -41,6 +41,7 @@ interface EditSiteProps {
 function EditSite({ site }: EditSiteProps) {
   const {
     formData,
+    isSubmitting,
     handleNestedChange,
     handleBilingualArrayChange,
     addBilingualArrayItem,
@@ -373,8 +374,14 @@ function EditSite({ site }: EditSiteProps) {
           </Button>
           {/* Submit Button */}
           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-            <Button type='submit' variant='contained' size='large' sx={{ px: 4 }}>
-              {site ? 'Update Site' : 'Add Site'}
+            <Button
+              type='submit'
+              variant='contained'
+              size='large'
+              sx={{ px: 4 }}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Saving...' : site ? 'Update Site' : 'Add Site'}
             </Button>
           </Box>
         </form>

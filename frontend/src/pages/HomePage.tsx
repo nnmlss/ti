@@ -1,12 +1,34 @@
 import { useGetSitesQuery } from '../store/apiSlice';
+import { useSites } from '../hooks/useSites';
 import { SiteCard } from '../components/SiteCard';
 import { Container, Typography, CircularProgress, Alert, Button, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { Link } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { useEffect } from 'react';
 
 export function HomePage() {
   const { data: sites, error, isLoading } = useGetSitesQuery();
+  const { setSites, setLoading, setError } = useSites();
+
+  // Sync RTK Query data to sitesSlice
+  useEffect(() => {
+    if (sites) {
+      setSites(sites);
+    }
+  }, [sites, setSites]);
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
+
+  useEffect(() => {
+    if (error) {
+      setError('Error loading sites!');
+    } else {
+      setError(null);
+    }
+  }, [error, setError]);
 
   if (isLoading) {
     return <CircularProgress />;

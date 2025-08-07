@@ -63,7 +63,7 @@ export function HomePage() {
             <Grid
               size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }}
               key={index}
-              sx={{ display: 'flex', aspectRatio: '2/3' }}
+              sx={{ display: 'flex', aspectRatio: '2/3.2' }}
             >
               <SiteCard site={site} />
             </Grid>

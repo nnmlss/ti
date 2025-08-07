@@ -215,10 +215,10 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     try {
       if (site) {
         await updateSite({ _id: site._id, ...cleanedFormData }).unwrap();
-        showSuccess('Site updated successfully!', undefined, () => navigate('/'));
+        showSuccess('Успешна редакция на място за летене!', undefined, () => navigate('/'));
       } else {
         await addSite(cleanedFormData).unwrap();
-        showSuccess('Site added successfully!', undefined, () => navigate('/'));
+        showSuccess('Добавено ново място за летене!', undefined, () => navigate('/'));
       }
     } catch (error) {
       console.error('Failed to save the site:', error);

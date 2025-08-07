@@ -43,9 +43,9 @@ export function HomePage() {
       maxWidth={false}
       sx={{ border: '1px dotted white', justifyContent: 'space-between' }}
     >
-      <Box sx={{ my: 4, display: 'flex', justifyContent: 'space-between' }}>
+      <Grid container sx={{ my: 4, display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant='h4' component='h1' gutterBottom sx={{ mt: 2 }}>
-          Flying Sites
+          Места за летене
         </Typography>
 
         <Button
@@ -54,14 +54,14 @@ export function HomePage() {
           variant='contained'
           startIcon={<AddCircleOutlineIcon />}
         >
-          Add New Site
+          добави старт
         </Button>
-      </Box>
+      </Grid>
       <Grid container spacing={2} justifyContent='flex-start' alignItems='stretch'>
         {sites &&
           sites.map((site, index) => (
             <Grid
-              size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}
+              size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }}
               key={index}
               sx={{ display: 'flex', aspectRatio: '2/3' }}
             >

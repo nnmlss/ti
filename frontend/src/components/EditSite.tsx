@@ -14,6 +14,8 @@ import Grid from '@mui/material/Grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+
 import type { WindDirection, FlyingSite } from '../types';
 import { useEditSiteForm } from '../hooks/useEditSiteForm';
 import { NotificationDialog } from './NotificationDialog';
@@ -79,7 +81,6 @@ function EditSite({ site }: EditSiteProps) {
       <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
         {title}
       </Typography>
-
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
           {(formData[field]?.bg || []).map((item, index) => (
@@ -252,8 +253,9 @@ function EditSite({ site }: EditSiteProps) {
           >
             <ArrowBackIosNewIcon />
           </Button>
+          <GpsFixedIcon sx={{ mr: 1 }} />
           <Typography variant='h4' component='h1' gutterBottom>
-            {site ? 'Edit Flying Site' : 'Add Flying Site'}
+            {site ? 'Редакция на място за летене' : 'Добавяне на място за летене'}
           </Typography>
         </Box>
         <form onSubmit={handleSubmit}>

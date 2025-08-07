@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { useId } from 'react';
+import { Box, Typography, useTheme } from '@mui/material';
 import type { WindDirection } from '../types';
 
 interface WindDirectionCompassProps {
@@ -39,10 +39,17 @@ export function WindDirectionCompass({
   size = 120,
   showLabels = true,
 }: WindDirectionCompassProps) {
+  const theme = useTheme();
   const radius = size / 2;
   const innerRadius = radius - 4; // Smaller inner radius for filled segments
   const centerX = (size + 30) / 2;
   const centerY = (size + 30) / 2;
+
+  // Unique IDs for ARIA
+  const titleId = useId();
+  const descId = useId();
+
+  const accessibleDescription = `Suitable wind directions are: ${windDirections.join(', ')}.`;
 
   // Create filled segments for each wind direction
   const segments = windDirections.map((direction, index) => {
@@ -68,7 +75,14 @@ export function WindDirectionCompass({
       'Z',
     ].join(' ');
 
-    return <path key={`${direction}-${index}`} d={pathData} fill='#1976d2' stroke='none' />;
+    return (
+      <path
+        key={`${direction}-${index}`}
+        d={pathData}
+        fill={theme.palette.primary.main}
+        stroke='none'
+      />
+    );
   });
 
   return (
@@ -83,14 +97,18 @@ export function WindDirectionCompass({
           width={size + 30}
           height={size + 30}
           style={{ position: 'absolute', top: 0, left: 0 }}
+          role='img'
+          aria-labelledby={`${titleId} ${descId}`}
         >
+          <title id={titleId}>Wind Direction Compass</title>
+          <desc id={descId}>{accessibleDescription}</desc>
           {/* Background circle */}
           <circle
             cx={centerX}
             cy={centerY}
             r={radius - 2}
-            fill='#f5f5f5'
-            stroke='#e0e0e0'
+            fill={theme.palette.grey[100]}
+            stroke={theme.palette.grey[300]}
             strokeWidth={1}
           />
 
@@ -108,7 +126,7 @@ export function WindDirectionCompass({
                 textAnchor='middle'
                 dominantBaseline='middle'
                 fontSize='12'
-                fill='#666'
+                fill={theme.palette.text.secondary}
                 fontWeight='bold'
               >
                 {label}

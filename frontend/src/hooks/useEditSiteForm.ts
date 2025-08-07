@@ -32,17 +32,22 @@ export const useEditSiteForm = (site?: FlyingSite) => {
 
   useEffect(() => {
     if (site) {
-      const { _id, ...siteData } = site;
-      const sanitizedData = { ...initialSiteState, ...siteData };
+      const sanitizedData = { ...initialSiteState, ...site };
       setFormData(sanitizedData);
     } else {
       setFormData(initialSiteState);
     }
   }, [site]);
 
-  const handleInputChange = (field: keyof Omit<FlyingSite, '_id'>, value: any) => {
-    const processedValue = value === '' ? null : value;
-    setFormData((prev) => ({ ...prev, [field]: processedValue }));
+  // This handler is specifically for the altitude field.
+  // The previous generic `handleInputChange` was not type-safe and could introduce bugs
+  // by assigning string values to fields expecting numbers.
+  const handleAltitudeChange = (value: string) => {
+    const altitude = parseInt(value, 10);
+    setFormData((prev) => ({
+      ...prev,
+      altitude: isNaN(altitude) ? null : altitude,
+    }));
   };
 
   const handleNestedChange = (
@@ -98,22 +103,26 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     lang: 'bg' | 'en',
     index: number,
     subField: 'description' | 'coordinates',
-    value: any
+    value: string | number,
+    coordinateIndex?: 0 | 1
   ) => {
     setFormData((prev) => {
       const currentData = prev.landingFields || { bg: [], en: [] };
       const items = [...(currentData[lang] || [])];
       const item = { ...items[index] };
 
-      if (subField === 'description') {
+      if (subField === 'description' && typeof value === 'string') {
         item.description = value;
-      } else if (subField === 'coordinates') {
+      } else if (
+        subField === 'coordinates' &&
+        (coordinateIndex === 0 || coordinateIndex === 1)
+      ) {
         const newCoords = [...(item.location?.coordinates || [null, null])] as [
           number | null,
           number | null
         ];
-        const parsedValue = parseFloat(value.value);
-        newCoords[value.index] = isNaN(parsedValue) ? null : parsedValue;
+        const parsedValue = parseFloat(String(value));
+        newCoords[coordinateIndex] = isNaN(parsedValue) ? null : parsedValue;
         item.location = { type: 'Point', coordinates: newCoords };
       }
       items[index] = item;
@@ -206,10 +215,19 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // The data cleaning logic can be kept as it is
+    // Clean the form data before submitting
     const cleanedFormData = {
       ...formData,
-      // ... (all the cleaning logic from your original hook)
+      tracklogs: (formData.tracklogs ?? []).filter((t) => t.trim() !== ''),
+      accomodations: {
+        bg: (formData.accomodations?.bg ?? []).filter((a) => a.trim() !== ''),
+        en: (formData.accomodations?.en ?? []).filter((a) => a.trim() !== ''),
+      },
+      alternatives: {
+        bg: (formData.alternatives?.bg ?? []).filter((a) => a.trim() !== ''),
+        en: (formData.alternatives?.en ?? []).filter((a) => a.trim() !== ''),
+      },
+      // Add more cleaning logic as needed, e.g., for landingFields
     };
 
     try {
@@ -229,7 +247,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   return {
     formData,
     isSubmitting: isAdding || isUpdating,
-    handleInputChange,
+    handleAltitudeChange,
     handleNestedChange,
     handleBilingualArrayChange,
     addBilingualArrayItem,

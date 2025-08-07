@@ -93,7 +93,7 @@ export function SiteCard({ site }: SiteCardProps) {
               window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
             }}
           >
-            <LocationPinIcon sx={{ mr: 0 }} /> Google Maps
+            Отвори <LocationPinIcon sx={{ mr: 0 }} />в Google Maps
           </Button>
         </CardContent>
         <Divider />

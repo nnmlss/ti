@@ -40,7 +40,7 @@ export interface AccessOption {
 }
 
 export interface LandingFieldInfo {
-  description?: string;
+  description?: LocalizedText;
   location?: Location;
 }
 
@@ -61,10 +61,7 @@ export interface FlyingSite {
     en?: string[];
   };
   access?: LocalizedText;
-  landingFields?: {
-    bg?: LandingFieldInfo[];
-    en?: LandingFieldInfo[];
-  };
+  landingFields?: LandingFieldInfo[];
   tracklogs?: string[];
   localPilotsClubs?: {
     bg?: string[];

@@ -30,7 +30,7 @@ export function AddSitePage() {
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ p: 0 }}>
+      <DialogContent sx={{ p: 0, mb: 3 }}>
         <EditSite />
       </DialogContent>
     </Dialog>

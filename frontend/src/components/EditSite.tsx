@@ -78,8 +78,8 @@ function EditSite({ site }: EditSiteProps) {
     field: 'accomodations' | 'alternatives' | 'localPilotsClubs',
     title: string
   ) => {
-    const bgValues = watch(`${field}.bg`) as string[] || [];
-    const enValues = watch(`${field}.en`) as string[] || [];
+    const bgValues = (watch(`${field}.bg`) as string[]) || [];
+    const enValues = (watch(`${field}.en`) as string[]) || [];
 
     return (
       <>
@@ -89,7 +89,10 @@ function EditSite({ site }: EditSiteProps) {
         <Grid container spacing={2}>
           <Grid component='div' size={{ xs: 12, md: 6 }}>
             {bgValues.map((_value, index) => (
-              <Box key={`${field}-bg-${index}`} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Box
+                key={`${field}-bg-${index}`}
+                sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
+              >
                 <Controller
                   name={`${field}.bg.${index}`}
                   control={control}
@@ -116,7 +119,10 @@ function EditSite({ site }: EditSiteProps) {
           </Grid>
           <Grid component='div' size={{ xs: 12, md: 6 }}>
             {enValues.map((_value, index) => (
-              <Box key={`${field}-en-${index}`} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Box
+                key={`${field}-en-${index}`}
+                sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
+              >
                 <Controller
                   name={`${field}.en.${index}`}
                   control={control}
@@ -197,7 +203,7 @@ function EditSite({ site }: EditSiteProps) {
                     fullWidth
                     label='Longitude'
                     type='number'
-                    InputProps={{ inputProps: { step: 'any' } }}
+                    slotProps={{ htmlInput: { step: 'any' } }}
                     sx={{ mb: 1 }}
                   />
                 )}
@@ -214,7 +220,7 @@ function EditSite({ site }: EditSiteProps) {
                     fullWidth
                     label='Latitude'
                     type='number'
-                    InputProps={{ inputProps: { step: 'any' } }}
+                    slotProps={{ htmlInput: { step: 'any' } }}
                   />
                 )}
               />
@@ -265,12 +271,12 @@ function EditSite({ site }: EditSiteProps) {
   }
 
   return (
-    <Container maxWidth='md'>
-      <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
+    <Container maxWidth='md' sx={{ pb: 5 }}>
+      <Paper elevation={0} sx={{ p: 2, mt: 2 }}>
         <form onSubmit={handleSubmit}>
           {/* Title Section */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
-            Site Title
+            Име на старта
           </Typography>
           <Grid container spacing={2}>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
@@ -334,7 +340,7 @@ function EditSite({ site }: EditSiteProps) {
 
           {/* Access Options Section */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
-            Access Options
+            Варианти на достъп
           </Typography>
           <Grid container spacing={1}>
             {accessOptions.map((option) => (
@@ -374,7 +380,7 @@ function EditSite({ site }: EditSiteProps) {
                     fullWidth
                     label='Longitude'
                     type='number'
-                    InputProps={{ inputProps: { step: 'any' } }}
+                    slotProps={{ htmlInput: { step: 'any' } }}
                     required
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
@@ -394,7 +400,7 @@ function EditSite({ site }: EditSiteProps) {
                     fullWidth
                     label='Latitude'
                     type='number'
-                    InputProps={{ inputProps: { step: 'any' } }}
+                    slotProps={{ htmlInput: { step: 'any' } }}
                     required
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
@@ -437,7 +443,7 @@ function EditSite({ site }: EditSiteProps) {
                     rows={4}
                     label='Access (Bulgarian)'
                     slotProps={{
-                      input: {
+                      htmlInput: {
                         id: 'access-bg',
                         name: 'access-bg',
                       },
@@ -459,7 +465,7 @@ function EditSite({ site }: EditSiteProps) {
                     rows={4}
                     label='Access (English)'
                     slotProps={{
-                      input: {
+                      htmlInput: {
                         id: 'access-en',
                         name: 'access-en',
                       },

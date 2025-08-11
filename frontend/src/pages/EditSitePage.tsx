@@ -2,18 +2,18 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useGetSiteQuery } from '../store/apiSlice';
 import { navigateToHome } from '../utils/navigation';
 import EditSite from '../components/EditSite';
-import { 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  IconButton, 
-  CircularProgress, 
-  Alert, 
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  CircularProgress,
+  Alert,
   Box,
-  Button
+  // Button,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+// import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 export function EditSitePage() {
@@ -30,7 +30,7 @@ export function EditSitePage() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <Box display="flex" justifyContent="center" p={4}>
+        <Box display='flex' justifyContent='center' p={4}>
           <CircularProgress />
         </Box>
       );
@@ -44,39 +44,24 @@ export function EditSitePage() {
   };
 
   return (
-    <Dialog 
-      open={true} 
-      onClose={handleClose} 
-      maxWidth='md' 
-      fullWidth
-      scroll='paper'
-    >
-      <DialogTitle sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        pb: 1
-      }}>
+    <Dialog open={true} onClose={handleClose} maxWidth='md' fullWidth scroll='paper'>
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          pb: 1,
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button
-            variant='outlined'
-            color='info'
-            onClick={handleClose}
-            sx={{ mr: 1 }}
-            size='large'
-          >
-            <ArrowBackIosNewIcon />
-          </Button>
           <GpsFixedIcon sx={{ mr: 1 }} />
-          {site ? 'Редакция на място за летене' : 'Добавяне на място за летене'}
+          Редакция на място за летене
         </Box>
-        <IconButton onClick={handleClose} size="small">
+        <IconButton onClick={handleClose} size='small'>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ p: 0 }}>
-        {renderContent()}
-      </DialogContent>
+      <DialogContent sx={{ p: 0 }}>{renderContent()}</DialogContent>
     </Dialog>
   );
 }

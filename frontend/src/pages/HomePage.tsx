@@ -41,7 +41,7 @@ export function HomePage() {
   }, [sites, isLoading, error, setSites, setLoading, setError]);
 
   return (
-    <Box sx={{ position: 'relative', height: '100vh', width: '100vw' }}>
+    <Box sx={{ position: 'relative', height: '100vh', width: '100vw', overflowX: 'hidden' }}>
       {/* Floating header with title and add button */}
       <Box
         sx={{
@@ -64,7 +64,7 @@ export function HomePage() {
         <Typography
           variant='h5'
           component='h1'
-          sx={{ color: 'primary.main', display: { xs: 'none', sm: 'block' } }}
+          sx={{ color: 'primary.main', fontSize: '1rem', display: { xs: 'none', sm: 'block' } }}
         >
           Места за летене
         </Typography>

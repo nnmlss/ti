@@ -4,8 +4,22 @@ import type { RootState } from '../store/store';
 import { setWindDirectionFilter, clearFilters } from '../store/sitesSlice';
 
 const windDirections = [
-  'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
-  'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'
+  'N',
+  'NNE',
+  'NE',
+  'ENE',
+  'E',
+  'ESE',
+  'SE',
+  'SSE',
+  'S',
+  'SSW',
+  'SW',
+  'WSW',
+  'W',
+  'WNW',
+  'NW',
+  'NNW',
 ];
 
 interface WindDirectionFilterProps {
@@ -29,24 +43,24 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
   return (
     <Paper
       sx={{
-        position: 'absolute',
-        bottom: 60,
-        left: 0,
-        p: 2,
-        minWidth: 200,
+        position: 'fixed',
+        bottom: 65,
+        left: '1vw',
+        p: 1,
+        width: '98vw',
         zIndex: 1002,
         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
       }}
     >
-      <Typography variant="subtitle2" sx={{ mb: 1, textAlign: 'center' }}>
+      <Typography variant='subtitle2' sx={{ mb: 1, textAlign: 'center' }}>
         Filter by Wind Direction
       </Typography>
-      
+
       {/* Reset button */}
       <Button
         onClick={handleClearFilter}
         variant={!selectedFilter ? 'contained' : 'outlined'}
-        size="small"
+        size='small'
         sx={{ mb: 2, width: '100%' }}
       >
         ~ Reset
@@ -56,7 +70,7 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(8, 1fr)',
           gap: 0.5,
         }}
       >
@@ -65,7 +79,7 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
             key={direction}
             onClick={() => handleFilterSelect(direction)}
             variant={selectedFilter === direction ? 'contained' : 'outlined'}
-            size="small"
+            size='small'
             sx={{
               minWidth: 40,
               fontSize: '0.75rem',

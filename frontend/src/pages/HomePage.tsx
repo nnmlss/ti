@@ -13,11 +13,15 @@ import AirIcon from '@mui/icons-material/Air';
 
 export function HomePage() {
   const [showWindFilter, setShowWindFilter] = useState(false);
-  
+
   // Centralized data fetching for both map and list views
-  const { data: sites, error, isLoading } = useGetSitesQuery(undefined, {
+  const {
+    data: sites,
+    error,
+    isLoading,
+  } = useGetSitesQuery(undefined, {
     pollingInterval: 30000, // Refetch every 30 seconds
-    refetchOnFocus: true,   // Refetch when user returns to tab
+    refetchOnFocus: true, // Refetch when user returns to tab
     refetchOnReconnect: true, // Refetch on network reconnection
   });
   const { setSites, setLoading, setError, homeView, setHomeView, filter } = useSites();
@@ -57,20 +61,30 @@ export function HomePage() {
           boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
         }}
       >
-        <Typography variant='h5' component='h1' sx={{ color: 'primary.main', display: { xs: 'none', sm: 'block' } }}>
+        <Typography
+          variant='h5'
+          component='h1'
+          sx={{ color: 'primary.main', display: { xs: 'none', sm: 'block' } }}
+        >
           Места за летене
         </Typography>
         <Box>
-          <IconButton 
+          <IconButton
             onClick={() => setShowWindFilter(!showWindFilter)}
             sx={{ color: filter.windDirection ? 'primary.main' : 'inherit' }}
           >
             <AirIcon />
           </IconButton>
-          <IconButton onClick={() => setHomeView('map')} sx={{ color: !isListView ? 'primary.main' : 'inherit' }}>
+          <IconButton
+            onClick={() => setHomeView('map')}
+            sx={{ color: !isListView ? 'primary.main' : 'inherit' }}
+          >
             <MapIcon />
           </IconButton>
-          <IconButton onClick={() => setHomeView('list')} sx={{ color: isListView ? 'primary.main' : 'inherit' }}>
+          <IconButton
+            onClick={() => setHomeView('list')}
+            sx={{ color: isListView ? 'primary.main' : 'inherit' }}
+          >
             <FormatListBulletedIcon />
           </IconButton>
         </Box>
@@ -87,9 +101,7 @@ export function HomePage() {
       </Box>
 
       {/* Wind Direction Filter */}
-      {showWindFilter && (
-        <WindDirectionFilter onClose={() => setShowWindFilter(false)} />
-      )}
+      {showWindFilter && <WindDirectionFilter onClose={() => setShowWindFilter(false)} />}
 
       {/* Conditional content */}
       {isListView ? <SitesList /> : <SitesMap />}

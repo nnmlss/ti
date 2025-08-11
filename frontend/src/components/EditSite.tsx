@@ -14,11 +14,10 @@ import {
 import Grid from '@mui/material/Grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-// import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-// import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import { Controller } from 'react-hook-form';
 
 import type { WindDirection, FlyingSite } from '../types';
-import { useEditSiteForm } from '../hooks/useEditSiteForm';
+import { useEditSiteFormRHF } from '../hooks/useEditSiteFormRHF';
 import { NotificationDialog } from './NotificationDialog';
 
 const windDirections: WindDirection[] = [
@@ -49,141 +48,183 @@ const accessOptions = [
 ];
 
 interface EditSiteProps {
-  site?: FlyingSite; // You can replace 'any' with a more specific 'FlyingSite' type
+  site?: FlyingSite;
 }
 
 function EditSite({ site }: EditSiteProps) {
   const {
-    formData,
+    control,
+    handleSubmit,
+    watch,
     isSubmitting,
     showSuccessMessage,
-    handleNestedChange,
-    handleBilingualArrayChange,
-    addBilingualArrayItem,
-    removeBilingualArrayItem,
-    handleLandingFieldDescription,
-    handleLandingFieldCoordinates,
-    addLandingField,
-    removeLandingField,
+    landingFields,
+    tracklogsFields,
+    accomodationsBg,
+    accomodationsEn,
+    alternativesBg,
+    alternativesEn,
+    localPilotsClubsBg,
+    localPilotsClubsEn,
     handleWindDirectionChange,
     handleAccessOptionChange,
-    handleCoordinateChange,
-    handleAltitudeChange,
+    addBilingualArrayItem,
+    removeBilingualArrayItem,
+    addLandingField,
+    removeLandingField,
     addTracklog,
-    updateTracklog,
     removeTracklog,
-    handleSubmit,
     notificationDialog,
-  } = useEditSiteForm(site);
+  } = useEditSiteFormRHF(site);
+
+  const windDirectionValues = watch('windDirection') || [];
+  const accessOptionValues = watch('accessOptions') || [];
 
   const renderBilingualArrayFields = (
     field: 'accomodations' | 'alternatives' | 'localPilotsClubs',
     title: string
-  ) => (
-    <>
-      <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
-        {title}
-      </Typography>
-      <Grid container spacing={2}>
-        <Grid component='div' size={{ xs: 12, md: 6 }}>
-          {(formData[field]?.bg || []).map((item, index) => (
-            <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <TextField
-                fullWidth
-                label={`${title.slice(0, -1)} ${index + 1} (Bulgarian)`}
-                value={item}
-                onChange={(e) => handleBilingualArrayChange(field, 'bg', index, e.target.value)}
-              />
-              <IconButton onClick={() => removeBilingualArrayItem(field, 'bg', index)}>
-                <DeleteIcon color='primary' />
-              </IconButton>
-            </Box>
-          ))}
-          <Button
-            onClick={() => addBilingualArrayItem(field, 'bg')}
-            startIcon={<AddCircleOutlineIcon />}
-          >
-            Add
-          </Button>
+  ) => {
+    const bgFields = field === 'accomodations' ? accomodationsBg : 
+                     field === 'alternatives' ? alternativesBg : localPilotsClubsBg;
+    const enFields = field === 'accomodations' ? accomodationsEn : 
+                     field === 'alternatives' ? alternativesEn : localPilotsClubsEn;
+
+    return (
+      <>
+        <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
+          {title}
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid component='div' size={{ xs: 12, md: 6 }}>
+            {bgFields.fields.map((item, index) => (
+              <Box key={item.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Controller
+                  name={`${field}.bg.${index}`}
+                  control={control}
+                  render={({ field: controllerField }) => (
+                    <TextField
+                      {...controllerField}
+                      id={`${field}-bg-${index}`}
+                      fullWidth
+                      label={`${title.slice(0, -1)} ${index + 1} (Bulgarian)`}
+                    />
+                  )}
+                />
+                <IconButton onClick={() => removeBilingualArrayItem(field, 'bg', index)}>
+                  <DeleteIcon color='primary' />
+                </IconButton>
+              </Box>
+            ))}
+            <Button
+              onClick={() => addBilingualArrayItem(field, 'bg')}
+              startIcon={<AddCircleOutlineIcon />}
+            >
+              Add
+            </Button>
+          </Grid>
+          <Grid component='div' size={{ xs: 12, md: 6 }}>
+            {enFields.fields.map((item, index) => (
+              <Box key={item.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Controller
+                  name={`${field}.en.${index}`}
+                  control={control}
+                  render={({ field: controllerField }) => (
+                    <TextField
+                      {...controllerField}
+                      id={`${field}-en-${index}`}
+                      fullWidth
+                      label={`${title.slice(0, -1)} ${index + 1} (English)`}
+                    />
+                  )}
+                />
+                <IconButton onClick={() => removeBilingualArrayItem(field, 'en', index)}>
+                  <DeleteIcon color='primary' />
+                </IconButton>
+              </Box>
+            ))}
+            <Button
+              onClick={() => addBilingualArrayItem(field, 'en')}
+              startIcon={<AddCircleOutlineIcon />}
+            >
+              Add
+            </Button>
+          </Grid>
         </Grid>
-        <Grid component='div' size={{ xs: 12, md: 6 }}>
-          {(formData[field]?.en || []).map((item, index) => (
-            <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <TextField
-                fullWidth
-                label={`${title.slice(0, -1)} ${index + 1} (English)`}
-                value={item}
-                onChange={(e) => handleBilingualArrayChange(field, 'en', index, e.target.value)}
-              />
-              <IconButton onClick={() => removeBilingualArrayItem(field, 'en', index)}>
-                <DeleteIcon color='primary' />
-              </IconButton>
-            </Box>
-          ))}
-          <Button
-            onClick={() => addBilingualArrayItem(field, 'en')}
-            startIcon={<AddCircleOutlineIcon />}
-          >
-            Add
-          </Button>
-        </Grid>
-      </Grid>
-    </>
-  );
+      </>
+    );
+  };
 
   const renderLandingFields = () => (
     <>
       <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
         Места за кацане
       </Typography>
-      {(formData.landingFields || []).map((field, index) => (
-        <Paper key={index} sx={{ p: 2, mb: 2 }}>
+      {landingFields.fields.map((field, index) => (
+        <Paper key={field.id} sx={{ p: 2, mb: 2 }}>
           <Grid container spacing={2}>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                multiline
-                rows={2}
-                label={`Description ${index + 1} (Bulgarian)`}
-                value={field.description?.bg || ''}
-                onChange={(e) => handleLandingFieldDescription('bg', index, e.target.value)}
-                sx={{ mb: 1 }}
+              <Controller
+                name={`landingFields.${index}.description.bg`}
+                control={control}
+                render={({ field: controllerField }) => (
+                  <TextField
+                    {...controllerField}
+                    id={`landing-field-description-bg-${index}`}
+                    name={`landing-field-description-bg-${index}`}
+                    fullWidth
+                    label={`Description ${index + 1} (Bulgarian)`}
+                    sx={{ mb: 1 }}
+                  />
+                )}
               />
             </Grid>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                multiline
-                rows={2}
-                label={`Description ${index + 1} (English)`}
-                value={field.description?.en || ''}
-                onChange={(e) => handleLandingFieldDescription('en', index, e.target.value)}
-                sx={{ mb: 1 }}
+              <Controller
+                name={`landingFields.${index}.description.en`}
+                control={control}
+                render={({ field: controllerField }) => (
+                  <TextField
+                    {...controllerField}
+                    id={`landing-field-description-en-${index}`}
+                    name={`landing-field-description-en-${index}`}
+                    fullWidth
+                    label={`Description ${index + 1} (English)`}
+                    sx={{ mb: 1 }}
+                  />
+                )}
               />
             </Grid>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label='Longitude'
-                type='number'
-                InputProps={{ inputProps: { step: 'any' } }}
-                value={field.location?.coordinates[0] || ''}
-                onChange={(e) =>
-                  handleLandingFieldCoordinates(index, 0, Number(e.target.value))
-                }
-                sx={{ mb: 1 }}
+              <Controller
+                name={`landingFields.${index}.location.coordinates.0`}
+                control={control}
+                render={({ field: controllerField }) => (
+                  <TextField
+                    {...controllerField}
+                    id={`landing-field-longitude-${index}`}
+                    fullWidth
+                    label='Longitude'
+                    type='number'
+                    InputProps={{ inputProps: { step: 'any' } }}
+                    sx={{ mb: 1 }}
+                  />
+                )}
               />
             </Grid>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label='Latitude'
-                type='number'
-                InputProps={{ inputProps: { step: 'any' } }}
-                value={field.location?.coordinates[1] || ''}
-                onChange={(e) =>
-                  handleLandingFieldCoordinates(index, 1, Number(e.target.value))
-                }
+              <Controller
+                name={`landingFields.${index}.location.coordinates.1`}
+                control={control}
+                render={({ field: controllerField }) => (
+                  <TextField
+                    {...controllerField}
+                    id={`landing-field-latitude-${index}`}
+                    fullWidth
+                    label='Latitude'
+                    type='number'
+                    InputProps={{ inputProps: { step: 'any' } }}
+                  />
+                )}
               />
             </Grid>
           </Grid>
@@ -241,24 +282,43 @@ function EditSite({ site }: EditSiteProps) {
           </Typography>
           <Grid container spacing={2}>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label='Title (Bulgarian)'
-                value={formData.title.bg}
-                onChange={(e) => handleNestedChange('title', 'bg', e.target.value)}
-                required
+              <Controller
+                name='title.bg'
+                control={control}
+                rules={{ required: 'Bulgarian title is required' }}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    id='title-bg'
+                    fullWidth
+                    label='Title (Bulgarian)'
+                    required
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
             </Grid>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                label='Title (English)'
-                value={formData.title.en}
-                onChange={(e) => handleNestedChange('title', 'en', e.target.value)}
-                required
+              <Controller
+                name='title.en'
+                control={control}
+                rules={{ required: 'English title is required' }}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    id='title-en'
+                    fullWidth
+                    label='Title (English)'
+                    required
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
             </Grid>
           </Grid>
+
           {/* Wind Direction Section */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
             Wind Directions
@@ -269,7 +329,8 @@ function EditSite({ site }: EditSiteProps) {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={formData.windDirection.includes(direction)}
+                      id={`wind-direction-${direction.toLowerCase()}`}
+                      checked={windDirectionValues.includes(direction)}
                       onChange={() => handleWindDirectionChange(direction)}
                     />
                   }
@@ -289,7 +350,8 @@ function EditSite({ site }: EditSiteProps) {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={formData.accessOptions.some(
+                      id={`access-option-${option._id}`}
+                      checked={accessOptionValues.some(
                         (selected) => selected._id === option._id
                       )}
                       onChange={() =>
@@ -309,78 +371,136 @@ function EditSite({ site }: EditSiteProps) {
           </Typography>
           <Grid container spacing={2}>
             <Grid component='div' size={{ xs: 12, md: 4 }}>
-              <TextField
-                fullWidth
-                label='Longitude'
-                type='number'
-                InputProps={{ inputProps: { step: 'any' } }}
-                value={formData.location.coordinates[0] ?? ''}
-                onChange={(e) => handleCoordinateChange(0, e.target.value)}
-                required
+              <Controller
+                name='location.coordinates.0'
+                control={control}
+                rules={{ required: 'Longitude is required' }}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    id='location-longitude'
+                    fullWidth
+                    label='Longitude'
+                    type='number'
+                    InputProps={{ inputProps: { step: 'any' } }}
+                    required
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
             </Grid>
             <Grid component='div' size={{ xs: 12, md: 4 }}>
-              <TextField
-                fullWidth
-                label='Latitude'
-                type='number'
-                InputProps={{ inputProps: { step: 'any' } }}
-                value={formData.location.coordinates[1] ?? ''}
-                onChange={(e) => handleCoordinateChange(1, e.target.value)}
-                required
+              <Controller
+                name='location.coordinates.1'
+                control={control}
+                rules={{ required: 'Latitude is required' }}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    id='location-latitude'
+                    fullWidth
+                    label='Latitude'
+                    type='number'
+                    InputProps={{ inputProps: { step: 'any' } }}
+                    required
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
               />
             </Grid>
             <Grid component='div' size={{ xs: 12, md: 4 }}>
-              <TextField
-                fullWidth
-                label='Altitude (meters)'
-                type='number'
-                value={formData.altitude ?? ''}
-                onChange={(e) => handleAltitudeChange(e.target.value)}
+              <Controller
+                name='altitude'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id='altitude'
+                    fullWidth
+                    label='Altitude (meters)'
+                    type='number'
+                  />
+                )}
               />
             </Grid>
           </Grid>
+
           {/* Access Description */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
             Достъп
           </Typography>
           <Grid container spacing={2}>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                label='Access (Bulgarian)'
-                value={formData.access?.bg}
-                onChange={(e) => handleNestedChange('access', 'bg', e.target.value)}
+              <Controller
+                name='access.bg'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id='access-bg'
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label='Access (Bulgarian)'
+                    slotProps={{
+                      input: {
+                        id: 'access-bg',
+                        name: 'access-bg',
+                      },
+                    }}
+                  />
+                )}
               />
             </Grid>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                label='Access (English)'
-                value={formData.access?.en}
-                onChange={(e) => handleNestedChange('access', 'en', e.target.value)}
+              <Controller
+                name='access.en'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id='access-en'
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label='Access (English)'
+                    slotProps={{
+                      input: {
+                        id: 'access-en',
+                        name: 'access-en',
+                      },
+                    }}
+                  />
+                )}
               />
             </Grid>
           </Grid>
+
+          {/* Bilingual Array Fields */}
           {renderBilingualArrayFields('accomodations', 'Настаняване')}
           {renderBilingualArrayFields('alternatives', 'Друго за правене')}
           {renderLandingFields()}
           {renderBilingualArrayFields('localPilotsClubs', 'Local Pilots Clubs')}
+
           {/* Tracklogs */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
             Tracklogs
           </Typography>
-          {(formData.tracklogs || []).map((tracklog, index) => (
-            <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <TextField
-                fullWidth
-                label={`Tracklog URL ${index + 1}`}
-                value={tracklog}
-                onChange={(e) => updateTracklog(index, e.target.value)}
+          {tracklogsFields.fields.map((item, index) => (
+            <Box key={item.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Controller
+                name={`tracklogs.${index}`}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id={`tracklog-${index}`}
+                    fullWidth
+                    label={`Tracklog URL ${index + 1}`}
+                  />
+                )}
               />
               <IconButton onClick={() => removeTracklog(index)}>
                 <DeleteIcon color='primary' />
@@ -395,6 +515,7 @@ function EditSite({ site }: EditSiteProps) {
           >
             Add Tracklogs
           </Button>
+
           {/* Submit Button */}
           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
             <Button

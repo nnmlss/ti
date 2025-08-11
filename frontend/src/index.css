@@ -42,5 +42,10 @@ body {
   padding: 0 !important;
   margin: 0 !important;
   background-color: #f5f5f5;
+  background-image: url('./assets/oblaci.jpg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: 'comfortaa', sans-serif;
 }

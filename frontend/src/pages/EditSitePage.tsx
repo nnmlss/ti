@@ -1,9 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { useGetSiteQuery } from '../store/apiSlice';
 import { useModal } from '../hooks/useModal';
+import { useQueryState } from '../hooks/useQueryState';
 import EditSite from '../components/EditSite';
+import { AccessibleDialog } from '../components/AccessibleDialog';
 import {
-  Dialog,
   DialogTitle,
   DialogContent,
   IconButton,
@@ -21,10 +22,11 @@ export function EditSitePage() {
   const { handleClose } = useModal(true);
 
   // The 'skip' option prevents the query from running if the id is not available
-  const { data: site, error, isLoading } = useGetSiteQuery(id!, { skip: !id });
+  const siteQuery = useGetSiteQuery(id!, { skip: !id });
+  const siteState = useQueryState(siteQuery);
 
   const renderContent = () => {
-    if (isLoading) {
+    if (siteState.isLoading) {
       return (
         <Box display='flex' justifyContent='center' p={4}>
           <CircularProgress />
@@ -32,15 +34,24 @@ export function EditSitePage() {
       );
     }
 
-    if (error) {
-      return <Alert severity='error'>Error loading site data!</Alert>;
+    if (siteState.isError) {
+      return <Alert severity='error'>{siteState.error || 'Error loading site data!'}</Alert>;
     }
 
-    return site ? <EditSite site={site} /> : <Alert severity='warning'>Site not found.</Alert>;
+    return siteState.data ? <EditSite site={siteState.data} /> : <Alert severity='warning'>Site not found.</Alert>;
   };
 
   return (
-    <Dialog open={true} onClose={handleClose} maxWidth='md' fullWidth scroll='paper'>
+    <AccessibleDialog 
+      open={true} 
+      onClose={handleClose} 
+      maxWidth='md' 
+      fullWidth 
+      scroll='paper'
+      title="Редакция на място за летене"
+      description="Форма за редактиране на информацията за място за летене"
+      aria-label="Редакция на място за летене"
+    >
       <DialogTitle
         sx={{
           display: 'flex',
@@ -53,11 +64,15 @@ export function EditSitePage() {
           <GpsFixedIcon sx={{ mr: 1 }} />
           Редакция на място за летене
         </Box>
-        <IconButton onClick={handleClose} size='small'>
+        <IconButton 
+          onClick={handleClose} 
+          size='small'
+          aria-label="Затвори диалога"
+        >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
       <DialogContent sx={{ p: 0 }}>{renderContent()}</DialogContent>
-    </Dialog>
+    </AccessibleDialog>
   );
 }

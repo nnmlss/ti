@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAddSiteMutation, useUpdateSiteMutation } from '../store/apiSlice';
 import { useNotificationDialog } from './useNotificationDialog';
+import { useAsyncState } from './useAsyncState';
 import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
 import { navigateToHome } from '../utils/navigation';
 import type { FlyingSite, WindDirection } from '../types';
@@ -12,8 +13,11 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   const navigate = useNavigate();
   const { showError, ...notificationDialog } = useNotificationDialog();
 
-  const [addSite, { isLoading: isAdding }] = useAddSiteMutation();
-  const [updateSite, { isLoading: isUpdating }] = useUpdateSiteMutation();
+  // Use AsyncState for better async operation management
+  const submitState = useAsyncState<FlyingSite>();
+  
+  const [addSite] = useAddSiteMutation();
+  const [updateSite] = useUpdateSiteMutation();
 
   // Initialize form with transformed data
   const form = useForm<FormDataSite>({
@@ -108,24 +112,29 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   };
 
   const onSubmit = async (formData: FormDataSite) => {
-    try {
+    await submitState.execute(async () => {
       // Transform form data to API format
       const cleanedFormData = toApiData(formData, site);
 
+      let result: FlyingSite;
       if (site) {
-        await updateSite({ _id: site._id, ...cleanedFormData }).unwrap();
+        result = await updateSite({ _id: site._id, ...cleanedFormData }).unwrap();
         setShowSuccessMessage(true);
         // Auto-close after 5 seconds
         setTimeout(() => navigate(navigateToHome()), 5000);
       } else {
-        await addSite(cleanedFormData).unwrap();
+        result = await addSite(cleanedFormData).unwrap();
         setShowSuccessMessage(true);
         // Auto-close after 3 seconds
         setTimeout(() => navigate(navigateToHome()), 3000);
       }
-    } catch (error) {
-      console.error('Failed to save the site:', error);
-      showError('Error saving site. Please try again.');
+      
+      return result;
+    });
+
+    // Handle errors through submitState.error
+    if (submitState.isError) {
+      showError(submitState.error || 'Error saving site. Please try again.');
     }
   };
 
@@ -138,8 +147,9 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     setValue,
     
     // State
-    isSubmitting: isSubmitting || isAdding || isUpdating,
+    isSubmitting: isSubmitting || submitState.isLoading,
     showSuccessMessage,
+    submitState,
     
     // Field arrays (only for actual useFieldArray hooks)
     landingFields,

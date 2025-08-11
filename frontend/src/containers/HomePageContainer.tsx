@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGetSitesQuery } from '../store/apiSlice';
 import { useSites } from '../hooks/useSites';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useArrayQueryState } from '../hooks/useQueryState';
 import { HomePage } from '../pages/HomePage';
 
 export function HomePageContainer() {
@@ -14,15 +15,14 @@ export function HomePageContainer() {
   );
 
   // Centralized data fetching for both map and list views
-  const {
-    data: sites,
-    error,
-    isLoading,
-  } = useGetSitesQuery(undefined, {
+  const sitesQuery = useGetSitesQuery(undefined, {
     pollingInterval: 30000, // Refetch every 30 seconds
     refetchOnFocus: true, // Refetch when user returns to tab
     refetchOnReconnect: true, // Refetch on network reconnection
   });
+  
+  // Use adapter pattern to standardize query interface
+  const sitesState = useArrayQueryState(sitesQuery);
   
   const { setSites, setLoading, setError, homeView, setHomeView, filter } = useSites();
   
@@ -35,16 +35,16 @@ export function HomePageContainer() {
 
   // Sync RTK Query data to sitesSlice once at the top level
   useEffect(() => {
-    if (sites) {
-      setSites(sites);
+    if (sitesState.data?.items) {
+      setSites(sitesState.data.items);
     }
-    setLoading(isLoading);
-    if (error) {
-      setError('Error loading sites!');
+    setLoading(sitesState.isLoading);
+    if (sitesState.error) {
+      setError(sitesState.error);
     } else {
       setError(null);
     }
-  }, [sites, isLoading, error, setSites, setLoading, setError]);
+  }, [sitesState.data?.items, sitesState.isLoading, sitesState.error, setSites, setLoading, setError]);
 
   const handleViewToggle = (view: 'map' | 'list') => {
     setHomeView(view);

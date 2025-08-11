@@ -1,6 +1,6 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useGetSiteQuery } from '../store/apiSlice';
-import { navigateToHome } from '../utils/navigation';
+import { useModal } from '../hooks/useModal';
 import EditSite from '../components/EditSite';
 import {
   Dialog,
@@ -18,14 +18,10 @@ import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 export function EditSitePage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const { handleClose } = useModal(true);
 
   // The 'skip' option prevents the query from running if the id is not available
   const { data: site, error, isLoading } = useGetSiteQuery(id!, { skip: !id });
-
-  const handleClose = () => {
-    navigate(navigateToHome());
-  };
 
   const renderContent = () => {
     if (isLoading) {

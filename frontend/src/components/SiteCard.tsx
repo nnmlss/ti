@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -10,23 +8,36 @@ import {
   Divider,
 } from '@mui/material';
 
-import { Link } from 'react-router-dom';
-// import { Map } from '@mui/icons-material';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
-// import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-// import GpsOffIcon from '@mui/icons-material/GpsOff';
 
 import type { FlyingSite } from '../types';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
-interface SiteCardProps {
-  site: FlyingSite;
+
+interface DeleteDialogState {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
 }
 
-export function SiteCard({ site }: SiteCardProps) {
-  const navigate = useNavigate();
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+interface SiteCardProps {
+  site: FlyingSite;
+  onEdit: () => void;
+  onDelete: () => void;
+  onViewDetails: () => void;
+  onShowOnMap: () => void;
+  deleteDialog: DeleteDialogState;
+}
+
+export function SiteCard({ 
+  site, 
+  onEdit, 
+  onDelete, 
+  onViewDetails, 
+  onShowOnMap, 
+  deleteDialog 
+}: SiteCardProps) {
 
   return (
     <>
@@ -49,7 +60,7 @@ export function SiteCard({ site }: SiteCardProps) {
             alignItems: 'center',
             cursor: 'pointer',
           }}
-          onClick={() => navigate(`/site/${site._id}`)}
+          onClick={onViewDetails}
         >
           <Typography
             variant='h5'
@@ -73,10 +84,7 @@ export function SiteCard({ site }: SiteCardProps) {
           </Box>
           <AccessOptionsView accessOptions={site.accessOptions} size={46} />
           <Button
-            onClick={() => {
-              const [lng, lat] = site.location.coordinates;
-              window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
-            }}
+            onClick={onShowOnMap}
           >
             <LocationPinIcon sx={{ mr: 0 }} />
             Отвори в Google Maps
@@ -84,20 +92,25 @@ export function SiteCard({ site }: SiteCardProps) {
         </CardContent>
         <Divider />
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button component={Link} to={`/edit-site/${site._id}`} size='small'>
+          <Button onClick={onEdit} size='small'>
             Промяна
           </Button>
 
-          <Button onClick={() => setIsDeleteDialogOpen(true)} color='error' size='small'>
+          <Button 
+            onClick={onDelete} 
+            color='error' 
+            size='small'
+          >
             Изтриване
           </Button>
         </CardActions>
       </Card>
       <DeleteConfirmDialog
-        open={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
+        open={deleteDialog.isOpen}
+        onClose={deleteDialog.onClose}
         siteId={site._id}
         title={site.title.bg || site.title.en || 'this site'}
+        onConfirm={deleteDialog.onConfirm}
       />
     </>
   );

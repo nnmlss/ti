@@ -3,42 +3,29 @@ import { SitesList } from '../components/SitesList';
 import { WindDirectionFilter } from '../components/WindDirectionFilter';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useGetSitesQuery } from '../store/apiSlice';
-import { useSites } from '../hooks/useSites';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import MapIcon from '@mui/icons-material/Map';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
 
-export function HomePage() {
-  const [showWindFilter, setShowWindFilter] = useState(false);
+interface HomePageProps {
+  homeView: 'map' | 'list';
+  filter: { windDirection: string | null };
+  showWindFilter: boolean;
+  onViewToggle: (view: 'map' | 'list') => void;
+  onWindFilterToggle: () => void;
+  onWindFilterClose: () => void;
+}
 
-  // Centralized data fetching for both map and list views
-  const {
-    data: sites,
-    error,
-    isLoading,
-  } = useGetSitesQuery(undefined, {
-    pollingInterval: 30000, // Refetch every 30 seconds
-    refetchOnFocus: true, // Refetch when user returns to tab
-    refetchOnReconnect: true, // Refetch on network reconnection
-  });
-  const { setSites, setLoading, setError, homeView, setHomeView, filter } = useSites();
+export function HomePage({
+  homeView,
+  filter,
+  showWindFilter,
+  onViewToggle,
+  onWindFilterToggle,
+  onWindFilterClose,
+}: HomePageProps) {
   const isListView = homeView === 'list';
-
-  // Sync RTK Query data to sitesSlice once at the top level
-  useEffect(() => {
-    if (sites) {
-      setSites(sites);
-    }
-    setLoading(isLoading);
-    if (error) {
-      setError('Error loading sites!');
-    } else {
-      setError(null);
-    }
-  }, [sites, isLoading, error, setSites, setLoading, setError]);
 
   return (
     <Box sx={{ position: 'relative', height: '100vh', width: '100vw', overflowX: 'hidden' }}>
@@ -70,7 +57,7 @@ export function HomePage() {
         </Typography>
         <Box>
           <Button
-            onClick={() => setShowWindFilter(!showWindFilter)}
+            onClick={onWindFilterToggle}
             variant={filter.windDirection ? 'contained' : 'text'}
             sx={{
               color: filter.windDirection ? '#fff' : 'inherit',
@@ -84,13 +71,13 @@ export function HomePage() {
             {filter.windDirection || <AirIcon />}
           </Button>
           <IconButton
-            onClick={() => setHomeView('map')}
+            onClick={() => onViewToggle('map')}
             sx={{ color: !isListView ? 'primary.main' : 'inherit' }}
           >
             <MapIcon />
           </IconButton>
           <IconButton
-            onClick={() => setHomeView('list')}
+            onClick={() => onViewToggle('list')}
             sx={{ color: isListView ? 'primary.main' : 'inherit' }}
           >
             <FormatListBulletedIcon />
@@ -109,7 +96,7 @@ export function HomePage() {
       </Box>
 
       {/* Wind Direction Filter */}
-      {showWindFilter && <WindDirectionFilter onClose={() => setShowWindFilter(false)} />}
+      {showWindFilter && <WindDirectionFilter onClose={onWindFilterClose} />}
 
       {/* Conditional content */}
       {isListView ? <SitesList /> : <SitesMap />}

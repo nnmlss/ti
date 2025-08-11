@@ -1,5 +1,5 @@
 import { useSites } from '../hooks/useSites';
-import { SiteCard } from './SiteCard';
+import { SiteCardContainer } from '../containers/SiteCardContainer';
 import { CircularProgress, Alert, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
@@ -40,7 +40,7 @@ export function SitesList() {
             key={index}
             sx={{ display: 'flex', aspectRatio: '2/3.2' }}
           >
-            <SiteCard site={site} />
+            <SiteCardContainer site={site} />
           </Grid>
         ))}
     </Grid>

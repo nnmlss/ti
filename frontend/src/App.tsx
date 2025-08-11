@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { theme } from './theme';
-import { HomePage } from './pages/HomePage';
+import { HomePageContainer } from './containers/HomePageContainer';
 import { AddSitePage } from './pages/AddSitePage';
 import { EditSitePage } from './pages/EditSitePage';
 import { SiteDetailPage } from './pages/SiteDetailPage';
@@ -11,7 +11,7 @@ function AppContent() {
   return (
     <>
       {/* HomePage always rendered as base layer */}
-      <HomePage />
+      <HomePageContainer />
       
       {/* Modal Routes - render on top of HomePage */}
       <Routes>

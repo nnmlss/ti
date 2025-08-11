@@ -18,6 +18,7 @@ interface DeleteConfirmDialogProps {
   onClose: () => void;
   siteId: string;
   title: string;
+  onConfirm?: () => void;
 }
 
 export function DeleteConfirmDialog({
@@ -25,15 +26,20 @@ export function DeleteConfirmDialog({
   onClose,
   siteId,
   title,
+  onConfirm,
 }: DeleteConfirmDialogProps) {
   const [deleteSite, { isLoading: isDeleting }] = useDeleteSiteMutation();
 
   const handleConfirm = async () => {
-    try {
-      await deleteSite(siteId).unwrap();
-      onClose();
-    } catch (error) {
-      console.error('Failed to delete site:', error);
+    if (onConfirm) {
+      onConfirm();
+    } else {
+      try {
+        await deleteSite(siteId).unwrap();
+        onClose();
+      } catch (error) {
+        console.error('Failed to delete site:', error);
+      }
     }
   };
 

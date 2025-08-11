@@ -11,12 +11,13 @@ import {
   CardActions,
   Divider,
 } from '@mui/material';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+import { useConfirmDialog } from '../hooks/useConfirmDialog';
+import { useDeleteSiteMutation } from '../store/apiSlice';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -31,8 +32,17 @@ L.Icon.Default.mergeOptions({
 
 export function SitesMap() {
   const navigate = useNavigate();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
+  const { isOpen, targetId, confirm, handleConfirm, handleCancel } = useConfirmDialog();
+  const [deleteSite] = useDeleteSiteMutation();
   const { sites, error, loading } = useSites();
+
+  const handleDelete = async (siteId: string) => {
+    try {
+      await deleteSite(siteId).unwrap();
+    } catch (error) {
+      console.error('Failed to delete site:', error);
+    }
+  };
 
   if (loading && !sites) {
     return (
@@ -186,7 +196,7 @@ export function SitesMap() {
                       size='small'
                       onClick={(e) => {
                         e.stopPropagation();
-                        setDeleteDialogOpen(site._id);
+                        confirm(site._id, () => handleDelete(site._id));
                       }}
                     >
                       Изтриване
@@ -199,12 +209,13 @@ export function SitesMap() {
         })}
       </MapContainer>
 
-      {deleteDialogOpen && (
+      {isOpen && targetId && (
         <DeleteConfirmDialog
-          open={true}
-          onClose={() => setDeleteDialogOpen(null)}
-          siteId={deleteDialogOpen}
-          title={sites?.find((s) => s._id === deleteDialogOpen)?.title.bg || 'this site'}
+          open={isOpen}
+          onClose={handleCancel}
+          siteId={targetId}
+          title={sites?.find((s) => s._id === targetId)?.title.bg || 'this site'}
+          onConfirm={handleConfirm}
         />
       )}
     </>

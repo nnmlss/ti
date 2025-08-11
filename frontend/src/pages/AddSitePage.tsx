@@ -1,16 +1,11 @@
 import { Dialog, DialogTitle, DialogContent, IconButton, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import { useNavigate } from 'react-router-dom';
-import { navigateToHome } from '../utils/navigation';
+import { useModal } from '../hooks/useModal';
 import EditSite from '../components/EditSite';
 
 export function AddSitePage() {
-  const navigate = useNavigate();
-
-  const handleClose = () => {
-    navigate(navigateToHome());
-  };
+  const { handleClose } = useModal(true);
 
   return (
     <Dialog open={true} onClose={handleClose} maxWidth='md' fullWidth scroll='paper'>

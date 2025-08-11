@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -7,23 +7,36 @@ import {
   Button,
   Typography,
   Box,
+  CircularProgress,
 } from '@mui/material';
 
 import GpsOffIcon from '@mui/icons-material/GpsOff';
+import { useDeleteSiteMutation } from '../store/apiSlice';
 
 interface DeleteConfirmDialogProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  siteId: string;
   title: string;
 }
 
 export function DeleteConfirmDialog({
   open,
   onClose,
-  onConfirm,
+  siteId,
   title,
 }: DeleteConfirmDialogProps) {
+  const [deleteSite, { isLoading: isDeleting }] = useDeleteSiteMutation();
+
+  const handleConfirm = async () => {
+    try {
+      await deleteSite(siteId).unwrap();
+      onClose();
+    } catch (error) {
+      console.error('Failed to delete site:', error);
+    }
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', color: 'error.main' }}>
@@ -31,15 +44,34 @@ export function DeleteConfirmDialog({
       </DialogTitle>
       <DialogContent>
         <Box sx={{ my: 2, display: 'flex', justifyContent: 'center', gap: 1 }}>
-          {/* <DeleteIcon sx={{ mr: 0 }} /> */}
           <GpsOffIcon color='error' />
           <Typography>Наистина искаш да изтриеш "{title}"?</Typography>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onConfirm} color='error' variant='contained'>
-          Delete
+        <Button onClick={onClose} disabled={isDeleting}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleConfirm}
+          color='error'
+          variant='contained'
+          disabled={isDeleting}
+          startIcon={
+            isDeleting ? <CircularProgress size={21} sx={{ color: 'white' }} /> : undefined
+          }
+          sx={
+            isDeleting
+              ? {
+                  color: 'white !important',
+                  '& .MuiCircularProgress-root': {
+                    color: 'white !important',
+                  },
+                }
+              : undefined
+          }
+        >
+          {isDeleting ? '' : 'Delete'}
         </Button>
       </DialogActions>
     </Dialog>

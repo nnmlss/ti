@@ -8,7 +8,11 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useEffect } from 'react';
 
 export function HomePage() {
-  const { data: sites, error, isLoading } = useGetSitesQuery();
+  const { data: sites, error, isLoading } = useGetSitesQuery(undefined, {
+    pollingInterval: 30000, // Refetch every 30 seconds
+    refetchOnFocus: true,   // Refetch when user returns to tab
+    refetchOnReconnect: true, // Refetch on network reconnection
+  });
   const { setSites, setLoading, setError } = useSites();
 
   // Sync RTK Query data to sitesSlice

@@ -42,7 +42,14 @@ export const useEditSiteForm = (site?: FlyingSite) => {
 
   useEffect(() => {
     if (site) {
-      const sanitizedData = { ...initialSiteState, ...site };
+      const sanitizedData = {
+        ...initialSiteState,
+        ...site,
+        // Ensure landingFields is always an array
+        landingFields: Array.isArray(site.landingFields)
+          ? site.landingFields
+          : initialSiteState.landingFields,
+      };
       setFormData(sanitizedData);
     } else {
       setFormData(initialSiteState);

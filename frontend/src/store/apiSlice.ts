@@ -15,9 +15,10 @@ export const apiSlice = createApi({
               { type: 'Site', id: 'LIST' },
             ]
           : [{ type: 'Site', id: 'LIST' }],
+      keepUnusedDataFor: 60, // Cache for 1 minute
     }),
     getSite: builder.query<FlyingSite, string>({
-      query: (id) => `/sites/${id}`,
+      query: (id) => `/site/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Site', id }],
     }),
     addSite: builder.mutation<FlyingSite, Partial<FlyingSite>>({
@@ -32,7 +33,7 @@ export const apiSlice = createApi({
       query: (data) => {
         const { _id, ...body } = data;
         return {
-          url: `/sites/${_id}`,
+          url: `/site/${_id}`,
           method: 'PUT',
           body,
         };
@@ -41,7 +42,7 @@ export const apiSlice = createApi({
     }),
     deleteSite: builder.mutation<{ success: boolean; id: string }, string>({
       query: (id) => ({
-        url: `/sites/${id}`,
+        url: `/site/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: (_result, _error, id) => [{ type: 'Site', id }],

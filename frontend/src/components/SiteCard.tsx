@@ -20,28 +20,13 @@ import type { FlyingSite } from '../types';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
-import { useDeleteSiteMutation } from '../store/apiSlice';
-import { useSites } from '../hooks/useSites';
-
 interface SiteCardProps {
   site: FlyingSite;
 }
 
 export function SiteCard({ site }: SiteCardProps) {
   const navigate = useNavigate();
-  const [deleteSite] = useDeleteSiteMutation();
-  const { deleteSite: deleteFromState } = useSites();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-  const handleDeleteConfirm = async () => {
-    try {
-      await deleteSite(site._id).unwrap();
-      deleteFromState(site._id);
-    } catch (error) {
-      console.error('Failed to delete site:', error);
-    }
-    setIsDeleteDialogOpen(false);
-  };
 
   return (
     <>
@@ -111,7 +96,7 @@ export function SiteCard({ site }: SiteCardProps) {
       <DeleteConfirmDialog
         open={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handleDeleteConfirm}
+        siteId={site._id}
         title={site.title.bg || site.title.en || 'this site'}
       />
     </>

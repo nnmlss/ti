@@ -2,6 +2,9 @@ import { SitesMap } from '../components/SitesMap';
 import { SitesList } from '../components/SitesList';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useGetSitesQuery } from '../store/apiSlice';
+import { useSites } from '../hooks/useSites';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import MapIcon from '@mui/icons-material/Map';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -10,6 +13,27 @@ import AirIcon from '@mui/icons-material/Air';
 export function HomePage() {
   const location = useLocation();
   const isListView = location.pathname === '/list';
+  
+  // Centralized data fetching for both map and list views
+  const { data: sites, error, isLoading } = useGetSitesQuery(undefined, {
+    pollingInterval: 30000, // Refetch every 30 seconds
+    refetchOnFocus: true,   // Refetch when user returns to tab
+    refetchOnReconnect: true, // Refetch on network reconnection
+  });
+  const { setSites, setLoading, setError } = useSites();
+
+  // Sync RTK Query data to sitesSlice once at the top level
+  useEffect(() => {
+    if (sites) {
+      setSites(sites);
+    }
+    setLoading(isLoading);
+    if (error) {
+      setError('Error loading sites!');
+    } else {
+      setError(null);
+    }
+  }, [sites, isLoading, error, setSites, setLoading, setError]);
 
   return (
     <Box sx={{ position: 'relative', height: '100vh', width: '100vw' }}>
@@ -32,17 +56,17 @@ export function HomePage() {
           boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
         }}
       >
-        <Typography variant='h5' component='h1' sx={{ color: 'primary.main' }}>
+        <Typography variant='h5' component='h1' sx={{ color: 'primary.main', display: { xs: 'none', sm: 'block' } }}>
           Места за летене
         </Typography>
         <Box>
           <IconButton component={Link} to='/'>
             <AirIcon />
           </IconButton>
-          <IconButton component={Link} to='/'>
+          <IconButton component={Link} to='/' sx={{ color: !isListView ? 'primary.main' : 'inherit' }}>
             <MapIcon />
           </IconButton>
-          <IconButton component={Link} to='/list'>
+          <IconButton component={Link} to='/list' sx={{ color: isListView ? 'primary.main' : 'inherit' }}>
             <FormatListBulletedIcon />
           </IconButton>
         </Box>

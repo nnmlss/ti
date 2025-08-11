@@ -45,6 +45,11 @@ export function AccessOptionsView({ accessOptions, size = 24 }: AccessOptionsVie
               height: size,
               objectFit: 'contain',
             }}
+            loading="lazy"
+            onError={(e) => {
+              // Hide broken images gracefully
+              (e.target as HTMLElement).style.display = 'none';
+            }}
           />
         );
       })}

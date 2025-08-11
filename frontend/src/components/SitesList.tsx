@@ -1,42 +1,16 @@
-import { useGetSitesQuery } from '../store/apiSlice';
 import { useSites } from '../hooks/useSites';
 import { SiteCard } from './SiteCard';
 import { CircularProgress, Alert, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { useEffect } from 'react';
 
 export function SitesList() {
-  const { data: sites, error, isLoading } = useGetSitesQuery(undefined, {
-    pollingInterval: 30000, // Refetch every 30 seconds
-    refetchOnFocus: true,   // Refetch when user returns to tab
-    refetchOnReconnect: true, // Refetch on network reconnection
-  });
-  const { setSites, setLoading, setError } = useSites();
+  const { sites, loading, error } = useSites();
 
-  // Sync RTK Query data to sitesSlice
-  useEffect(() => {
-    if (sites) {
-      setSites(sites);
-    }
-  }, [sites, setSites]);
-
-  useEffect(() => {
-    setLoading(isLoading);
-  }, [isLoading, setLoading]);
-
-  useEffect(() => {
-    if (error) {
-      setError('Error loading sites!');
-    } else {
-      setError(null);
-    }
-  }, [error, setError]);
-
-  if (isLoading && !sites) {
+  if (loading && !sites) {
     return (
       <Box
         sx={{
-          height: '50vh',
+          height: '70vh',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -48,15 +22,21 @@ export function SitesList() {
   }
 
   if (error) {
-    return <Alert severity='error'>Error loading sites!</Alert>;
+    return <Alert severity='error'>{error}</Alert>;
   }
 
   return (
-    <Grid container spacing={2} justifyContent='flex-start' alignItems='stretch'>
+    <Grid
+      container
+      spacing={2}
+      justifyContent='flex-start'
+      alignItems='stretch'
+      sx={{ p: 2, pb: 10 }}
+    >
       {sites &&
         sites.map((site, index) => (
           <Grid
-            size={{ xs: 12, sm: 6, md: 4, lg: 4, xl: 3 }}
+            size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}
             key={index}
             sx={{ display: 'flex', aspectRatio: '2/3.2' }}
           >

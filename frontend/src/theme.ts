@@ -12,5 +12,48 @@ export const theme = createTheme({
   },
   typography: {
     fontFamily: 'comfortaa, sans-serif',
+    h1: {
+      fontFamily: 'comfortaalight, sans-serif',
+    },
+    h2: {
+      fontFamily: 'comfortaalight, sans-serif',
+    },
+    h3: {
+      fontFamily: 'comfortaalight, sans-serif',
+    },
+    h4: {
+      fontFamily: 'comfortaalight, sans-serif',
+    },
+    h5: {
+      fontFamily: 'comfortaalight, sans-serif',
+    },
+    h6: {
+      fontFamily: 'comfortaalight, sans-serif',
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          '&.MuiTypography-body1': {
+            '&.font-bold, &.font-strong': {
+              fontFamily: 'comfortaabold, sans-serif',
+            },
+          },
+          '&.MuiTypography-body2': {
+            '&.font-bold, &.font-strong': {
+              fontFamily: 'comfortaabold, sans-serif',
+            },
+          },
+        },
+      },
+    },
   },
 });

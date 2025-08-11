@@ -35,8 +35,8 @@ export interface GalleryImage {
 
 export interface AccessOption {
   _id: number;
-  bg?: string[];
-  en?: string[];
+  bg?: string;
+  en?: string;
 }
 
 export interface LandingFieldInfo {

@@ -1,4 +1,4 @@
-import type { FlyingSite, LocalizedText, LandingFieldInfo } from '../types';
+import type { FlyingSite, LocalizedText, LandingFieldInfo, GalleryImage } from '../types';
 
 // Form data type with empty strings instead of null/undefined for UI editing
 export interface FormDataSite extends Omit<FlyingSite, '_id' | 'location' | 'altitude' | 'access' | 'accomodations' | 'alternatives' | 'localPilotsClubs' | 'tracklogs' | 'landingFields'> {

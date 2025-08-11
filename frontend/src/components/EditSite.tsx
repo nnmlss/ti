@@ -246,7 +246,7 @@ function EditSite({ site }: EditSiteProps) {
   if (showSuccessMessage) {
     return (
       <Container maxWidth='md'>
-        <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
+        <Paper elevation={0} sx={{ p: 4, my: 2 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4 }}>
             <Alert severity='success' sx={{ mb: 3, width: '100%' }}>
               <Typography variant='h6' gutterBottom>

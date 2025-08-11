@@ -37,8 +37,8 @@ export interface GalleryImage {
 
 export interface AccessOption {
   _id: number;
-  bg?: string[];
-  en?: string[];
+  bg?: string;
+  en?: string;
 }
 
 export interface LandingFieldInfo {
@@ -94,8 +94,8 @@ const GalleryImageSchema = new Schema({
 
 const AccessOptionSchema = new Schema({
   _id: { type: Number, required: true },
-  bg: [{ type: String }],
-  en: [{ type: String }],
+  bg: { type: String },
+  en: { type: String },
 });
 
 const LandingFieldInfoSchema = new Schema({

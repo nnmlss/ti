@@ -67,7 +67,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
       setValue('accessOptions', current.filter((option) => option._id !== optionId));
     } else {
       // Add if not selected
-      setValue('accessOptions', [...current, { _id: optionId, bg: [bg], en: [en] }]);
+      setValue('accessOptions', [...current, { _id: optionId, bg, en }]);
     }
   };
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogActions, Button, Alert, AlertTitle } from '@mui/material';
 import type { NotificationState } from '../hooks/useNotificationDialog';
 
@@ -10,12 +10,12 @@ interface NotificationDialogProps {
 export function NotificationDialog({ notification, onClose }: NotificationDialogProps) {
   const { open, message, severity, title, onAutoClose } = notification;
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (onAutoClose) {
       onAutoClose();
     }
     onClose();
-  };
+  }, [onAutoClose, onClose]);
 
   useEffect(() => {
     if (open) {
@@ -25,7 +25,7 @@ export function NotificationDialog({ notification, onClose }: NotificationDialog
 
       return () => clearTimeout(timer);
     }
-  }, [open, onClose, onAutoClose]);
+  }, [open, handleClose]);
 
   return (
     <Dialog

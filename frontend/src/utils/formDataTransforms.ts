@@ -159,9 +159,18 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
     cleanedFormData.$unset = { ...cleanedFormData.$unset, accessOptions: 1 };
   }
 
-  // Handle galleryImages array
+  // Handle galleryImages array - remove _id from objects if present
   if (formData.galleryImages && formData.galleryImages.length > 0) {
-    cleanedFormData.galleryImages = formData.galleryImages;
+    cleanedFormData.galleryImages = formData.galleryImages.map(img => {
+      // Create a clean image object with only the expected properties
+      const cleanImage: GalleryImage = {
+        path: img.path,
+        ...(img.author && { author: img.author }),
+        ...(img.width && { width: img.width }),
+        ...(img.height && { height: img.height }),
+      };
+      return cleanImage;
+    });
   } else if (originalSite?.galleryImages && originalSite.galleryImages.length > 0) {
     cleanedFormData.$unset = { ...cleanedFormData.$unset, galleryImages: 1 };
   }

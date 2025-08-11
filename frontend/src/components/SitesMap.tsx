@@ -1,4 +1,3 @@
-import { useGetSitesQuery } from '../store/apiSlice';
 import { useSites } from '../hooks/useSites';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import {
@@ -12,7 +11,7 @@ import {
   CardActions,
   Divider,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import { WindDirectionCompass } from './WindDirectionCompass';
@@ -33,37 +32,9 @@ L.Icon.Default.mergeOptions({
 export function SitesMap() {
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
-  const {
-    data: sites,
-    error,
-    isLoading,
-  } = useGetSitesQuery(undefined, {
-    pollingInterval: 30000, // Refetch every 30 seconds
-    refetchOnFocus: true, // Refetch when user returns to tab
-    refetchOnReconnect: true, // Refetch on network reconnection
-  });
-  const { setSites, setLoading, setError } = useSites();
+  const { sites, error, loading } = useSites();
 
-  // Sync RTK Query data to sitesSlice
-  useEffect(() => {
-    if (sites) {
-      setSites(sites);
-    }
-  }, [sites, setSites]);
-
-  useEffect(() => {
-    setLoading(isLoading);
-  }, [isLoading, setLoading]);
-
-  useEffect(() => {
-    if (error) {
-      setError('Error loading sites!');
-    } else {
-      setError(null);
-    }
-  }, [error, setError]);
-
-  if (isLoading) {
+  if (loading && !sites) {
     return (
       <Box
         sx={{

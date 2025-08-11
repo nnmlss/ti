@@ -61,12 +61,30 @@ const homeViewSlice = createSlice({
   },
 });
 
+// Filter state slice
+const filterSlice = createSlice({
+  name: 'filter',
+  initialState: {
+    windDirection: null,
+  } as { windDirection: string | null },
+  reducers: {
+    setWindDirectionFilter: (state, action: PayloadAction<string | null>) => {
+      state.windDirection = action.payload;
+    },
+    clearFilters: (state) => {
+      state.windDirection = null;
+    },
+  },
+});
+
 export const { setSites, addSite, updateSite, deleteSite } = sitesArraySlice.actions;
 export const { setLoading } = loadingSlice.actions;
 export const { setError, clearError } = errorSlice.actions;
 export const { setHomeView } = homeViewSlice.actions;
+export const { setWindDirectionFilter, clearFilters } = filterSlice.actions;
 
 export const sitesReducer = sitesArraySlice.reducer;
 export const loadingReducer = loadingSlice.reducer;
 export const errorReducer = errorSlice.reducer;
 export const homeViewReducer = homeViewSlice.reducer;
+export const filterReducer = filterSlice.reducer;

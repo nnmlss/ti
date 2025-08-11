@@ -1,8 +1,9 @@
 import { SitesMap } from '../components/SitesMap';
 import { SitesList } from '../components/SitesList';
+import { WindDirectionFilter } from '../components/WindDirectionFilter';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGetSitesQuery } from '../store/apiSlice';
 import { useSites } from '../hooks/useSites';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -11,13 +12,15 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
 
 export function HomePage() {
+  const [showWindFilter, setShowWindFilter] = useState(false);
+  
   // Centralized data fetching for both map and list views
   const { data: sites, error, isLoading } = useGetSitesQuery(undefined, {
     pollingInterval: 30000, // Refetch every 30 seconds
     refetchOnFocus: true,   // Refetch when user returns to tab
     refetchOnReconnect: true, // Refetch on network reconnection
   });
-  const { setSites, setLoading, setError, homeView, setHomeView } = useSites();
+  const { setSites, setLoading, setError, homeView, setHomeView, filter } = useSites();
   const isListView = homeView === 'list';
 
   // Sync RTK Query data to sitesSlice once at the top level
@@ -58,7 +61,10 @@ export function HomePage() {
           Места за летене
         </Typography>
         <Box>
-          <IconButton>
+          <IconButton 
+            onClick={() => setShowWindFilter(!showWindFilter)}
+            sx={{ color: filter.windDirection ? 'primary.main' : 'inherit' }}
+          >
             <AirIcon />
           </IconButton>
           <IconButton onClick={() => setHomeView('map')} sx={{ color: !isListView ? 'primary.main' : 'inherit' }}>
@@ -79,6 +85,11 @@ export function HomePage() {
           </Button>
         </Box>
       </Box>
+
+      {/* Wind Direction Filter */}
+      {showWindFilter && (
+        <WindDirectionFilter onClose={() => setShowWindFilter(false)} />
+      )}
 
       {/* Conditional content */}
       {isListView ? <SitesList /> : <SitesMap />}

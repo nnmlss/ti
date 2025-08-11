@@ -1,6 +1,5 @@
-import { Dialog, DialogTitle, DialogContent, IconButton, Button, Box } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import { useNavigate } from 'react-router-dom';
 import EditSite from '../components/EditSite';

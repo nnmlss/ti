@@ -5,6 +5,7 @@ import { theme } from './theme';
 import { HomePage } from './pages/HomePage';
 import { AddSitePage } from './pages/AddSitePage';
 import { EditSitePage } from './pages/EditSitePage';
+import { SiteDetailPage } from './pages/SiteDetailPage';
 
 function AppContent() {
   const location = useLocation();
@@ -13,8 +14,10 @@ function AppContent() {
     <>
       <HomePage />
       <Routes>
+        <Route path='/' element={null} />
         <Route path='/add-site' element={<AddSitePage />} />
         <Route path='/edit-site/:id' element={<EditSitePage />} />
+        <Route path='/site/:id' element={<SiteDetailPage />} />
       </Routes>
     </>
   );

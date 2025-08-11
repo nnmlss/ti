@@ -1,0 +1,225 @@
+import { useGetSitesQuery } from '../store/apiSlice';
+import { useSites } from '../hooks/useSites';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { 
+  CircularProgress, 
+  Alert, 
+  Typography, 
+  Button, 
+  Box, 
+  Card,
+  CardContent,
+  CardActions,
+  Divider
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import LocationPinIcon from '@mui/icons-material/LocationPin';
+import { WindDirectionCompass } from './WindDirectionCompass';
+import { AccessOptionsView } from './AccessOptionsView';
+import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default markers in react-leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+export function SitesMap() {
+  const navigate = useNavigate();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
+  const { data: sites, error, isLoading } = useGetSitesQuery(undefined, {
+    pollingInterval: 30000, // Refetch every 30 seconds
+    refetchOnFocus: true,   // Refetch when user returns to tab
+    refetchOnReconnect: true, // Refetch on network reconnection
+  });
+  const { setSites, setLoading, setError } = useSites();
+
+  // Sync RTK Query data to sitesSlice
+  useEffect(() => {
+    if (sites) {
+      setSites(sites);
+    }
+  }, [sites, setSites]);
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
+
+  useEffect(() => {
+    if (error) {
+      setError('Error loading sites!');
+    } else {
+      setError(null);
+    }
+  }, [error, setError]);
+
+  if (isLoading) {
+    return (
+      <Box 
+        sx={{ 
+          height: '100vh', 
+          width: '100vw', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box 
+        sx={{ 
+          height: '100vh', 
+          width: '100vw', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+        }}
+      >
+        <Alert severity='error'>Error loading sites!</Alert>
+      </Box>
+    );
+  }
+
+  // Filter sites with valid coordinates
+  const sitesWithCoordinates = sites?.filter(site => 
+    site.location?.coordinates && 
+    site.location.coordinates[0] !== null && 
+    site.location.coordinates[1] !== null
+  ) || [];
+
+  // Calculate center of Bulgaria as default center
+  const defaultCenter: [number, number] = [42.7339, 25.4858]; // Center of Bulgaria
+  
+  // If we have sites, calculate center based on them
+  const mapCenter = sitesWithCoordinates.length > 0 
+    ? sitesWithCoordinates.reduce(
+        (acc, site) => {
+          const [lng, lat] = site.location.coordinates;
+          return [acc[0] + lat!, acc[1] + lng!];
+        },
+        [0, 0]
+      ).map(sum => sum / sitesWithCoordinates.length) as [number, number]
+    : defaultCenter;
+
+  return (
+    <>
+      <MapContainer 
+        center={mapCenter} 
+        zoom={8} 
+        style={{ height: '100vh', width: '100vw' }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        
+        {sitesWithCoordinates.map((site) => {
+          const [lng, lat] = site.location.coordinates;
+          return (
+            <Marker 
+              key={site._id} 
+              position={[lat!, lng!]}
+            >
+              <Popup maxWidth={280} minWidth={260}>
+                <Card sx={{ width: '100%' }}>
+                  <CardContent
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      py: 2,
+                      px: 1,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => navigate(`/site/${site._id}`)}
+                  >
+                    <Typography
+                      variant='h6'
+                      component='div'
+                      sx={{ mb: 1, textAlign: 'center', color: 'primary.light' }}
+                    >
+                      {site.title.bg}
+                      <Typography variant='body1' component='div' sx={{ textAlign: 'center', color: 'text.secondary' }}>
+                        {site.title.en}
+                      </Typography>
+                    </Typography>
+                    
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+                      <WindDirectionCompass
+                        windDirections={site.windDirection}
+                        size={60}
+                        showLabels={false}
+                      />
+                      <Typography variant='body2' sx={{ textAlign: 'center', mt: 1 }}>
+                        {site.altitude ? `${site.altitude}m` : 'N/A'}
+                      </Typography>
+                    </Box>
+                    
+                    <AccessOptionsView accessOptions={site.accessOptions} size={36} />
+                    
+                    <Button
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const [lng, lat] = site.location.coordinates;
+                        window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
+                      }}
+                      sx={{ mt: 1 }}
+                    >
+                      <LocationPinIcon sx={{ mr: 0.5 }} />
+                      Отвори в Google Maps
+                    </Button>
+                  </CardContent>
+                  
+                  <Divider />
+                  
+                  <CardActions sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 1 }}>
+                    <Button 
+                      size='small'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/edit-site/${site._id}`);
+                      }}
+                    >
+                      Промяна
+                    </Button>
+                    
+                    <Button 
+                      color='error' 
+                      size='small'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteDialogOpen(site._id);
+                      }}
+                    >
+                      Изтриване
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Popup>
+            </Marker>
+          );
+        })}
+      </MapContainer>
+      
+      {deleteDialogOpen && (
+        <DeleteConfirmDialog
+          open={true}
+          onClose={() => setDeleteDialogOpen(null)}
+          siteId={deleteDialogOpen}
+          title={sites?.find(s => s._id === deleteDialogOpen)?.title.bg || 'this site'}
+        />
+      )}
+    </>
+  );
+}

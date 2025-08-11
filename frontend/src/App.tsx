@@ -9,15 +9,13 @@ import { SiteDetailPage } from './pages/SiteDetailPage';
 
 function AppContent() {
   return (
-    <>
-      <HomePage />
-      <Routes>
-        <Route path='/' element={null} />
-        <Route path='/add-site' element={<AddSitePage />} />
-        <Route path='/edit-site/:id' element={<EditSitePage />} />
-        <Route path='/site/:id' element={<SiteDetailPage />} />
-      </Routes>
-    </>
+    <Routes>
+      <Route path='/' element={<HomePage />} />
+      <Route path='/list' element={<HomePage />} />
+      <Route path='/add-site' element={<AddSitePage />} />
+      <Route path='/edit-site/:id' element={<EditSitePage />} />
+      <Route path='/site/:id' element={<SiteDetailPage />} />
+    </Routes>
   );
 }
 

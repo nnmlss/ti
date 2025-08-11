@@ -1,7 +1,7 @@
 import { useGetSitesQuery } from '../store/apiSlice';
 import { useSites } from '../hooks/useSites';
 import { SiteCard } from './SiteCard';
-import { CircularProgress, Alert } from '@mui/material';
+import { CircularProgress, Alert, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { useEffect } from 'react';
 
@@ -32,8 +32,19 @@ export function SitesList() {
     }
   }, [error, setError]);
 
-  if (isLoading) {
-    return <CircularProgress />;
+  if (isLoading && !sites) {
+    return (
+      <Box
+        sx={{
+          height: '50vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {

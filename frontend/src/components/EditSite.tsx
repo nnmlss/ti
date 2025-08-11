@@ -17,7 +17,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Controller } from 'react-hook-form';
 
 import type { WindDirection, FlyingSite } from '../types';
-import { useEditSiteFormRHF } from '../hooks/useEditSiteFormRHF';
+import { useEditSiteForm } from '../hooks/useEditSiteForm';
 import { NotificationDialog } from './NotificationDialog';
 
 const windDirections: WindDirection[] = [
@@ -75,7 +75,7 @@ function EditSite({ site }: EditSiteProps) {
     addTracklog,
     removeTracklog,
     notificationDialog,
-  } = useEditSiteFormRHF(site);
+  } = useEditSiteForm(site);
 
   const windDirectionValues = watch('windDirection') || [];
   const accessOptionValues = watch('accessOptions') || [];
@@ -84,10 +84,18 @@ function EditSite({ site }: EditSiteProps) {
     field: 'accomodations' | 'alternatives' | 'localPilotsClubs',
     title: string
   ) => {
-    const bgFields = field === 'accomodations' ? accomodationsBg : 
-                     field === 'alternatives' ? alternativesBg : localPilotsClubsBg;
-    const enFields = field === 'accomodations' ? accomodationsEn : 
-                     field === 'alternatives' ? alternativesEn : localPilotsClubsEn;
+    const bgFields =
+      field === 'accomodations'
+        ? accomodationsBg
+        : field === 'alternatives'
+        ? alternativesBg
+        : localPilotsClubsBg;
+    const enFields =
+      field === 'accomodations'
+        ? accomodationsEn
+        : field === 'alternatives'
+        ? alternativesEn
+        : localPilotsClubsEn;
 
     return (
       <>

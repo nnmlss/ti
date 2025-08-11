@@ -1,7 +1,7 @@
 import { SitesMap } from '../components/SitesMap';
 import { SitesList } from '../components/SitesList';
 import { Box, Button, IconButton, Typography } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useGetSitesQuery } from '../store/apiSlice';
 import { useSites } from '../hooks/useSites';
@@ -11,16 +11,14 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
 
 export function HomePage() {
-  const location = useLocation();
-  const isListView = location.pathname === '/list';
-  
   // Centralized data fetching for both map and list views
   const { data: sites, error, isLoading } = useGetSitesQuery(undefined, {
     pollingInterval: 30000, // Refetch every 30 seconds
     refetchOnFocus: true,   // Refetch when user returns to tab
     refetchOnReconnect: true, // Refetch on network reconnection
   });
-  const { setSites, setLoading, setError } = useSites();
+  const { setSites, setLoading, setError, homeView, setHomeView } = useSites();
+  const isListView = homeView === 'list';
 
   // Sync RTK Query data to sitesSlice once at the top level
   useEffect(() => {
@@ -60,13 +58,13 @@ export function HomePage() {
           Места за летене
         </Typography>
         <Box>
-          <IconButton component={Link} to='/'>
+          <IconButton>
             <AirIcon />
           </IconButton>
-          <IconButton component={Link} to='/' sx={{ color: !isListView ? 'primary.main' : 'inherit' }}>
+          <IconButton onClick={() => setHomeView('map')} sx={{ color: !isListView ? 'primary.main' : 'inherit' }}>
             <MapIcon />
           </IconButton>
-          <IconButton component={Link} to='/list' sx={{ color: isListView ? 'primary.main' : 'inherit' }}>
+          <IconButton onClick={() => setHomeView('list')} sx={{ color: isListView ? 'primary.main' : 'inherit' }}>
             <FormatListBulletedIcon />
           </IconButton>
         </Box>

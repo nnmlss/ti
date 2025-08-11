@@ -60,12 +60,6 @@ function EditSite({ site }: EditSiteProps) {
     showSuccessMessage,
     landingFields,
     tracklogsFields,
-    accomodationsBg,
-    accomodationsEn,
-    alternativesBg,
-    alternativesEn,
-    localPilotsClubsBg,
-    localPilotsClubsEn,
     handleWindDirectionChange,
     handleAccessOptionChange,
     addBilingualArrayItem,
@@ -84,18 +78,8 @@ function EditSite({ site }: EditSiteProps) {
     field: 'accomodations' | 'alternatives' | 'localPilotsClubs',
     title: string
   ) => {
-    const bgFields =
-      field === 'accomodations'
-        ? accomodationsBg
-        : field === 'alternatives'
-        ? alternativesBg
-        : localPilotsClubsBg;
-    const enFields =
-      field === 'accomodations'
-        ? accomodationsEn
-        : field === 'alternatives'
-        ? alternativesEn
-        : localPilotsClubsEn;
+    const bgValues = watch(`${field}.bg`) as string[] || [];
+    const enValues = watch(`${field}.en`) as string[] || [];
 
     return (
       <>
@@ -104,8 +88,8 @@ function EditSite({ site }: EditSiteProps) {
         </Typography>
         <Grid container spacing={2}>
           <Grid component='div' size={{ xs: 12, md: 6 }}>
-            {bgFields.fields.map((item, index) => (
-              <Box key={item.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            {bgValues.map((_value, index) => (
+              <Box key={`${field}-bg-${index}`} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <Controller
                   name={`${field}.bg.${index}`}
                   control={control}
@@ -131,8 +115,8 @@ function EditSite({ site }: EditSiteProps) {
             </Button>
           </Grid>
           <Grid component='div' size={{ xs: 12, md: 6 }}>
-            {enFields.fields.map((item, index) => (
-              <Box key={item.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+            {enValues.map((_value, index) => (
+              <Box key={`${field}-en-${index}`} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <Controller
                   name={`${field}.en.${index}`}
                   control={control}

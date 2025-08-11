@@ -2,13 +2,14 @@ import { Dialog, DialogTitle, DialogContent, IconButton, Box } from '@mui/materi
 import CloseIcon from '@mui/icons-material/Close';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import { useNavigate } from 'react-router-dom';
+import { navigateToHome } from '../utils/navigation';
 import EditSite from '../components/EditSite';
 
 export function AddSitePage() {
   const navigate = useNavigate();
 
   const handleClose = () => {
-    navigate('/');
+    navigate(navigateToHome());
   };
 
   return (

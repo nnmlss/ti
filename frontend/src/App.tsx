@@ -10,16 +10,12 @@ import { SiteDetailPage } from './pages/SiteDetailPage';
 function AppContent() {
   return (
     <>
-      <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/list' element={<HomePage />} />
-        <Route path='/add-site' element={<HomePage />} />
-        <Route path='/edit-site/:id' element={<HomePage />} />
-        <Route path='/site/:id' element={<HomePage />} />
-      </Routes>
+      {/* HomePage always rendered as base layer */}
+      <HomePage />
       
       {/* Modal Routes - render on top of HomePage */}
       <Routes>
+        <Route path='/' element={null} />
         <Route path='/add-site' element={<AddSitePage />} />
         <Route path='/edit-site/:id' element={<EditSitePage />} />
         <Route path='/site/:id' element={<SiteDetailPage />} />

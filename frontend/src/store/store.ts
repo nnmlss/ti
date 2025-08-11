@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { apiSlice } from './apiSlice';
-import { sitesReducer, loadingReducer, errorReducer } from './sitesSlice';
+import { sitesReducer, loadingReducer, errorReducer, homeViewReducer } from './sitesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -8,6 +8,7 @@ export const store = configureStore({
     sites: sitesReducer,
     loading: loadingReducer,
     error: errorReducer,
+    homeView: homeViewReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
 });

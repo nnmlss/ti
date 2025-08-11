@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAddSiteMutation, useUpdateSiteMutation } from '../store/apiSlice';
 import { useNotificationDialog } from './useNotificationDialog';
 import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
+import { navigateToHome } from '../utils/navigation';
 import type { FlyingSite, WindDirection } from '../types';
 
 export const useEditSiteForm = (site?: FlyingSite) => {
@@ -31,37 +32,10 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   const tracklogsFields = useFieldArray({
     control,
     name: 'tracklogs',
-  } as any);
+  });
 
-  const accomodationsBg = useFieldArray({
-    control,
-    name: 'accomodations.bg',
-  } as any);
-
-  const accomodationsEn = useFieldArray({
-    control,
-    name: 'accomodations.en',
-  } as any);
-
-  const alternativesBg = useFieldArray({
-    control,
-    name: 'alternatives.bg',
-  } as any);
-
-  const alternativesEn = useFieldArray({
-    control,
-    name: 'alternatives.en',
-  } as any);
-
-  const localPilotsClubsBg = useFieldArray({
-    control,
-    name: 'localPilotsClubs.bg',
-  } as any);
-
-  const localPilotsClubsEn = useFieldArray({
-    control,
-    name: 'localPilotsClubs.en',
-  } as any);
+  // For nested string arrays, we'll manage them manually without useFieldArray
+  // since TypeScript doesn't recognize nested dot notation paths
 
   // Reset form when site changes
   useEffect(() => {
@@ -93,30 +67,13 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     }
   };
 
-  // Helper functions for bilingual arrays
+  // Helper functions for bilingual arrays using setValue instead of useFieldArray
   const addBilingualArrayItem = (
     field: 'accomodations' | 'alternatives' | 'localPilotsClubs',
     lang: 'bg' | 'en'
   ) => {
-    if (field === 'accomodations') {
-      if (lang === 'bg') {
-        accomodationsBg.append('' as any);
-      } else {
-        accomodationsEn.append('' as any);
-      }
-    } else if (field === 'alternatives') {
-      if (lang === 'bg') {
-        alternativesBg.append('' as any);
-      } else {
-        alternativesEn.append('' as any);
-      }
-    } else if (field === 'localPilotsClubs') {
-      if (lang === 'bg') {
-        localPilotsClubsBg.append('' as any);
-      } else {
-        localPilotsClubsEn.append('' as any);
-      }
-    }
+    const currentValues = watch(`${field}.${lang}`) as string[] || [];
+    setValue(`${field}.${lang}`, [...currentValues, '']);
   };
 
   const removeBilingualArrayItem = (
@@ -124,25 +81,9 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     lang: 'bg' | 'en',
     index: number
   ) => {
-    if (field === 'accomodations') {
-      if (lang === 'bg') {
-        accomodationsBg.remove(index);
-      } else {
-        accomodationsEn.remove(index);
-      }
-    } else if (field === 'alternatives') {
-      if (lang === 'bg') {
-        alternativesBg.remove(index);
-      } else {
-        alternativesEn.remove(index);
-      }
-    } else if (field === 'localPilotsClubs') {
-      if (lang === 'bg') {
-        localPilotsClubsBg.remove(index);
-      } else {
-        localPilotsClubsEn.remove(index);
-      }
-    }
+    const currentValues = watch(`${field}.${lang}`) as string[] || [];
+    const newValues = currentValues.filter((_, i) => i !== index);
+    setValue(`${field}.${lang}`, newValues);
   };
 
   // Landing field helpers
@@ -150,7 +91,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     landingFields.append({
       description: { bg: '', en: '' },
       location: { type: 'Point', coordinates: ['', ''] },
-    } as any);
+    });
   };
 
   const removeLandingField = (index: number) => {
@@ -159,7 +100,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
 
   // Tracklog helpers
   const addTracklog = () => {
-    tracklogsFields.append('' as any);
+    tracklogsFields.append('');
   };
 
   const removeTracklog = (index: number) => {
@@ -175,12 +116,12 @@ export const useEditSiteForm = (site?: FlyingSite) => {
         await updateSite({ _id: site._id, ...cleanedFormData }).unwrap();
         setShowSuccessMessage(true);
         // Auto-close after 5 seconds
-        setTimeout(() => navigate('/'), 5000);
+        setTimeout(() => navigate(navigateToHome()), 5000);
       } else {
         await addSite(cleanedFormData).unwrap();
         setShowSuccessMessage(true);
         // Auto-close after 3 seconds
-        setTimeout(() => navigate('/'), 3000);
+        setTimeout(() => navigate(navigateToHome()), 3000);
       }
     } catch (error) {
       console.error('Failed to save the site:', error);
@@ -200,15 +141,9 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     isSubmitting: isSubmitting || isAdding || isUpdating,
     showSuccessMessage,
     
-    // Field arrays
+    // Field arrays (only for actual useFieldArray hooks)
     landingFields,
     tracklogsFields,
-    accomodationsBg,
-    accomodationsEn,
-    alternativesBg,
-    alternativesEn,
-    localPilotsClubsBg,
-    localPilotsClubsEn,
     
     // Helper functions
     handleWindDirectionChange,

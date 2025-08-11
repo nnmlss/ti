@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetSiteQuery } from '../store/apiSlice';
+import { navigateToHome } from '../utils/navigation';
 import EditSite from '../components/EditSite';
 import { 
   Dialog, 
@@ -23,7 +24,7 @@ export function EditSitePage() {
   const { data: site, error, isLoading } = useGetSiteQuery(id!, { skip: !id });
 
   const handleClose = () => {
-    navigate('/');
+    navigate(navigateToHome());
   };
 
   const renderContent = () => {

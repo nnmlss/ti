@@ -8,6 +8,7 @@ import {
   setLoading,
   setError,
   clearError,
+  setHomeView,
 } from '../store/sitesSlice';
 import type { FlyingSite } from '../types';
 
@@ -16,12 +17,14 @@ export const useSites = () => {
   const sites = useSelector((state: RootState) => state.sites);
   const loading = useSelector((state: RootState) => state.loading);
   const error = useSelector((state: RootState) => state.error);
+  const homeView = useSelector((state: RootState) => state.homeView);
 
   return {
     // State
     sites,
     loading,
     error,
+    homeView,
 
     // Actions
     setSites: (sites: FlyingSite[]) => dispatch(setSites(sites)),
@@ -31,5 +34,6 @@ export const useSites = () => {
     setLoading: (loading: boolean) => dispatch(setLoading(loading)),
     setError: (error: string | null) => dispatch(setError(error)),
     clearError: () => dispatch(clearError()),
+    setHomeView: (view: 'map' | 'list') => dispatch(setHomeView(view)),
   };
 };

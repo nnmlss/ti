@@ -9,6 +9,7 @@ import {
   Box,
   IconButton,
   CircularProgress,
+  Alert,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -55,6 +56,7 @@ function EditSite({ site }: EditSiteProps) {
   const {
     formData,
     isSubmitting,
+    showSuccessMessage,
     handleNestedChange,
     handleBilingualArrayChange,
     addBilingualArrayItem,
@@ -200,6 +202,32 @@ function EditSite({ site }: EditSiteProps) {
       </Button>
     </>
   );
+
+  // Show success message if submission was successful
+  if (showSuccessMessage) {
+    return (
+      <Container maxWidth='md'>
+        <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4 }}>
+            <Alert severity="success" sx={{ mb: 3, width: '100%' }}>
+              <Typography variant="h6" gutterBottom>
+                {site ? 'Успешна редакция на място за летене!' : 'Добавено ново място за летене!'}
+              </Typography>
+              <Typography variant="body2">
+                Прозорецът ще се затвори автоматично след 3 секунди...
+              </Typography>
+            </Alert>
+            
+            <CircularProgress />
+            
+            <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+              Запазване на промените...
+            </Typography>
+          </Box>
+        </Paper>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth='md'>
@@ -390,10 +418,13 @@ function EditSite({ site }: EditSiteProps) {
           </Box>
         </form>
       </Paper>
-      <NotificationDialog
-        notification={notificationDialog.notification}
-        onClose={notificationDialog.hideNotification}
-      />
+      {/* Keep NotificationDialog only for error messages */}
+      {notificationDialog.notification.severity === 'error' && (
+        <NotificationDialog
+          notification={notificationDialog.notification}
+          onClose={notificationDialog.hideNotification}
+        />
+      )}
     </Container>
   );
 }

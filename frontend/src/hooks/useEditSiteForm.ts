@@ -34,8 +34,9 @@ const initialSiteState: Omit<FlyingSite, '_id'> = {
 
 export const useEditSiteForm = (site?: FlyingSite) => {
   const [formData, setFormData] = useState<Omit<FlyingSite, '_id'>>(initialSiteState);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const navigate = useNavigate();
-  const { showSuccess, showError, ...notificationDialog } = useNotificationDialog();
+  const { showError, ...notificationDialog } = useNotificationDialog();
 
   const [addSite, { isLoading: isAdding }] = useAddSiteMutation();
   const [updateSite, { isLoading: isUpdating }] = useUpdateSiteMutation();
@@ -354,10 +355,14 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     try {
       if (site) {
         await updateSite({ _id: site._id, ...cleanedFormData }).unwrap();
-        showSuccess('Успешна редакция на място за летене!', undefined, () => navigate('/'));
+        setShowSuccessMessage(true);
+        // Auto-close after 3 seconds
+        setTimeout(() => navigate('/'), 3000);
       } else {
         await addSite(cleanedFormData).unwrap();
-        showSuccess('Добавено ново място за летене!', undefined, () => navigate('/'));
+        setShowSuccessMessage(true);
+        // Auto-close after 3 seconds
+        setTimeout(() => navigate('/'), 3000);
       }
     } catch (error) {
       console.error('Failed to save the site:', error);
@@ -368,6 +373,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   return {
     formData,
     isSubmitting: isAdding || isUpdating,
+    showSuccessMessage,
     handleAltitudeChange,
     handleNestedChange,
     handleBilingualArrayChange,

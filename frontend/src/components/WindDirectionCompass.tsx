@@ -87,11 +87,6 @@ export function WindDirectionCompass({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-      {showLabels && (
-        <Typography variant='body2' color='text.secondary'>
-          Wind Directions
-        </Typography>
-      )}
       <Box sx={{ position: 'relative', width: size + 30, height: size + 30 }}>
         <svg
           width={size + 30}

@@ -1,16 +1,16 @@
 import { useGetSitesQuery } from '../store/apiSlice';
 import { useSites } from '../hooks/useSites';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { 
-  CircularProgress, 
-  Alert, 
-  Typography, 
-  Button, 
-  Box, 
+import {
+  CircularProgress,
+  Alert,
+  Typography,
+  Button,
+  Box,
   Card,
   CardContent,
   CardActions,
-  Divider
+  Divider,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +24,8 @@ import L from 'leaflet';
 // Fix for default markers in react-leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconRetinaUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
@@ -32,9 +33,13 @@ L.Icon.Default.mergeOptions({
 export function SitesMap() {
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
-  const { data: sites, error, isLoading } = useGetSitesQuery(undefined, {
+  const {
+    data: sites,
+    error,
+    isLoading,
+  } = useGetSitesQuery(undefined, {
     pollingInterval: 30000, // Refetch every 30 seconds
-    refetchOnFocus: true,   // Refetch when user returns to tab
+    refetchOnFocus: true, // Refetch when user returns to tab
     refetchOnReconnect: true, // Refetch on network reconnection
   });
   const { setSites, setLoading, setError } = useSites();
@@ -60,13 +65,13 @@ export function SitesMap() {
 
   if (isLoading) {
     return (
-      <Box 
-        sx={{ 
-          height: '100vh', 
-          width: '100vw', 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center' 
+      <Box
+        sx={{
+          height: '100vh',
+          width: '100vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <CircularProgress />
@@ -76,13 +81,13 @@ export function SitesMap() {
 
   if (error) {
     return (
-      <Box 
-        sx={{ 
-          height: '100vh', 
-          width: '100vw', 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center' 
+      <Box
+        sx={{
+          height: '100vh',
+          width: '100vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <Alert severity='error'>Error loading sites!</Alert>
@@ -91,47 +96,45 @@ export function SitesMap() {
   }
 
   // Filter sites with valid coordinates
-  const sitesWithCoordinates = sites?.filter(site => 
-    site.location?.coordinates && 
-    site.location.coordinates[0] !== null && 
-    site.location.coordinates[1] !== null
-  ) || [];
+  const sitesWithCoordinates =
+    sites?.filter(
+      (site) =>
+        site.location?.coordinates &&
+        site.location.coordinates[0] !== null &&
+        site.location.coordinates[1] !== null
+    ) || [];
 
   // Calculate center of Bulgaria as default center
   const defaultCenter: [number, number] = [42.7339, 25.4858]; // Center of Bulgaria
-  
+
   // If we have sites, calculate center based on them
-  const mapCenter = sitesWithCoordinates.length > 0 
-    ? sitesWithCoordinates.reduce(
-        (acc, site) => {
-          const [lng, lat] = site.location.coordinates;
-          return [acc[0] + lat!, acc[1] + lng!];
-        },
-        [0, 0]
-      ).map(sum => sum / sitesWithCoordinates.length) as [number, number]
-    : defaultCenter;
+  const mapCenter =
+    sitesWithCoordinates.length > 0
+      ? (sitesWithCoordinates
+          .reduce(
+            (acc, site) => {
+              const [lng, lat] = site.location.coordinates;
+              return [acc[0] + lat!, acc[1] + lng!];
+            },
+            [0, 0]
+          )
+          .map((sum) => sum / sitesWithCoordinates.length) as [number, number])
+      : defaultCenter;
 
   return (
     <>
-      <MapContainer 
-        center={mapCenter} 
-        zoom={8} 
-        style={{ height: '100vh', width: '100vw' }}
-      >
+      <MapContainer center={mapCenter} zoom={8} style={{ height: '100vh', width: '100vw' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         />
-        
+
         {sitesWithCoordinates.map((site) => {
           const [lng, lat] = site.location.coordinates;
           return (
-            <Marker 
-              key={site._id} 
-              position={[lat!, lng!]}
-            >
+            <Marker key={site._id} position={[lat!, lng!]}>
               <Popup maxWidth={280} minWidth={260}>
-                <Card sx={{ width: '100%' }}>
+                <Card sx={{ width: '100%', boxShadow: 'none', border: 'none', p: 0, m: 0 }}>
                   <CardContent
                     sx={{
                       display: 'flex',
@@ -139,7 +142,7 @@ export function SitesMap() {
                       alignItems: 'center',
                       py: 2,
                       px: 1,
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     }}
                     onClick={() => navigate(`/site/${site._id}`)}
                   >
@@ -149,12 +152,23 @@ export function SitesMap() {
                       sx={{ mb: 1, textAlign: 'center', color: 'primary.light' }}
                     >
                       {site.title.bg}
-                      <Typography variant='body1' component='div' sx={{ textAlign: 'center', color: 'text.secondary' }}>
+                      <Typography
+                        variant='body1'
+                        component='div'
+                        sx={{ textAlign: 'center', color: 'text.secondary' }}
+                      >
                         {site.title.en}
                       </Typography>
                     </Typography>
-                    
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        mb: 2,
+                      }}
+                    >
                       <WindDirectionCompass
                         windDirections={site.windDirection}
                         size={60}
@@ -164,11 +178,11 @@ export function SitesMap() {
                         {site.altitude ? `${site.altitude}m` : 'N/A'}
                       </Typography>
                     </Box>
-                    
+
                     <AccessOptionsView accessOptions={site.accessOptions} size={36} />
-                    
+
                     <Button
-                      size="small"
+                      size='small'
                       onClick={(e) => {
                         e.stopPropagation();
                         const [lng, lat] = site.location.coordinates;
@@ -180,11 +194,13 @@ export function SitesMap() {
                       Отвори в Google Maps
                     </Button>
                   </CardContent>
-                  
+
                   <Divider />
-                  
-                  <CardActions sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 1 }}>
-                    <Button 
+
+                  <CardActions
+                    sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 1 }}
+                  >
+                    <Button
                       size='small'
                       onClick={(e) => {
                         e.stopPropagation();
@@ -193,9 +209,9 @@ export function SitesMap() {
                     >
                       Промяна
                     </Button>
-                    
-                    <Button 
-                      color='error' 
+
+                    <Button
+                      color='error'
                       size='small'
                       onClick={(e) => {
                         e.stopPropagation();
@@ -211,13 +227,13 @@ export function SitesMap() {
           );
         })}
       </MapContainer>
-      
+
       {deleteDialogOpen && (
         <DeleteConfirmDialog
           open={true}
           onClose={() => setDeleteDialogOpen(null)}
           siteId={deleteDialogOpen}
-          title={sites?.find(s => s._id === deleteDialogOpen)?.title.bg || 'this site'}
+          title={sites?.find((s) => s._id === deleteDialogOpen)?.title.bg || 'this site'}
         />
       )}
     </>

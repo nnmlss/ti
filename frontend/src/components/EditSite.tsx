@@ -134,7 +134,7 @@ function EditSite({ site }: EditSiteProps) {
   const renderLandingFields = () => (
     <>
       <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
-        Landing Fields
+        Места за кацане
       </Typography>
       {(formData.landingFields || []).map((field, index) => (
         <Paper key={index} sx={{ p: 2, mb: 2 }}>
@@ -192,13 +192,13 @@ function EditSite({ site }: EditSiteProps) {
               onClick={() => removeLandingField(index)}
               startIcon={<DeleteIcon color='primary' />}
             >
-              Remove Landing Field
+              Изтрии мястото за кацане
             </Button>
           </Box>
         </Paper>
       ))}
       <Button onClick={addLandingField} startIcon={<AddCircleOutlineIcon />}>
-        Add Landing Field
+        Добави място за кацане
       </Button>
     </>
   );
@@ -209,18 +209,20 @@ function EditSite({ site }: EditSiteProps) {
       <Container maxWidth='md'>
         <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4 }}>
-            <Alert severity="success" sx={{ mb: 3, width: '100%' }}>
-              <Typography variant="h6" gutterBottom>
-                {site ? 'Успешна редакция на място за летене!' : 'Добавено ново място за летене!'}
+            <Alert severity='success' sx={{ mb: 3, width: '100%' }}>
+              <Typography variant='h6' gutterBottom>
+                {site
+                  ? 'Успешна редакция на място за летене!'
+                  : 'Добавено ново място за летене!'}
               </Typography>
-              <Typography variant="body2">
-                Прозорецът ще се затвори автоматично след 3 секунди...
+              <Typography variant='body2'>
+                Прозорецът ще се затвори автоматично след 5 секунди...
               </Typography>
             </Alert>
-            
+
             <CircularProgress />
-            
-            <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+
+            <Typography variant='body2' sx={{ mt: 2, color: 'text.secondary' }}>
               Запазване на промените...
             </Typography>
           </Box>
@@ -340,7 +342,7 @@ function EditSite({ site }: EditSiteProps) {
           </Grid>
           {/* Access Description */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
-            Access Description
+            Достъп
           </Typography>
           <Grid container spacing={2}>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
@@ -364,8 +366,8 @@ function EditSite({ site }: EditSiteProps) {
               />
             </Grid>
           </Grid>
-          {renderBilingualArrayFields('accomodations', 'Accomodations')}
-          {renderBilingualArrayFields('alternatives', 'Alternatives')}
+          {renderBilingualArrayFields('accomodations', 'Настаняване')}
+          {renderBilingualArrayFields('alternatives', 'Друго за правене')}
           {renderLandingFields()}
           {renderBilingualArrayFields('localPilotsClubs', 'Local Pilots Clubs')}
           {/* Tracklogs */}
@@ -410,9 +412,9 @@ function EditSite({ site }: EditSiteProps) {
               {isSubmitting ? (
                 <CircularProgress size={24} />
               ) : site ? (
-                'Update Site'
+                'Обнови старта'
               ) : (
-                'Add Site'
+                'Добави старт'
               )}
             </Button>
           </Box>

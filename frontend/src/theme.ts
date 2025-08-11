@@ -10,4 +10,7 @@ export const theme = createTheme({
       main: '#f50057', // Default MUI secondary pink
     },
   },
+  typography: {
+    fontFamily: 'comfortaa, sans-serif',
+  },
 });

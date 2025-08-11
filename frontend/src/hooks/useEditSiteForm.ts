@@ -357,7 +357,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
         await updateSite({ _id: site._id, ...cleanedFormData }).unwrap();
         setShowSuccessMessage(true);
         // Auto-close after 3 seconds
-        setTimeout(() => navigate('/'), 3000);
+        setTimeout(() => navigate('/'), 5000);
       } else {
         await addSite(cleanedFormData).unwrap();
         setShowSuccessMessage(true);

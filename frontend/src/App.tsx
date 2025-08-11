@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { theme } from './theme';
@@ -8,8 +8,6 @@ import { EditSitePage } from './pages/EditSitePage';
 import { SiteDetailPage } from './pages/SiteDetailPage';
 
 function AppContent() {
-  const location = useLocation();
-  
   return (
     <>
       <HomePage />

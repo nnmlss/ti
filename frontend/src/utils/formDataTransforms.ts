@@ -136,8 +136,6 @@ export function toFormData(site?: FlyingSite): FormDataSite {
 export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): UpdatePayload {
   const cleanedFormData: UpdatePayload = {
     title: formData.title,
-    windDirection: formData.windDirection,
-    accessOptions: formData.accessOptions,
     location: {
       type: 'Point',
       coordinates: [
@@ -146,6 +144,27 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
       ] as [number | null, number | null],
     },
   };
+
+  // Handle windDirection array
+  if (formData.windDirection && formData.windDirection.length > 0) {
+    cleanedFormData.windDirection = formData.windDirection;
+  } else if (originalSite?.windDirection && originalSite.windDirection.length > 0) {
+    cleanedFormData.$unset = { ...cleanedFormData.$unset, windDirection: 1 };
+  }
+
+  // Handle accessOptions array
+  if (formData.accessOptions && formData.accessOptions.length > 0) {
+    cleanedFormData.accessOptions = formData.accessOptions;
+  } else if (originalSite?.accessOptions && originalSite.accessOptions.length > 0) {
+    cleanedFormData.$unset = { ...cleanedFormData.$unset, accessOptions: 1 };
+  }
+
+  // Handle galleryImages array
+  if (formData.galleryImages && formData.galleryImages.length > 0) {
+    cleanedFormData.galleryImages = formData.galleryImages;
+  } else if (originalSite?.galleryImages && originalSite.galleryImages.length > 0) {
+    cleanedFormData.$unset = { ...cleanedFormData.$unset, galleryImages: 1 };
+  }
 
   // Handle altitude field
   const altitudeValue = formData.altitude ? parseInt(formData.altitude, 10) : null;
@@ -160,7 +179,7 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
   const filteredTracklogs = formData.tracklogs.filter((t) => t.trim() !== '');
   if (filteredTracklogs.length > 0) {
     cleanedFormData.tracklogs = filteredTracklogs;
-  } else if (originalSite?.tracklogs?.length) {
+  } else if (originalSite?.tracklogs && originalSite.tracklogs.length > 0) {
     // If editing and tracklogs exist in DB but should be removed, use $unset
     cleanedFormData.$unset = { ...cleanedFormData.$unset, tracklogs: 1 };
   }
@@ -255,9 +274,14 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
     originalSite?.landingFields
   );
 
-  if (cleanedLandingFields.length > 0) {
+  // Check if we have any meaningful landing fields
+  const hasMeaningfulLandingFields = cleanedLandingFields.some(field => 
+    field.description || field.location || Object.keys(field).length > 1
+  );
+
+  if (hasMeaningfulLandingFields && cleanedLandingFields.length > 0) {
     cleanedFormData.landingFields = cleanedLandingFields as LandingFieldInfo[];
-  } else if (originalSite?.landingFields?.length) {
+  } else if (originalSite?.landingFields && originalSite.landingFields.length > 0) {
     cleanedFormData.$unset = { ...cleanedFormData.$unset, landingFields: 1 };
   }
 

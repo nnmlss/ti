@@ -63,9 +63,27 @@ router.get('/site/:id', async (req, res, next) => {
 // PUT /api/site/:id - Update an existing site
 router.put('/site/:id', async (req, res, next) => {
   try {
+    const { $unset, ...updateData } = req.body;
+    
+    // Build the update operation
+    const updateOperation: any = {};
+    
+    // Add regular update data if present
+    if (Object.keys(updateData).length > 0) {
+      updateOperation.$set = updateData;
+    }
+    
+    // Add unset operations if present
+    if ($unset && Object.keys($unset).length > 0) {
+      updateOperation.$unset = $unset;
+    }
+    
+    // If no operations, fall back to simple update
+    const finalUpdate = Object.keys(updateOperation).length > 0 ? updateOperation : req.body;
+    
     const updatedSite = await Site.findOneAndUpdate(
       { _id: parseInt(req.params.id) },
-      req.body,
+      finalUpdate,
       {
         new: true,
         runValidators: true,
@@ -78,8 +96,12 @@ router.put('/site/:id', async (req, res, next) => {
 
     res.status(200).json(updatedSite);
     next();
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update site' });
+  } catch (error: any) {
+    console.error('PUT /site/:id error:', error);
+    res.status(500).json({ 
+      error: 'Failed to update site',
+      message: error.message 
+    });
   }
 });
 

@@ -1,5 +1,7 @@
-import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Button, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import { useNavigate } from 'react-router-dom';
 import EditSite from '../components/EditSite';
 
@@ -11,21 +13,20 @@ export function AddSitePage() {
   };
 
   return (
-    <Dialog 
-      open={true} 
-      onClose={handleClose} 
-      maxWidth='md' 
-      fullWidth
-      scroll='paper'
-    >
-      <DialogTitle sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        pb: 1
-      }}>
-        Добави ново място за летене
-        <IconButton onClick={handleClose} size="small">
+    <Dialog open={true} onClose={handleClose} maxWidth='md' fullWidth scroll='paper'>
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          pb: 1,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <GpsFixedIcon sx={{ mr: 1 }} />
+          Добавяне на място за летене
+        </Box>
+        <IconButton onClick={handleClose} size='small'>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

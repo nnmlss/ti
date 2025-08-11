@@ -8,9 +8,12 @@ import {
   IconButton, 
   CircularProgress, 
   Alert, 
-  Box 
+  Box,
+  Button
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 export function EditSitePage() {
   const { id } = useParams<{ id: string }>();
@@ -53,7 +56,19 @@ export function EditSitePage() {
         alignItems: 'center',
         pb: 1
       }}>
-        Промени място за летене
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Button
+            variant='outlined'
+            color='info'
+            onClick={handleClose}
+            sx={{ mr: 1 }}
+            size='large'
+          >
+            <ArrowBackIosNewIcon />
+          </Button>
+          <GpsFixedIcon sx={{ mr: 1 }} />
+          {site ? 'Редакция на място за летене' : 'Добавяне на място за летене'}
+        </Box>
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
         </IconButton>

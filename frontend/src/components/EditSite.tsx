@@ -204,21 +204,6 @@ function EditSite({ site }: EditSiteProps) {
   return (
     <Container maxWidth='md'>
       <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
-          {/* <Button
-            variant='outlined'
-            color='info'
-            onClick={() => window.history.back()}
-            sx={{ mr: 1 }}
-            size='large'
-          >
-            <ArrowBackIosNewIcon />
-          </Button>
-          <GpsFixedIcon sx={{ mr: 1 }} /> */}
-          <Typography variant='h4' component='h1' gutterBottom>
-            {site ? 'Редакция на място за летене' : 'Добавяне на място за летене'}
-          </Typography>
-        </Box>
         <form onSubmit={handleSubmit}>
           {/* Title Section */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>

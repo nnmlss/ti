@@ -69,12 +69,20 @@ export function HomePage() {
           Места за летене
         </Typography>
         <Box>
-          <IconButton
+          <Button
             onClick={() => setShowWindFilter(!showWindFilter)}
-            sx={{ color: filter.windDirection ? 'primary.main' : 'inherit' }}
+            variant={filter.windDirection ? 'contained' : 'text'}
+            sx={{
+              color: filter.windDirection ? '#fff' : 'inherit',
+              minWidth: '46px',
+              width: '46px',
+              height: '28px',
+              fontSize: filter.windDirection ? '0.875rem' : 'inherit',
+              fontWeight: filter.windDirection ? 'normal' : 'normal',
+            }}
           >
-            <AirIcon />
-          </IconButton>
+            {filter.windDirection || <AirIcon />}
+          </Button>
           <IconButton
             onClick={() => setHomeView('map')}
             sx={{ color: !isListView ? 'primary.main' : 'inherit' }}

@@ -2,6 +2,7 @@ import { Box, Button, Paper, Typography } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store/store';
 import { setWindDirectionFilter, clearFilters } from '../store/sitesSlice';
+import AirIcon from '@mui/icons-material/Air';
 
 const windDirections = [
   'N',
@@ -45,15 +46,15 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
       sx={{
         position: 'fixed',
         bottom: 65,
-        left: '1vw',
+        left: 0,
         p: 1,
-        width: '98vw',
+        width: '100vw',
         zIndex: 1002,
         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
       }}
     >
       <Typography variant='subtitle2' sx={{ mb: 1, textAlign: 'center' }}>
-        Filter by Wind Direction
+        Филтрирай по посока на вятъра
       </Typography>
 
       {/* Reset button */}
@@ -63,7 +64,7 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
         size='small'
         sx={{ mb: 2, width: '100%' }}
       >
-        ~ Reset
+        Всички <AirIcon sx={{ ml: 0.5 }} />
       </Button>
 
       {/* Wind direction buttons in a grid */}

@@ -1,14 +1,5 @@
 import { useEffect } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Alert,
-  AlertTitle,
-} from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Button, Alert, AlertTitle } from '@mui/material';
 import type { NotificationState } from '../hooks/useNotificationDialog';
 
 interface NotificationDialogProps {

@@ -1,6 +1,5 @@
 // import React from 'react';
 import {
-  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
@@ -12,6 +11,7 @@ import {
 
 import GpsOffIcon from '@mui/icons-material/GpsOff';
 import { useDeleteSiteMutation } from '../store/apiSlice';
+import { AccessibleDialog } from './AccessibleDialog';
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -44,7 +44,14 @@ export function DeleteConfirmDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
+    <AccessibleDialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth='sm' 
+      fullWidth
+      title="Delete flying site confirmation"
+      description={`Confirm deletion of site: ${title}`}
+    >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', color: 'error.main' }}>
         Изтриване на място за летене
       </DialogTitle>
@@ -80,6 +87,6 @@ export function DeleteConfirmDialog({
           {isDeleting ? '' : 'Delete'}
         </Button>
       </DialogActions>
-    </Dialog>
+    </AccessibleDialog>
   );
 }

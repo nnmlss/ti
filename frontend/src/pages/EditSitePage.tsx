@@ -2,8 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import type { RootState, AppDispatch } from '../store/store';
-import { loadSingleSiteThunk } from '../store/sitesThunk';
-import { clearCurrentSite } from '../store/sitesSlice';
+import { loadSingleSiteThunk } from '../store/thunks/sitesThunks';
+import { clearCurrentSite } from '../store/slices/singleSiteSlice';
 import { useModal } from '../hooks/useModal';
 import EditSite from '../components/EditSite';
 import { AccessibleDialog } from '../components/AccessibleDialog';
@@ -26,8 +26,9 @@ export function EditSitePage() {
   const { handleClose } = useModal(true);
 
   // Get site from current site state (loaded individually)
-  const site = useSelector((state: RootState) => state.currentSite);
-  const loading = useSelector((state: RootState) => state.loading.singleSite);
+  const site = useSelector((state: RootState) => state.singleSite.data);
+  const loadState = useSelector((state: RootState) => state.singleSite.load);
+  const loading = loadState.status;
 
   // Load individual site data on mount
   useEffect(() => {
@@ -43,7 +44,7 @@ export function EditSitePage() {
 
   const renderContent = () => {
     // Show loading while fetching individual site data
-    if (loading) {
+    if (loading === 'pending') {
       return (
         <Box display='flex' justifyContent='center' p={4}>
           <CircularProgress variant='indeterminate' color='primary' disableShrink />

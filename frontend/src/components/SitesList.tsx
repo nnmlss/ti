@@ -4,9 +4,11 @@ import { CircularProgress, Alert, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
 export function SitesList() {
-  const { sites, loading, error } = useSites();
+  const { sites, allSitesLoadState } = useSites();
+  const loading = allSitesLoadState.status;
+  const error = allSitesLoadState.error;
 
-  if (loading && !sites) {
+  if (loading === 'pending' && sites.length === 0) {
     return (
       <Box
         sx={{

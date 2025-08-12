@@ -1,12 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { sitesReducer, loadingReducer, errorReducer, currentSiteReducer, homeViewReducer, filterReducer } from './sitesSlice';
+import { allSitesReducer } from './slices/allSitesSlice';
+import { singleSiteReducer } from './slices/singleSiteSlice';
+import { homeViewReducer } from './slices/homeViewSlice';
+import { filterReducer } from './slices/filterSlice';
 
 export const store = configureStore({
   reducer: {
-    sites: sitesReducer,
-    loading: loadingReducer,
-    error: errorReducer,
-    currentSite: currentSiteReducer,
+    allSites: allSitesReducer,
+    singleSite: singleSiteReducer,
     homeView: homeViewReducer,
     filter: filterReducer,
   },

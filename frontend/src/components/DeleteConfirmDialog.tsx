@@ -11,9 +11,10 @@ import {
 
 import GpsOffIcon from '@mui/icons-material/GpsOff';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteSiteThunk } from '../store/sitesThunk';
+import { deleteSiteThunk } from '../store/thunks/sitesThunks';
 import type { RootState, AppDispatch } from '../store/store';
 import { AccessibleDialog } from './AccessibleDialog';
+import { useImmediateAsync } from '../hooks/useImmediateAsync';
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -31,18 +32,23 @@ export function DeleteConfirmDialog({
   onConfirm,
 }: DeleteConfirmDialogProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const isDeleting = useSelector((state: RootState) => state.loading.deleting);
+  const reduxIsDeleting = useSelector((state: RootState) => state.singleSite.delete.status === 'pending');
+  
+  const deleteAction = useImmediateAsync({
+    externalLoading: reduxIsDeleting,
+    onError: (error) => {
+      console.error('Failed to delete site:', error);
+    }
+  });
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     if (onConfirm) {
       onConfirm();
     } else {
-      try {
+      deleteAction.execute(async () => {
         await dispatch(deleteSiteThunk(siteId));
         onClose();
-      } catch (error) {
-        console.error('Failed to delete site:', error);
-      }
+      });
     }
   };
 
@@ -65,11 +71,11 @@ export function DeleteConfirmDialog({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={isDeleting}>
+        <Button onClick={onClose} disabled={deleteAction.isLoading}>
           Cancel
         </Button>
-        <Button onClick={handleConfirm} color='error' variant='contained' disabled={isDeleting}>
-          {isDeleting ? (
+        <Button onClick={handleConfirm} color='error' variant='contained' disabled={deleteAction.isLoading}>
+          {deleteAction.isLoading ? (
             <CircularProgress size={21} sx={{ color: 'white' }} disableShrink />
           ) : (
             'Изтрии'

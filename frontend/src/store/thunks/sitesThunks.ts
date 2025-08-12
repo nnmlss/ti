@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { FlyingSite } from '../types';
+import type { FlyingSite } from '../../types';
 
 // Thunk for loading a single site (for edit/view with full data)
 export const loadSingleSiteThunk = createAsyncThunk(

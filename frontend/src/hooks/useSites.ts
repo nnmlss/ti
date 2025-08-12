@@ -1,50 +1,71 @@
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../store/store';
 import {
-  setSites,
-  addSite,
-  updateSite,
-  deleteSite,
-  setLoading,
-  setError,
-  clearError,
-  setHomeView,
-  setWindDirectionFilter,
-  clearFilters,
-} from '../store/sitesSlice';
+  addSiteLocally,
+  updateSiteLocally,
+  deleteSiteLocally,
+  resetLoadState as resetAllSitesLoadState,
+} from '../store/slices/allSitesSlice';
+import {
+  setCurrentSite,
+  clearCurrentSite,
+  resetLoadState as resetSiteLoadState,
+  resetEditState,
+  resetDeleteState,
+} from '../store/slices/singleSiteSlice';
+import { setHomeView } from '../store/slices/homeViewSlice';
+import { setWindDirectionFilter, clearFilters } from '../store/slices/filterSlice';
 import type { FlyingSite, WindDirection } from '../types';
 
 export const useSites = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const allSites = useSelector((state: RootState) => state.sites);
-  const loading = useSelector((state: RootState) => state.loading);
-  const error = useSelector((state: RootState) => state.error);
+  const allSitesData = useSelector((state: RootState) => state.allSites.data);
+  const allSitesLoadState = useSelector((state: RootState) => state.allSites.load);
+  const singleSiteData = useSelector((state: RootState) => state.singleSite.data);
+  const singleSiteLoadState = useSelector((state: RootState) => state.singleSite.load);
+  const singleSiteEditState = useSelector((state: RootState) => state.singleSite.edit);
+  const singleSiteDeleteState = useSelector((state: RootState) => state.singleSite.delete);
   const homeView = useSelector((state: RootState) => state.homeView);
   const filter = useSelector((state: RootState) => state.filter);
 
   // Filter sites based on wind direction if filter is active
   const sites = filter.windDirection 
-    ? allSites.filter(site => 
+    ? allSitesData.filter(site => 
         site.windDirection && site.windDirection.includes(filter.windDirection as WindDirection)
       )
-    : allSites;
+    : allSitesData;
 
   return {
-    // State
+    // State - All Sites
     sites,
-    loading,
-    error,
+    allSitesLoadState,
+    
+    // State - Single Site
+    currentSite: singleSiteData,
+    siteLoadState: singleSiteLoadState,
+    siteEditState: singleSiteEditState,
+    siteDeleteState: singleSiteDeleteState,
+    
+    // UI State
     homeView,
     filter,
 
-    // Actions
-    setSites: (sites: FlyingSite[]) => dispatch(setSites(sites)),
-    addSite: (site: FlyingSite) => dispatch(addSite(site)),
-    updateSite: (site: FlyingSite) => dispatch(updateSite(site)),
-    deleteSite: (id: string) => dispatch(deleteSite(id)),
-    setLoading: (loading: boolean) => dispatch(setLoading(loading)),
-    setError: (error: string | null) => dispatch(setError(error)),
-    clearError: () => dispatch(clearError()),
+    // Actions - Local site management
+    addSiteLocally: (site: FlyingSite) => dispatch(addSiteLocally(site)),
+    updateSiteLocally: (site: FlyingSite) => dispatch(updateSiteLocally(site)),
+    deleteSiteLocally: (id: string) => dispatch(deleteSiteLocally(id)),
+    
+    // Actions - Single site management
+    setCurrentSite: (site: FlyingSite | null) => dispatch(setCurrentSite(site)),
+    clearCurrentSite: () => dispatch(clearCurrentSite()),
+    
+    // Actions - State reset
+    resetAllSitesLoadState: () => dispatch(resetAllSitesLoadState()),
+    resetSiteLoadState: () => dispatch(resetSiteLoadState()),
+    resetEditState: () => dispatch(resetEditState()),
+    resetDeleteState: () => dispatch(resetDeleteState()),
+    
+    // Actions - UI
     setHomeView: (view: 'map' | 'list') => dispatch(setHomeView(view)),
     setWindDirectionFilter: (direction: string | null) => dispatch(setWindDirectionFilter(direction)),
     clearFilters: () => dispatch(clearFilters()),

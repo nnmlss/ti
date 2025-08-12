@@ -1,7 +1,7 @@
 import { Box, Button, Paper, Typography } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store/store';
-import { setWindDirectionFilter, clearFilters } from '../store/sitesSlice';
+import { setWindDirectionFilter, clearFilters } from '../store/slices/filterSlice';
 import AirIcon from '@mui/icons-material/Air';
 
 const windDirections = [

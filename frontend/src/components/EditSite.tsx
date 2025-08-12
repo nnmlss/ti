@@ -56,6 +56,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
   const {
     control,
     handleSubmit,
+    handleSmartSubmit,
     watch,
     isSubmitting,
     showSuccessMessage,
@@ -275,7 +276,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
   return (
     <Container maxWidth='md' sx={{ pb: 5 }}>
       <Paper elevation={0} sx={{ p: 2, mt: 2 }}>
-        <form onSubmit={handleSubmit}>
+        <form>
           {/* Title Section */}
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
             Име на старта
@@ -519,7 +520,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
           {/* Submit Button */}
           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
             <Button
-              type='submit'
+              onClick={handleSmartSubmit}
               variant='contained'
               size='large'
               sx={{
@@ -530,13 +531,16 @@ function EditSite({ site, onClose }: EditSiteProps) {
               }}
               disabled={isSubmitting}
             >
-              {isSubmitting ? (
-                <CircularProgress size={24} disableShrink />
-              ) : site ? (
-                'Обнови старта'
-              ) : (
-                'Добави старт'
-              )}
+              {(() => {
+                console.log('🔵 Button render - isSubmitting:', isSubmitting);
+                return isSubmitting ? (
+                  <CircularProgress size={24} disableShrink />
+                ) : site ? (
+                  'Обнови старта'
+                ) : (
+                  'Добави старт'
+                );
+              })()}
             </Button>
           </Box>
         </form>

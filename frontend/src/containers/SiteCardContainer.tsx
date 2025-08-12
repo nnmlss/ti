@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
-import { deleteSiteThunk } from '../store/sitesThunk';
+import { deleteSiteThunk } from '../store/thunks/sitesThunks';
 import { SiteCard } from '../components/SiteCard';
 import type { FlyingSite } from '../types';
 import type { AppDispatch } from '../store/store';

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { loadSitesThunk } from '../store/sitesThunk';
+import { loadSitesThunk } from '../store/thunks/sitesThunks';
 import type { AppDispatch } from '../store/store';
 import { useSites } from '../hooks/useSites';
 import { useLocalStorage } from '../hooks/useLocalStorage';

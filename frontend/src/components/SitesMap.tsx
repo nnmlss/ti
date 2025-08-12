@@ -18,7 +18,7 @@ import { AccessOptionsView } from './AccessOptionsView';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useDispatch } from 'react-redux';
-import { deleteSiteThunk } from '../store/sitesThunk';
+import { deleteSiteThunk } from '../store/thunks/sitesThunks';
 import type { AppDispatch } from '../store/store';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -37,7 +37,9 @@ export function SitesMap() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { isOpen, targetId, confirm, handleConfirm, handleCancel } = useConfirmDialog();
-  const { sites, error, loading } = useSites();
+  const { sites, allSitesLoadState } = useSites();
+  const loading = allSitesLoadState.status;
+  const error = allSitesLoadState.error;
 
   const handleDelete = async (siteId: string) => {
     try {
@@ -47,7 +49,7 @@ export function SitesMap() {
     }
   };
 
-  if (loading && !sites) {
+  if (loading === 'pending' && sites.length === 0) {
     return (
       <Box
         sx={{

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { addSiteThunk, updateSiteThunk } from '../store/sitesThunk';
+import { addSiteThunk, updateSiteThunk } from '../store/thunks/sitesThunks';
 import type { AppDispatch } from '../store/store';
 import { useNotificationDialog } from './useNotificationDialog';
 import { useAsyncState } from './useAsyncState';

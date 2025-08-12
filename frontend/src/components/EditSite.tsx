@@ -56,7 +56,6 @@ function EditSite({ site, onClose }: EditSiteProps) {
   const {
     control,
     handleSubmit,
-    handleSmartSubmit,
     watch,
     isSubmitting,
     showSuccessMessage,
@@ -520,7 +519,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
           {/* Submit Button */}
           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
             <Button
-              onClick={handleSmartSubmit}
+              onClick={handleSubmit}
               variant='contained'
               size='large'
               sx={{
@@ -531,16 +530,13 @@ function EditSite({ site, onClose }: EditSiteProps) {
               }}
               disabled={isSubmitting}
             >
-              {(() => {
-                console.log('🔵 Button render - isSubmitting:', isSubmitting);
-                return isSubmitting ? (
-                  <CircularProgress size={24} disableShrink />
-                ) : site ? (
-                  'Обнови старта'
-                ) : (
-                  'Добави старт'
-                );
-              })()}
+              {isSubmitting ? (
+                <CircularProgress size={24} disableShrink />
+              ) : site ? (
+                'Обнови старта'
+              ) : (
+                'Добави старт'
+              )}
             </Button>
           </Box>
         </form>

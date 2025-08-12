@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Site } from '../models/sites.js';
+import type { FlyingSite } from '../models/sites.js';
 
 const router = Router();
 
@@ -13,7 +14,7 @@ async function getNextId(): Promise<number> {
 router.get('/sites', async (req, res, next) => {
   try {
     const sites = await Site.find();
-    res.status(200).json(sites);
+    res.status(200).json(sites as FlyingSite[]);
     next();
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch sites' });
@@ -37,7 +38,7 @@ router.post('/new-site', async (req, res, next) => {
     // Fetch the inserted document to return it with proper formatting
     const savedSite = await Site.findOne({ _id: nextId });
     
-    res.status(201).json(savedSite);
+    res.status(201).json(savedSite as FlyingSite);
     next();
   } catch (error: any) {
     console.error('POST /new-site error:', error);
@@ -61,7 +62,7 @@ router.get('/site/:id', async (req, res, next) => {
     if (!site) {
       return res.status(404).json({ error: 'Site not found' });
     }
-    res.status(200).json(site);
+    res.status(200).json(site as FlyingSite);
     next();
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch site' });
@@ -102,7 +103,7 @@ router.put('/site/:id', async (req, res, next) => {
       return res.status(404).json({ error: 'Site not found' });
     }
 
-    res.status(200).json(updatedSite);
+    res.status(200).json(updatedSite as FlyingSite);
     next();
   } catch (error: any) {
     console.error('PUT /site/:id error:', error);

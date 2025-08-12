@@ -43,7 +43,9 @@ export interface LandingFieldInfo {
   location?: Location;
 }
 
+// Domain model - every site has an _id once it exists
 export interface FlyingSite {
+  _id: number;
   title: LocalizedText;
   windDirection: WindDirection[];
   location: Location;
@@ -67,7 +69,12 @@ export interface FlyingSite {
   };
 }
 
-export interface FlyingSiteDocument extends FlyingSite, Document {}
+// For site creation only - before _id is assigned
+export interface CreateSiteData extends Omit<FlyingSite, '_id'> {}
+
+export interface FlyingSiteDocument extends Omit<FlyingSite, '_id'>, Document {
+  _id: number;
+}
 
 const LocationSchema = new Schema(
   {

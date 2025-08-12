@@ -39,7 +39,7 @@ export interface GalleryImage {
 export type AccessOptionId = 0 | 1 | 2 | 3 | 4;
 
 export interface LandingFieldInfo {
-  description?: string;
+  description?: LocalizedText;
   location?: Location;
 }
 
@@ -59,10 +59,7 @@ export interface FlyingSite {
     en?: string[];
   };
   access?: LocalizedText;
-  landingFields?: {
-    bg?: LandingFieldInfo[];
-    en?: LandingFieldInfo[];
-  };
+  landingFields?: LandingFieldInfo[];
   tracklogs?: string[];
   localPilotsClubs?: {
     bg?: string[];
@@ -107,7 +104,7 @@ const AccessOptionSchema = new Schema({
 
 const LandingFieldInfoSchema = new Schema(
   {
-    description: { type: String },
+    description: LocalizedTextSchema,
     location: LocationSchema,
   },
   { _id: false, id: false }
@@ -169,10 +166,7 @@ const FlyingSiteSchema = new Schema(
       en: [{ type: String }],
     },
     access: LocalizedTextSchema,
-    landingFields: {
-      bg: [LandingFieldInfoSchema],
-      en: [LandingFieldInfoSchema],
-    },
+    landingFields: [LandingFieldInfoSchema],
     tracklogs: [{ type: String }],
     localPilotsClubs: {
       bg: [{ type: String }],

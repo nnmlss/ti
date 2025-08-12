@@ -19,7 +19,7 @@ import { useImmediateAsync } from '../hooks/useImmediateAsync';
 interface DeleteConfirmDialogProps {
   open: boolean;
   onClose: () => void;
-  siteId: string;
+  siteId: number;
   title: string;
   onConfirm?: () => void;
 }
@@ -32,13 +32,15 @@ export function DeleteConfirmDialog({
   onConfirm,
 }: DeleteConfirmDialogProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const reduxIsDeleting = useSelector((state: RootState) => state.singleSite.delete.status === 'pending');
-  
+  const reduxIsDeleting = useSelector(
+    (state: RootState) => state.singleSite.delete.status === 'pending'
+  );
+
   const deleteAction = useImmediateAsync({
     externalLoading: reduxIsDeleting,
     onError: (error) => {
       console.error('Failed to delete site:', error);
-    }
+    },
   });
 
   const handleConfirm = () => {
@@ -74,7 +76,12 @@ export function DeleteConfirmDialog({
         <Button onClick={onClose} disabled={deleteAction.isLoading}>
           Cancel
         </Button>
-        <Button onClick={handleConfirm} color='error' variant='contained' disabled={deleteAction.isLoading}>
+        <Button
+          onClick={handleConfirm}
+          color='error'
+          variant='contained'
+          disabled={deleteAction.isLoading}
+        >
           {deleteAction.isLoading ? (
             <CircularProgress size={21} sx={{ color: 'white' }} disableShrink />
           ) : (

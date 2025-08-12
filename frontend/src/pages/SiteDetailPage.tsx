@@ -30,9 +30,12 @@ export function SiteDetailPage() {
   // Load individual site data on mount
   useEffect(() => {
     if (id) {
-      dispatch(loadSingleSiteThunk(id));
+      const numId = Number(id);
+      if (!Number.isNaN(numId)) {
+        dispatch(loadSingleSiteThunk(numId));
+      }
     }
-    
+
     // Cleanup: clear current site when component unmounts
     return () => {
       dispatch(clearCurrentSite());

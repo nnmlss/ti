@@ -41,7 +41,7 @@ export function SitesMap() {
   const loading = allSitesLoadState.status;
   const error = allSitesLoadState.error;
 
-  const handleDelete = async (siteId: string) => {
+  const handleDelete = async (siteId: number) => {
     try {
       await dispatch(deleteSiteThunk(siteId));
     } catch (error) {

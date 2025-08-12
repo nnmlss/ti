@@ -42,7 +42,7 @@ const allSitesSlice = createSlice({
         state.data[index] = action.payload;
       }
     },
-    deleteSiteLocally: (state, action: PayloadAction<string>) => {
+    deleteSiteLocally: (state, action: PayloadAction<number>) => {
       state.data = state.data.filter((site) => site._id !== action.payload);
     },
     // Reset load state
@@ -61,9 +61,9 @@ const allSitesSlice = createSlice({
         state.load = { status: 'success', error: null };
       })
       .addCase(loadSitesThunk.rejected, (state, action) => {
-        state.load = { 
-          status: 'error', 
-          error: action.error.message || 'Failed to load sites' 
+        state.load = {
+          status: 'error',
+          error: action.error.message || 'Failed to load sites',
         };
       })
       // Add site - optimistically update the list
@@ -88,14 +88,11 @@ const allSitesSlice = createSlice({
   },
 });
 
-export const { 
-  addSiteLocally, 
-  updateSiteLocally, 
-  deleteSiteLocally, 
-  resetLoadState 
-} = allSitesSlice.actions;
+export const { addSiteLocally, updateSiteLocally, deleteSiteLocally, resetLoadState } =
+  allSitesSlice.actions;
 export const allSitesReducer = allSitesSlice.reducer;
 
 // Selectors for easy access
 export const selectAllSites = (state: { allSites: AllSitesState }) => state.allSites.data;
-export const selectAllSitesLoadState = (state: { allSites: AllSitesState }) => state.allSites.load;
+export const selectAllSitesLoadState = (state: { allSites: AllSitesState }) =>
+  state.allSites.load;

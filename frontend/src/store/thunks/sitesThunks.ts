@@ -4,32 +4,29 @@ import type { FlyingSite } from '../../types';
 // Thunk for loading a single site (for edit/view with full data)
 export const loadSingleSiteThunk = createAsyncThunk(
   'sites/loadSingleSite',
-  async (siteId: string) => {
+  async (siteId: number) => {
     const response = await fetch(`/api/site/${siteId}`);
-    
+
     if (!response.ok) {
       throw new Error('Failed to load site');
     }
-    
+
     const site: FlyingSite = await response.json();
     return site;
   }
 );
 
 // Thunk for loading all sites
-export const loadSitesThunk = createAsyncThunk(
-  'sites/loadSites',
-  async () => {
-    const response = await fetch('/api/sites');
-    
-    if (!response.ok) {
-      throw new Error('Failed to load sites');
-    }
-    
-    const sites: FlyingSite[] = await response.json();
-    return sites;
+export const loadSitesThunk = createAsyncThunk('sites/loadSites', async () => {
+  const response = await fetch('/api/sites');
+
+  if (!response.ok) {
+    throw new Error('Failed to load sites');
   }
-);
+
+  const sites: FlyingSite[] = await response.json();
+  return sites;
+});
 
 // Thunk for adding a site
 export const addSiteThunk = createAsyncThunk(
@@ -42,11 +39,11 @@ export const addSiteThunk = createAsyncThunk(
       },
       body: JSON.stringify(siteData),
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to add site');
     }
-    
+
     const newSite: FlyingSite = await response.json();
     return newSite;
   }
@@ -64,28 +61,25 @@ export const updateSiteThunk = createAsyncThunk(
       },
       body: JSON.stringify(body),
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to update site');
     }
-    
+
     const updatedSite: FlyingSite = await response.json();
     return updatedSite;
   }
 );
 
 // Thunk for deleting a site
-export const deleteSiteThunk = createAsyncThunk(
-  'sites/deleteSite',
-  async (siteId: string) => {
-    const response = await fetch(`/api/site/${siteId}`, {
-      method: 'DELETE',
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to delete site');
-    }
-    
-    return siteId;
+export const deleteSiteThunk = createAsyncThunk('sites/deleteSite', async (siteId: number) => {
+  const response = await fetch(`/api/site/${siteId}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete site');
   }
-);
+
+  return siteId;
+});

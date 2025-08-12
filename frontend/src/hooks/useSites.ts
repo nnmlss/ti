@@ -29,9 +29,11 @@ export const useSites = () => {
   const filter = useSelector((state: RootState) => state.filter);
 
   // Filter sites based on wind direction if filter is active
-  const sites = filter.windDirection 
-    ? allSitesData.filter(site => 
-        site.windDirection && site.windDirection.includes(filter.windDirection as WindDirection)
+  const sites = filter.windDirection
+    ? allSitesData.filter(
+        (site) =>
+          site.windDirection &&
+          site.windDirection.includes(filter.windDirection as WindDirection)
       )
     : allSitesData;
 
@@ -39,13 +41,13 @@ export const useSites = () => {
     // State - All Sites
     sites,
     allSitesLoadState,
-    
+
     // State - Single Site
     currentSite: singleSiteData,
     siteLoadState: singleSiteLoadState,
     siteEditState: singleSiteEditState,
     siteDeleteState: singleSiteDeleteState,
-    
+
     // UI State
     homeView,
     filter,
@@ -53,21 +55,22 @@ export const useSites = () => {
     // Actions - Local site management
     addSiteLocally: (site: FlyingSite) => dispatch(addSiteLocally(site)),
     updateSiteLocally: (site: FlyingSite) => dispatch(updateSiteLocally(site)),
-    deleteSiteLocally: (id: string) => dispatch(deleteSiteLocally(id)),
-    
+    deleteSiteLocally: (id: number) => dispatch(deleteSiteLocally(id)),
+
     // Actions - Single site management
     setCurrentSite: (site: FlyingSite | null) => dispatch(setCurrentSite(site)),
     clearCurrentSite: () => dispatch(clearCurrentSite()),
-    
+
     // Actions - State reset
     resetAllSitesLoadState: () => dispatch(resetAllSitesLoadState()),
     resetSiteLoadState: () => dispatch(resetSiteLoadState()),
     resetEditState: () => dispatch(resetEditState()),
     resetDeleteState: () => dispatch(resetDeleteState()),
-    
+
     // Actions - UI
     setHomeView: (view: 'map' | 'list') => dispatch(setHomeView(view)),
-    setWindDirectionFilter: (direction: string | null) => dispatch(setWindDirectionFilter(direction)),
+    setWindDirectionFilter: (direction: string | null) =>
+      dispatch(setWindDirectionFilter(direction)),
     clearFilters: () => dispatch(clearFilters()),
   };
 };

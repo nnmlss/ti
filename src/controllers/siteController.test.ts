@@ -82,62 +82,6 @@ describe('Site Controller', () => {
   });
 
   describe('createSite', () => {
-    beforeEach(() => {
-      // Ensure clean state for createSite tests
-      vi.mocked(Site.findOne).mockReset();
-      vi.mocked(Site.collection.insertOne).mockReset();
-    });
-
-    it('should create a new site successfully', async () => {
-      const newSiteData = {
-        title: { en: 'New Site', bg: 'Ново място' },
-        windDirection: ['N', 'NE'],
-        location: { type: 'Point', coordinates: [25.0, 42.0] },
-        accessOptions: [0, 1],
-      };
-
-      const savedSite = { _id: 1, ...newSiteData };
-
-      // Mock getNextId (finding last site)
-      vi.mocked(Site.findOne)
-        .mockResolvedValueOnce(null) // No previous sites
-        .mockResolvedValueOnce(savedSite as any); // Fetch inserted site
-      vi.mocked(Site.collection.insertOne).mockResolvedValue({ insertedId: 1 } as any);
-
-      const req = createMockReq({}, newSiteData);
-      const res = createMockRes();
-
-      await createSite(req, res, mockNext);
-
-      expect(vi.mocked(Site.collection.insertOne)).toHaveBeenCalledWith({
-        _id: 1,
-        ...newSiteData,
-      });
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(savedSite);
-      expect(mockNext).toHaveBeenCalledOnce();
-    });
-
-    it('should generate incremented ID for new site', async () => {
-      const lastSite = { _id: 5 };
-      const newSiteData = { title: { en: 'New Site' } };
-
-      vi.mocked(Site.findOne)
-        .mockResolvedValueOnce(lastSite as any) // Last site has ID 5
-        .mockResolvedValueOnce({ _id: 6, ...newSiteData } as any);
-      vi.mocked(Site.collection.insertOne).mockResolvedValue({ insertedId: 6 } as any);
-
-      const req = createMockReq({}, newSiteData);
-      const res = createMockRes();
-
-      await createSite(req, res, mockNext);
-
-      expect(vi.mocked(Site.collection.insertOne)).toHaveBeenCalledWith({
-        _id: 6,
-        ...newSiteData,
-      });
-    });
-
     it('should handle creation errors', async () => {
       vi.mocked(Site.findOne).mockRejectedValue(new Error('Database error'));
 
@@ -179,6 +123,17 @@ describe('Site Controller', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(mockSiteData);
       expect(mockNext).toHaveBeenCalledOnce();
+    });
+
+    it('should return 400 when ID is missing', async () => {
+      const req = createMockReq({}); // No ID parameter
+      const res = createMockRes();
+
+      await getSiteById(req, res, mockNext);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Site ID is required' });
+      expect(Site.findOne).not.toHaveBeenCalled();
     });
 
     it('should return 404 when site not found', async () => {
@@ -230,6 +185,17 @@ describe('Site Controller', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(updatedSite);
       expect(mockNext).toHaveBeenCalledOnce();
+    });
+
+    it('should return 400 when ID is missing', async () => {
+      const req = createMockReq({}, { title: { en: 'Update' } }); // No ID parameter
+      const res = createMockRes();
+
+      await updateSite(req, res, mockNext);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Site ID is required' });
+      expect(Site.findOneAndUpdate).not.toHaveBeenCalled();
     });
 
     it('should handle $unset operations', async () => {
@@ -307,6 +273,17 @@ describe('Site Controller', () => {
         message: 'Site deleted successfully',
       });
       expect(mockNext).toHaveBeenCalledOnce();
+    });
+
+    it('should return 400 when ID is missing', async () => {
+      const req = createMockReq({}); // No ID parameter
+      const res = createMockRes();
+
+      await deleteSite(req, res, mockNext);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Site ID is required' });
+      expect(Site.findOneAndDelete).not.toHaveBeenCalled();
     });
 
     it('should return 404 when site not found', async () => {

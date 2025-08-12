@@ -9,7 +9,7 @@ async function getNextId(): Promise<number> {
 }
 
 // GET /api/sites - List all sites
-export const getAllSites = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllSites = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const sites = await Site.find();
     res.status(200).json(sites as FlyingSite[]);
@@ -56,7 +56,11 @@ export const createSite = async (req: Request, res: Response, next: NextFunction
 // GET /api/site/:id - Get a single site
 export const getSiteById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const site = await Site.findOne({ _id: parseInt(req.params.id) });
+    const id = req.params.id;
+    if (!id) {
+      return res.status(400).json({ error: 'Site ID is required' });
+    }
+    const site = await Site.findOne({ _id: parseInt(id) });
     if (!site) {
       return res.status(404).json({ error: 'Site not found' });
     }
@@ -88,8 +92,13 @@ export const updateSite = async (req: Request, res: Response, next: NextFunction
     // If no operations, fall back to simple update
     const finalUpdate = Object.keys(updateOperation).length > 0 ? updateOperation : req.body;
     
+    const id = req.params.id;
+    if (!id) {
+      return res.status(400).json({ error: 'Site ID is required' });
+    }
+    
     const updatedSite = await Site.findOneAndUpdate(
-      { _id: parseInt(req.params.id) },
+      { _id: parseInt(id) },
       finalUpdate,
       {
         new: true,
@@ -115,7 +124,11 @@ export const updateSite = async (req: Request, res: Response, next: NextFunction
 // DELETE /api/site/:id - Delete a site
 export const deleteSite = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const deletedSite = await Site.findOneAndDelete({ _id: parseInt(req.params.id) });
+    const id = req.params.id;
+    if (!id) {
+      return res.status(400).json({ error: 'Site ID is required' });
+    }
+    const deletedSite = await Site.findOneAndDelete({ _id: parseInt(id) });
 
     if (!deletedSite) {
       return res.status(404).json({ error: 'Site not found' });

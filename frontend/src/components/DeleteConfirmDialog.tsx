@@ -69,7 +69,11 @@ export function DeleteConfirmDialog({
           Cancel
         </Button>
         <Button onClick={handleConfirm} color='error' variant='contained' disabled={isDeleting}>
-          {isDeleting ? <CircularProgress size={21} sx={{ color: 'white' }} /> : 'Изтрии'}
+          {isDeleting ? (
+            <CircularProgress size={21} sx={{ color: 'white' }} disableShrink />
+          ) : (
+            'Изтрии'
+          )}
         </Button>
       </DialogActions>
     </AccessibleDialog>

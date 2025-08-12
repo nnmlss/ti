@@ -49,9 +49,10 @@ const accessOptions = [
 
 interface EditSiteProps {
   site?: FlyingSite;
+  onClose?: () => void;
 }
 
-function EditSite({ site }: EditSiteProps) {
+function EditSite({ site, onClose }: EditSiteProps) {
   const {
     control,
     handleSubmit,
@@ -255,15 +256,16 @@ function EditSite({ site }: EditSiteProps) {
                   : 'Добавено ново място за летене!'}
               </Typography>
               <Typography variant='body2'>
-                Прозорецът ще се затвори автоматично след 5 секунди...
+                Прозорецът ще се затвори автоматично след 3 секунди...
               </Typography>
             </Alert>
-
             <CircularProgress disableShrink />
-
             <Typography variant='body2' sx={{ mt: 2, color: 'text.secondary' }}>
               Запазване на промените...
             </Typography>
+            <Button onClick={onClose} variant='contained' sx={{ mt: 2 }}>
+              Затвори
+            </Button>
           </Box>
         </Paper>
       </Container>

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useGetSitesQuery } from '../store/apiSlice';
+import { useDispatch } from 'react-redux';
+import { loadSitesThunk } from '../store/sitesThunk';
+import type { AppDispatch } from '../store/store';
 import { useSites } from '../hooks/useSites';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { useArrayQueryState } from '../hooks/useQueryState';
 import { HomePage } from '../pages/HomePage';
 
 export function HomePageContainer() {
+  const dispatch = useDispatch<AppDispatch>();
   const [showWindFilter, setShowWindFilter] = useState(false);
   
   // Persist homeView preference
@@ -14,37 +16,19 @@ export function HomePageContainer() {
     'map'
   );
 
-  // Centralized data fetching for both map and list views
-  const sitesQuery = useGetSitesQuery(undefined, {
-    pollingInterval: 30000, // Refetch every 30 seconds
-    refetchOnFocus: true, // Refetch when user returns to tab
-    refetchOnReconnect: true, // Refetch on network reconnection
-  });
+  const { homeView, setHomeView, filter } = useSites();
   
-  // Use adapter pattern to standardize query interface
-  const sitesState = useArrayQueryState(sitesQuery);
-  
-  const { setSites, setLoading, setError, homeView, setHomeView, filter } = useSites();
-  
+  // Load sites on app start
+  useEffect(() => {
+    dispatch(loadSitesThunk());
+  }, [dispatch]);
+
   // Sync localStorage with Redux state
   useEffect(() => {
     if (homeView !== storedHomeView) {
       setHomeView(storedHomeView);
     }
   }, [storedHomeView, homeView, setHomeView]);
-
-  // Sync RTK Query data to sitesSlice once at the top level
-  useEffect(() => {
-    if (sitesState.data?.items) {
-      setSites(sitesState.data.items);
-    }
-    setLoading(sitesState.isLoading);
-    if (sitesState.error) {
-      setError(sitesState.error);
-    } else {
-      setError(null);
-    }
-  }, [sitesState.data?.items, sitesState.isLoading, sitesState.error, setSites, setLoading, setError]);
 
   const handleViewToggle = (view: 'map' | 'list') => {
     setHomeView(view);

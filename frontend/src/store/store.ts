@@ -1,17 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { apiSlice } from './apiSlice';
-import { sitesReducer, loadingReducer, errorReducer, homeViewReducer, filterReducer } from './sitesSlice';
+import { sitesReducer, loadingReducer, errorReducer, currentSiteReducer, homeViewReducer, filterReducer } from './sitesSlice';
 
 export const store = configureStore({
   reducer: {
-    [apiSlice.reducerPath]: apiSlice.reducer,
     sites: sitesReducer,
     loading: loadingReducer,
     error: errorReducer,
+    currentSite: currentSiteReducer,
     homeView: homeViewReducer,
     filter: filterReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

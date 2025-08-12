@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useAddSiteMutation, useUpdateSiteMutation } from '../store/apiSlice';
+import { useDispatch } from 'react-redux';
+import { addSiteThunk, updateSiteThunk } from '../store/sitesThunk';
+import type { AppDispatch } from '../store/store';
 import { useNotificationDialog } from './useNotificationDialog';
 import { useAsyncState } from './useAsyncState';
 import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
@@ -11,13 +13,11 @@ import type { FlyingSite, WindDirection } from '../types';
 export const useEditSiteForm = (site?: FlyingSite) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const { showError, ...notificationDialog } = useNotificationDialog();
 
   // Use AsyncState for better async operation management
   const submitState = useAsyncState<FlyingSite>();
-  
-  const [addSite] = useAddSiteMutation();
-  const [updateSite] = useUpdateSiteMutation();
 
   // Initialize form with transformed data
   const form = useForm<FormDataSite>({
@@ -25,7 +25,14 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     mode: 'onChange',
   });
 
-  const { control, handleSubmit, reset, watch, setValue, formState: { isSubmitting } } = form;
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { isSubmitting },
+  } = form;
 
   // Field arrays for dynamic sections
   const landingFields = useFieldArray({
@@ -64,7 +71,10 @@ export const useEditSiteForm = (site?: FlyingSite) => {
 
     if (existingIndex >= 0) {
       // Remove if already selected
-      setValue('accessOptions', current.filter((option) => option._id !== optionId));
+      setValue(
+        'accessOptions',
+        current.filter((option) => option._id !== optionId)
+      );
     } else {
       // Add if not selected
       setValue('accessOptions', [...current, { _id: optionId, bg, en }]);
@@ -76,7 +86,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     field: 'accomodations' | 'alternatives' | 'localPilotsClubs',
     lang: 'bg' | 'en'
   ) => {
-    const currentValues = watch(`${field}.${lang}`) as string[] || [];
+    const currentValues = (watch(`${field}.${lang}`) as string[]) || [];
     setValue(`${field}.${lang}`, [...currentValues, '']);
   };
 
@@ -85,7 +95,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     lang: 'bg' | 'en',
     index: number
   ) => {
-    const currentValues = watch(`${field}.${lang}`) as string[] || [];
+    const currentValues = (watch(`${field}.${lang}`) as string[]) || [];
     const newValues = currentValues.filter((_, i) => i !== index);
     setValue(`${field}.${lang}`, newValues);
   };
@@ -118,17 +128,19 @@ export const useEditSiteForm = (site?: FlyingSite) => {
 
       let result: FlyingSite;
       if (site) {
-        result = await updateSite({ _id: site._id, ...cleanedFormData }).unwrap();
+        const action = await dispatch(updateSiteThunk({ _id: site._id, ...cleanedFormData }));
+        result = action.payload as FlyingSite;
         setShowSuccessMessage(true);
         // Auto-close after 5 seconds
-        setTimeout(() => navigate(navigateToHome()), 5000);
+        setTimeout(() => navigate(navigateToHome()), 3000);
       } else {
-        result = await addSite(cleanedFormData).unwrap();
+        const action = await dispatch(addSiteThunk(cleanedFormData));
+        result = action.payload as FlyingSite;
         setShowSuccessMessage(true);
         // Auto-close after 3 seconds
         setTimeout(() => navigate(navigateToHome()), 3000);
       }
-      
+
       return result;
     });
 
@@ -145,16 +157,16 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     handleSubmit: handleSubmit(onSubmit),
     watch,
     setValue,
-    
+
     // State
     isSubmitting: isSubmitting || submitState.isLoading,
     showSuccessMessage,
     submitState,
-    
+
     // Field arrays (only for actual useFieldArray hooks)
     landingFields,
     tracklogsFields,
-    
+
     // Helper functions
     handleWindDirectionChange,
     handleAccessOptionChange,
@@ -164,7 +176,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     removeLandingField,
     addTracklog,
     removeTracklog,
-    
+
     // Other
     notificationDialog,
   };

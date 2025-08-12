@@ -7,6 +7,7 @@ import type { AppDispatch } from '../store/store';
 import { useNotificationDialog } from './useNotificationDialog';
 import { useAsyncState } from './useAsyncState';
 import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
+import type { AccessOptionId } from '../types';
 import { navigateToHome } from '../utils/navigation';
 import type { FlyingSite, WindDirection } from '../types';
 
@@ -40,10 +41,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     name: 'landingFields',
   });
 
-  const tracklogsFields = useFieldArray({
-    control,
-    name: 'tracklogs',
-  });
+  // Tracklogs are managed as a primitive string array via watch/setValue
 
   // For nested string arrays, we'll manage them manually without useFieldArray
   // since TypeScript doesn't recognize nested dot notation paths
@@ -55,7 +53,8 @@ export const useEditSiteForm = (site?: FlyingSite) => {
 
   // Watch wind direction to handle checkbox changes
   const windDirections = watch('windDirection');
-  const accessOptions = watch('accessOptions');
+  const accessOptions = watch('accessOptions') as AccessOptionId[] | undefined;
+  const tracklogsValues = (watch('tracklogs') as string[] | undefined) || [];
 
   const handleWindDirectionChange = (direction: WindDirection) => {
     const current = windDirections || [];
@@ -65,20 +64,13 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     setValue('windDirection', newDirections);
   };
 
-  const handleAccessOptionChange = (optionId: number, bg: string, en: string) => {
+  const handleAccessOptionChange = (optionId: number) => {
     const current = accessOptions || [];
-    const existingIndex = current.findIndex((option) => option._id === optionId);
-
-    if (existingIndex >= 0) {
-      // Remove if already selected
-      setValue(
-        'accessOptions',
-        current.filter((option) => option._id !== optionId)
-      );
-    } else {
-      // Add if not selected
-      setValue('accessOptions', [...current, { _id: optionId, bg, en }]);
-    }
+    const exists = current.includes(optionId as AccessOptionId);
+    const next = exists
+      ? (current.filter((id) => id !== (optionId as AccessOptionId)) as AccessOptionId[])
+      : ([...current, optionId as AccessOptionId] as AccessOptionId[]);
+    setValue('accessOptions', next);
   };
 
   // Helper functions for bilingual arrays using setValue instead of useFieldArray
@@ -114,11 +106,12 @@ export const useEditSiteForm = (site?: FlyingSite) => {
 
   // Tracklog helpers
   const addTracklog = () => {
-    tracklogsFields.append('');
+    setValue('tracklogs', [...tracklogsValues, '']);
   };
 
   const removeTracklog = (index: number) => {
-    tracklogsFields.remove(index);
+    const next = tracklogsValues.filter((_, i) => i !== index);
+    setValue('tracklogs', next);
   };
 
   const onSubmit = async (formData: FormDataSite) => {
@@ -165,7 +158,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
 
     // Field arrays (only for actual useFieldArray hooks)
     landingFields,
-    tracklogsFields,
+    tracklogsValues,
 
     // Helper functions
     handleWindDirectionChange,

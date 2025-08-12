@@ -1,7 +1,25 @@
-import type { FlyingSite, LocalizedText, LandingFieldInfo, GalleryImage } from '../types';
+import type {
+  FlyingSite,
+  LocalizedText,
+  LandingFieldInfo,
+  GalleryImage,
+  AccessOptionId,
+} from '../types';
 
 // Form data type with empty strings instead of null/undefined for UI editing
-export interface FormDataSite extends Omit<FlyingSite, '_id' | 'location' | 'altitude' | 'access' | 'accomodations' | 'alternatives' | 'localPilotsClubs' | 'tracklogs' | 'landingFields'> {
+export interface FormDataSite
+  extends Omit<
+    FlyingSite,
+    | '_id'
+    | 'location'
+    | 'altitude'
+    | 'access'
+    | 'accomodations'
+    | 'alternatives'
+    | 'localPilotsClubs'
+    | 'tracklogs'
+    | 'landingFields'
+  > {
   location: {
     type: 'Point';
     coordinates: [string, string]; // String for form inputs
@@ -51,7 +69,7 @@ const initialFormState: FormDataSite = {
   windDirection: [],
   location: { type: 'Point', coordinates: ['', ''] },
   altitude: '',
-  accessOptions: [],
+  accessOptions: [] as AccessOptionId[],
   galleryImages: [],
   accomodations: { bg: [''], en: [''] },
   alternatives: { bg: [''], en: [''] },
@@ -80,7 +98,10 @@ export function toFormData(site?: FlyingSite): FormDataSite {
     en: text?.en || '',
   });
 
-  const transformBilingualArray = (data?: { bg?: string[]; en?: string[] }): { bg: string[]; en: string[] } => ({
+  const transformBilingualArray = (data?: {
+    bg?: string[];
+    en?: string[];
+  }): { bg: string[]; en: string[] } => ({
     bg: data?.bg?.length ? data.bg : [''],
     en: data?.en?.length ? data.en : [''],
   });
@@ -95,13 +116,13 @@ export function toFormData(site?: FlyingSite): FormDataSite {
       ];
     }
 
-    return fields.map(field => ({
+    return fields.map((field) => ({
       description: transformLocalizedText(field.description),
       location: {
         type: 'Point' as const,
         coordinates: [
           field.location?.coordinates[0]?.toString() || '',
-          field.location?.coordinates[1]?.toString() || ''
+          field.location?.coordinates[1]?.toString() || '',
         ] as [string, string],
       },
     }));
@@ -114,7 +135,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
       type: 'Point' as const,
       coordinates: [
         site.location.coordinates[0]?.toString() || '',
-        site.location.coordinates[1]?.toString() || ''
+        site.location.coordinates[1]?.toString() || '',
       ] as [string, string],
     },
     altitude: site.altitude?.toString() || '',
@@ -152,16 +173,16 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
     cleanedFormData.$unset = { ...cleanedFormData.$unset, windDirection: 1 };
   }
 
-  // Handle accessOptions array
+  // Handle accessOptions array (as numbers)
   if (formData.accessOptions && formData.accessOptions.length > 0) {
-    cleanedFormData.accessOptions = formData.accessOptions;
+    cleanedFormData.accessOptions = formData.accessOptions as AccessOptionId[];
   } else if (originalSite?.accessOptions && originalSite.accessOptions.length > 0) {
     cleanedFormData.$unset = { ...cleanedFormData.$unset, accessOptions: 1 };
   }
 
   // Handle galleryImages array - remove _id from objects if present
   if (formData.galleryImages && formData.galleryImages.length > 0) {
-    cleanedFormData.galleryImages = formData.galleryImages.map(img => {
+    cleanedFormData.galleryImages = formData.galleryImages.map((img) => {
       // Create a clean image object with only the expected properties
       const cleanImage: GalleryImage = {
         path: img.path,
@@ -249,9 +270,13 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
     }
 
     // Handle location
-    const lng = field.location.coordinates[0] ? parseFloat(field.location.coordinates[0]) : null;
-    const lat = field.location.coordinates[1] ? parseFloat(field.location.coordinates[1]) : null;
-    
+    const lng = field.location.coordinates[0]
+      ? parseFloat(field.location.coordinates[0])
+      : null;
+    const lat = field.location.coordinates[1]
+      ? parseFloat(field.location.coordinates[1])
+      : null;
+
     if (lng !== null && lat !== null && !isNaN(lng) && !isNaN(lat)) {
       cleaned.location = {
         type: 'Point',
@@ -272,8 +297,7 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
       .map((field, index) => cleanLandingField(field, existingFields?.[index]))
       .filter((field) => {
         return (
-          Object.keys(field).length > 0 &&
-          (field.description || field.location || field.$unset)
+          Object.keys(field).length > 0 && (field.description || field.location || field.$unset)
         );
       });
   };
@@ -284,8 +308,8 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
   );
 
   // Check if we have any meaningful landing fields
-  const hasMeaningfulLandingFields = cleanedLandingFields.some(field => 
-    field.description || field.location || Object.keys(field).length > 1
+  const hasMeaningfulLandingFields = cleanedLandingFields.some(
+    (field) => field.description || field.location || Object.keys(field).length > 1
   );
 
   if (hasMeaningfulLandingFields && cleanedLandingFields.length > 0) {

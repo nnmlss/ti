@@ -60,7 +60,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
     isSubmitting,
     showSuccessMessage,
     landingFields,
-    tracklogsFields,
+    tracklogsValues,
     handleWindDirectionChange,
     handleAccessOptionChange,
     addBilingualArrayItem,
@@ -73,7 +73,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
   } = useEditSiteForm(site);
 
   const windDirectionValues = watch('windDirection') || [];
-  const accessOptionValues = watch('accessOptions') || [];
+  const accessOptionValues = (watch('accessOptions') as number[]) || [];
 
   const renderBilingualArrayFields = (
     field: 'accomodations' | 'alternatives' | 'localPilotsClubs',
@@ -351,12 +351,8 @@ function EditSite({ site, onClose }: EditSiteProps) {
                   control={
                     <Checkbox
                       id={`access-option-${option._id}`}
-                      checked={accessOptionValues.some(
-                        (selected) => selected._id === option._id
-                      )}
-                      onChange={() =>
-                        handleAccessOptionChange(option._id, option.bg, option.en)
-                      }
+                      checked={accessOptionValues.includes(option._id)}
+                      onChange={() => handleAccessOptionChange(option._id)}
                     />
                   }
                   label={`${option.bg} / ${option.en}`}
@@ -488,8 +484,11 @@ function EditSite({ site, onClose }: EditSiteProps) {
           <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
             Tracklogs
           </Typography>
-          {tracklogsFields.fields.map((item, index) => (
-            <Box key={item.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          {(tracklogsValues || []).map((_value, index) => (
+            <Box
+              key={`tracklog-${index}`}
+              sx={{ display: 'flex', alignItems: 'center', mb: 1 }}
+            >
               <Controller
                 name={`tracklogs.${index}`}
                 control={control}

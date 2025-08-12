@@ -33,11 +33,7 @@ export interface GalleryImage {
   height?: number;
 }
 
-export interface AccessOption {
-  _id: number;
-  bg?: string;
-  en?: string;
-}
+export type AccessOptionId = 0 | 1 | 2 | 3 | 4;
 
 export interface LandingFieldInfo {
   description?: LocalizedText;
@@ -49,7 +45,7 @@ export interface FlyingSite {
   title: LocalizedText;
   windDirection: WindDirection[];
   location: Location;
-  accessOptions: AccessOption[];
+  accessOptions: AccessOptionId[];
   altitude?: number | null;
   galleryImages?: GalleryImage[];
   accomodations?: {

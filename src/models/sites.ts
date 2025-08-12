@@ -35,11 +35,8 @@ export interface GalleryImage {
   height?: number;
 }
 
-export interface AccessOption {
-  _id: number;
-  bg?: string;
-  en?: string;
-}
+// Access options are stored as numeric IDs in the DB
+export type AccessOptionId = 0 | 1 | 2 | 3 | 4;
 
 export interface LandingFieldInfo {
   description?: string;
@@ -50,7 +47,7 @@ export interface FlyingSite {
   title: LocalizedText;
   windDirection: WindDirection[];
   location: Location;
-  accessOptions: AccessOption[];
+  accessOptions: AccessOptionId[];
   altitude?: number | null;
   galleryImages?: GalleryImage[];
   accomodations?: {
@@ -101,6 +98,7 @@ const GalleryImageSchema = new Schema(
   { _id: false, id: false }
 );
 
+// Deprecated legacy schema kept for backward compatibility in existing documents
 const AccessOptionSchema = new Schema({
   _id: { type: Number, required: true },
   bg: { type: String },
@@ -144,7 +142,22 @@ const FlyingSiteSchema = new Schema(
       },
     ],
     location: { type: LocationSchema, required: true },
-    accessOptions: [AccessOptionSchema],
+    accessOptions: {
+      type: [Number],
+      validate: {
+        validator: (ids: number[]) => {
+          if (!Array.isArray(ids)) return false;
+          const allowed = new Set([0, 1, 2, 3, 4]);
+          const unique = new Set<number>();
+          for (const id of ids) {
+            if (!allowed.has(id)) return false;
+            unique.add(id);
+          }
+          return unique.size === ids.length;
+        },
+        message: 'Invalid or duplicate access option IDs',
+      },
+    },
     altitude: { type: Number },
     galleryImages: [GalleryImageSchema],
     accomodations: {
@@ -182,6 +195,13 @@ const FlyingSiteSchema = new Schema(
             if (bgEmpty && enEmpty) delete ret[key];
           };
           const isEmptyString = (v: unknown) => typeof v === 'string' && v.trim().length === 0;
+
+          // Normalize accessOptions to numbers if legacy objects are present
+          if (Array.isArray(ret.accessOptions)) {
+            ret.accessOptions = ret.accessOptions
+              .map((v: any) => (typeof v === 'number' ? v : v?._id))
+              .filter((id: any) => [0, 1, 2, 3, 4].includes(id));
+          }
 
           // Remove empty arrays
           [

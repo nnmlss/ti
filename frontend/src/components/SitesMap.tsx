@@ -1,5 +1,5 @@
 import { useSites } from '../hooks/useSites';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import {
   CircularProgress,
   Alert,
@@ -22,7 +22,8 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 // Fix for default markers in react-leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+// TypeScript doesn't know about the internal _getIconUrl property
+delete (L.Icon.Default.prototype as { _getIconUrl?: () => string })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -114,6 +115,15 @@ export function SitesMap() {
           const [lng, lat] = site.location.coordinates;
           return (
             <Marker key={site._id} position={[lat!, lng!]}>
+              <Tooltip
+                key={`tooltip-${site._id}`}
+                permanent
+                direction='top'
+                offset={[-16, -4]}
+                opacity={1}
+              >
+                {site.title.bg}
+              </Tooltip>
               <Popup maxWidth={280} minWidth={260}>
                 <Card sx={{ width: '100%', boxShadow: 'none', border: 'none', p: 0, m: 0 }}>
                   <CardContent

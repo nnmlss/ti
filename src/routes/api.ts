@@ -20,19 +20,27 @@ router.get('/sites', async (req, res, next) => {
   }
 });
 
-// POST /api/sites - Create a new site
-router.post('/sites', async (req, res, next) => {
+// POST /api/new-site - Create a new site
+router.post('/new-site', async (req, res, next) => {
   try {
     const nextId = await getNextId();
-    const newSite = new Site({
-      ...req.body,
+    
+    // Only include fields that are actually provided in the request body
+    const siteData = {
       _id: nextId,
-    });
-    const savedSite = await newSite.save();
+      ...req.body,
+    };
+    
+    // Use insertOne directly to avoid Mongoose schema defaults
+    await Site.collection.insertOne(siteData);
+    
+    // Fetch the inserted document to return it with proper formatting
+    const savedSite = await Site.findOne({ _id: nextId });
+    
     res.status(201).json(savedSite);
     next();
   } catch (error: any) {
-    console.error('POST /sites error:', error);
+    console.error('POST /new-site error:', error);
     console.error('Error message:', error.message);
     console.error('Error name:', error.name);
     if (error.errors) {

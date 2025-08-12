@@ -32,7 +32,7 @@ export const loadSitesThunk = createAsyncThunk('sites/loadSites', async () => {
 export const addSiteThunk = createAsyncThunk(
   'sites/addSite',
   async (siteData: Partial<FlyingSite>) => {
-    const response = await fetch('/api/sites', {
+    const response = await fetch('/api/new-site', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

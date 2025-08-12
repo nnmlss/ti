@@ -17,7 +17,9 @@ import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
-import { useDeleteSiteMutation } from '../store/apiSlice';
+import { useDispatch } from 'react-redux';
+import { deleteSiteThunk } from '../store/sitesThunk';
+import type { AppDispatch } from '../store/store';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -33,13 +35,13 @@ L.Icon.Default.mergeOptions({
 
 export function SitesMap() {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const { isOpen, targetId, confirm, handleConfirm, handleCancel } = useConfirmDialog();
-  const [deleteSite] = useDeleteSiteMutation();
   const { sites, error, loading } = useSites();
 
   const handleDelete = async (siteId: string) => {
     try {
-      await deleteSite(siteId).unwrap();
+      await dispatch(deleteSiteThunk(siteId));
     } catch (error) {
       console.error('Failed to delete site:', error);
     }
@@ -119,7 +121,7 @@ export function SitesMap() {
                 key={`tooltip-${site._id}`}
                 permanent
                 direction='top'
-                offset={[-16, -4]}
+                offset={[-15, -7]}
                 opacity={1}
               >
                 {site.title.bg}

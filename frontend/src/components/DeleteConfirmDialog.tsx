@@ -10,7 +10,9 @@ import {
 } from '@mui/material';
 
 import GpsOffIcon from '@mui/icons-material/GpsOff';
-import { useDeleteSiteMutation } from '../store/apiSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteSiteThunk } from '../store/sitesThunk';
+import type { RootState, AppDispatch } from '../store/store';
 import { AccessibleDialog } from './AccessibleDialog';
 
 interface DeleteConfirmDialogProps {
@@ -28,14 +30,15 @@ export function DeleteConfirmDialog({
   title,
   onConfirm,
 }: DeleteConfirmDialogProps) {
-  const [deleteSite, { isLoading: isDeleting }] = useDeleteSiteMutation();
+  const dispatch = useDispatch<AppDispatch>();
+  const isDeleting = useSelector((state: RootState) => state.loading.deleting);
 
   const handleConfirm = async () => {
     if (onConfirm) {
       onConfirm();
     } else {
       try {
-        await deleteSite(siteId).unwrap();
+        await dispatch(deleteSiteThunk(siteId));
         onClose();
       } catch (error) {
         console.error('Failed to delete site:', error);

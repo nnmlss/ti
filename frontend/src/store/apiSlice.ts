@@ -55,5 +55,4 @@ export const {
   useGetSiteQuery,
   useAddSiteMutation,
   useUpdateSiteMutation,
-  useDeleteSiteMutation,
 } = apiSlice;

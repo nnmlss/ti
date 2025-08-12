@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
-import { useDeleteSiteMutation } from '../store/apiSlice';
+import { deleteSiteThunk } from '../store/sitesThunk';
 import { SiteCard } from '../components/SiteCard';
 import type { FlyingSite } from '../types';
+import type { AppDispatch } from '../store/store';
 
 interface SiteCardContainerProps {
   site: FlyingSite;
@@ -10,12 +12,12 @@ interface SiteCardContainerProps {
 
 export function SiteCardContainer({ site }: SiteCardContainerProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const { isOpen, targetId, confirm, handleConfirm, handleCancel } = useConfirmDialog();
-  const [deleteSite] = useDeleteSiteMutation();
 
   const handleDelete = async () => {
     try {
-      await deleteSite(site._id).unwrap();
+      await dispatch(deleteSiteThunk(site._id));
     } catch (error) {
       console.error('Failed to delete site:', error);
     }

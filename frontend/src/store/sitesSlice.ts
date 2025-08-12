@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { FlyingSite } from '../types';
+import { deleteSiteThunk } from './sitesThunk';
 
 // Sites array slice
 const sitesArraySlice = createSlice({
@@ -23,16 +24,36 @@ const sitesArraySlice = createSlice({
       return state.filter((site) => site._id !== action.payload);
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(deleteSiteThunk.fulfilled, (state, action) => {
+      return state.filter((site) => site._id !== action.payload);
+    });
+  },
 });
 
 // Loading state slice
 const loadingSlice = createSlice({
   name: 'loading',
-  initialState: false,
+  initialState: {
+    general: false,
+    deleting: false,
+  },
   reducers: {
     setLoading: (state, action: PayloadAction<boolean>) => {
-      return action.payload;
+      state.general = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(deleteSiteThunk.pending, (state) => {
+        state.deleting = true;
+      })
+      .addCase(deleteSiteThunk.fulfilled, (state) => {
+        state.deleting = false;
+      })
+      .addCase(deleteSiteThunk.rejected, (state) => {
+        state.deleting = false;
+      });
   },
 });
 
@@ -41,7 +62,7 @@ const errorSlice = createSlice({
   name: 'error',
   initialState: null as string | null,
   reducers: {
-    setError: (state, action: PayloadAction<string | null>) => {
+    setError: (_state, action: PayloadAction<string | null>) => {
       return action.payload;
     },
     clearError: () => {

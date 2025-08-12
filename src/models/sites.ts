@@ -75,22 +75,31 @@ export interface FlyingSite {
 
 export interface FlyingSiteDocument extends FlyingSite, Document {}
 
-const LocationSchema = new Schema({
-  type: { type: String, enum: ['Point'], required: true },
-  coordinates: { type: [Number], required: true },
-});
+const LocationSchema = new Schema(
+  {
+    type: { type: String, enum: ['Point'], required: true },
+    coordinates: { type: [Number], required: true },
+  },
+  { _id: false, id: false }
+);
 
-const LocalizedTextSchema = new Schema({
-  bg: { type: String },
-  en: { type: String },
-});
+const LocalizedTextSchema = new Schema(
+  {
+    bg: { type: String },
+    en: { type: String },
+  },
+  { _id: false, id: false }
+);
 
-const GalleryImageSchema = new Schema({
-  path: { type: String, required: true },
-  author: { type: String },
-  width: { type: Number },
-  height: { type: Number },
-});
+const GalleryImageSchema = new Schema(
+  {
+    path: { type: String, required: true },
+    author: { type: String },
+    width: { type: Number },
+    height: { type: Number },
+  },
+  { _id: false, id: false }
+);
 
 const AccessOptionSchema = new Schema({
   _id: { type: Number, required: true },
@@ -98,60 +107,113 @@ const AccessOptionSchema = new Schema({
   en: { type: String },
 });
 
-const LandingFieldInfoSchema = new Schema({
-  description: { type: String },
-  location: LocationSchema,
-});
+const LandingFieldInfoSchema = new Schema(
+  {
+    description: { type: String },
+    location: LocationSchema,
+  },
+  { _id: false, id: false }
+);
 
-const FlyingSiteSchema = new Schema({
-  _id: { type: Schema.Types.Mixed },
-  title: { type: LocalizedTextSchema, required: true },
-  windDirection: [
-    {
-      type: String,
-      enum: [
-        'N',
-        'NNE',
-        'NE',
-        'ENE',
-        'E',
-        'ESE',
-        'SE',
-        'SSE',
-        'S',
-        'SSW',
-        'SW',
-        'WSW',
-        'W',
-        'WNW',
-        'NW',
-        'NNW',
-      ],
-      required: true,
+const FlyingSiteSchema = new Schema(
+  {
+    _id: { type: Schema.Types.Mixed },
+    title: { type: LocalizedTextSchema, required: true },
+    windDirection: [
+      {
+        type: String,
+        enum: [
+          'N',
+          'NNE',
+          'NE',
+          'ENE',
+          'E',
+          'ESE',
+          'SE',
+          'SSE',
+          'S',
+          'SSW',
+          'SW',
+          'WSW',
+          'W',
+          'WNW',
+          'NW',
+          'NNW',
+        ],
+        required: true,
+      },
+    ],
+    location: { type: LocationSchema, required: true },
+    accessOptions: [AccessOptionSchema],
+    altitude: { type: Number },
+    galleryImages: [GalleryImageSchema],
+    accomodations: {
+      bg: [{ type: String }],
+      en: [{ type: String }],
     },
-  ],
-  location: { type: LocationSchema, required: true },
-  accessOptions: [AccessOptionSchema],
-  altitude: { type: Number },
-  galleryImages: [GalleryImageSchema],
-  accomodations: {
-    bg: [{ type: String }],
-    en: [{ type: String }],
+    alternatives: {
+      bg: [{ type: String }],
+      en: [{ type: String }],
+    },
+    access: LocalizedTextSchema,
+    landingFields: {
+      bg: [LandingFieldInfoSchema],
+      en: [LandingFieldInfoSchema],
+    },
+    tracklogs: [{ type: String }],
+    localPilotsClubs: {
+      bg: [{ type: String }],
+      en: [{ type: String }],
+    },
   },
-  alternatives: {
-    bg: [{ type: String }],
-    en: [{ type: String }],
-  },
-  access: LocalizedTextSchema,
-  landingFields: {
-    bg: [LandingFieldInfoSchema],
-    en: [LandingFieldInfoSchema],
-  },
-  tracklogs: [{ type: String }],
-  localPilotsClubs: {
-    bg: [{ type: String }],
-    en: [{ type: String }],
-  },
-});
+  {
+    toJSON: {
+      virtuals: true,
+      transform: (_doc: any, ret: any) => {
+        try {
+          const removeArrayIfEmpty = (key: string) => {
+            if (Array.isArray(ret[key]) && ret[key].length === 0) delete ret[key];
+          };
+          const removeBilingualArraysIfEmpty = (key: string) => {
+            const val = ret[key];
+            if (!val) return;
+            const bgEmpty = !Array.isArray(val.bg) || val.bg.length === 0;
+            const enEmpty = !Array.isArray(val.en) || val.en.length === 0;
+            if (bgEmpty && enEmpty) delete ret[key];
+          };
+          const isEmptyString = (v: unknown) => typeof v === 'string' && v.trim().length === 0;
+
+          // Remove empty arrays
+          [
+            'windDirection',
+            'galleryImages',
+            'landingFields',
+            'tracklogs',
+            'accessOptions',
+          ].forEach(removeArrayIfEmpty);
+          // Remove empty bilingual arrays containers
+          ['accomodations', 'alternatives', 'localPilotsClubs'].forEach(
+            removeBilingualArraysIfEmpty
+          );
+          // Remove access if both bg/en empty or missing
+          if (ret.access) {
+            const bgEmpty = ret.access.bg === undefined || isEmptyString(ret.access.bg);
+            const enEmpty = ret.access.en === undefined || isEmptyString(ret.access.en);
+            if (bgEmpty && enEmpty) delete ret.access;
+          }
+          // Do not expose id virtual or version key
+          delete ret.id;
+        } catch (e) {
+          console.error('toJSON transform error:', e);
+          return ret;
+        }
+        return ret;
+      },
+    },
+    toObject: { virtuals: true },
+    id: false,
+    versionKey: false,
+  }
+);
 
 export const Site = mongoose.model<FlyingSiteDocument>('Site', FlyingSiteSchema, 'paragliding');

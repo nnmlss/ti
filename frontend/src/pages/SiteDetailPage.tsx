@@ -11,10 +11,8 @@ import {
   CircularProgress,
   Alert,
   Box,
-  Button,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 export function SiteDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +26,7 @@ export function SiteDetailPage() {
     if (siteState.isLoading) {
       return (
         <Box display='flex' justifyContent='center' p={4}>
-          <CircularProgress />
+          <CircularProgress disableShrink />
         </Box>
       );
     }
@@ -45,14 +43,14 @@ export function SiteDetailPage() {
   };
 
   return (
-    <AccessibleDialog 
-      open={true} 
-      onClose={handleClose} 
-      fullWidth 
+    <AccessibleDialog
+      open={true}
+      onClose={handleClose}
+      fullWidth
       scroll='paper'
-      title="Детайли за място за летене"
-      description="Подробна информация за избраното място за летене"
-      aria-label="Детайли за място за летене"
+      title='Детайли за място за летене'
+      description='Подробна информация за избраното място за летене'
+      aria-label='Детайли за място за летене'
     >
       <DialogTitle
         sx={{
@@ -62,11 +60,7 @@ export function SiteDetailPage() {
           pb: 1,
         }}
       >
-        <IconButton 
-          onClick={handleClose} 
-          size='small'
-          aria-label="Затвори диалога"
-        >
+        <IconButton onClick={handleClose} size='small' aria-label='Затвори диалога'>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

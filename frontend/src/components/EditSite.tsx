@@ -259,7 +259,7 @@ function EditSite({ site }: EditSiteProps) {
               </Typography>
             </Alert>
 
-            <CircularProgress />
+            <CircularProgress disableShrink />
 
             <Typography variant='body2' sx={{ mt: 2, color: 'text.secondary' }}>
               Запазване на промените...
@@ -529,7 +529,7 @@ function EditSite({ site }: EditSiteProps) {
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <CircularProgress size={24} />
+                <CircularProgress size={24} disableShrink />
               ) : site ? (
                 'Обнови старта'
               ) : (

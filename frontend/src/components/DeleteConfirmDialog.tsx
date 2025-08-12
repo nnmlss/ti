@@ -44,12 +44,12 @@ export function DeleteConfirmDialog({
   };
 
   return (
-    <AccessibleDialog 
-      open={open} 
-      onClose={onClose} 
-      maxWidth='sm' 
+    <AccessibleDialog
+      open={open}
+      onClose={onClose}
+      maxWidth='sm'
       fullWidth
-      title="Delete flying site confirmation"
+      title='Delete flying site confirmation'
       description={`Confirm deletion of site: ${title}`}
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', color: 'error.main' }}>
@@ -71,7 +71,9 @@ export function DeleteConfirmDialog({
           variant='contained'
           disabled={isDeleting}
           startIcon={
-            isDeleting ? <CircularProgress size={21} sx={{ color: 'white' }} /> : undefined
+            isDeleting ? (
+              <CircularProgress size={21} sx={{ color: 'white' }} disableShrink />
+            ) : undefined
           }
           sx={
             isDeleting

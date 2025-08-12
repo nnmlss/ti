@@ -56,7 +56,7 @@ export function SitesMap() {
           alignItems: 'center',
         }}
       >
-        <CircularProgress />
+        <CircularProgress disableShrink />
       </Box>
     );
   }

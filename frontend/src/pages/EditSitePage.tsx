@@ -29,7 +29,7 @@ export function EditSitePage() {
     if (siteState.isLoading) {
       return (
         <Box display='flex' justifyContent='center' p={4}>
-          <CircularProgress />
+          <CircularProgress variant='indeterminate' color='primary' disableShrink />
         </Box>
       );
     }
@@ -38,19 +38,23 @@ export function EditSitePage() {
       return <Alert severity='error'>{siteState.error || 'Error loading site data!'}</Alert>;
     }
 
-    return siteState.data ? <EditSite site={siteState.data} /> : <Alert severity='warning'>Site not found.</Alert>;
+    return siteState.data ? (
+      <EditSite site={siteState.data} />
+    ) : (
+      <Alert severity='warning'>Site not found.</Alert>
+    );
   };
 
   return (
-    <AccessibleDialog 
-      open={true} 
-      onClose={handleClose} 
-      maxWidth='md' 
-      fullWidth 
+    <AccessibleDialog
+      open={true}
+      onClose={handleClose}
+      maxWidth='md'
+      fullWidth
       scroll='paper'
-      title="Редакция на място за летене"
-      description="Форма за редактиране на информацията за място за летене"
-      aria-label="Редакция на място за летене"
+      title='Редакция на място за летене'
+      description='Форма за редактиране на информацията за място за летене'
+      aria-label='Редакция на място за летене'
     >
       <DialogTitle
         sx={{
@@ -64,11 +68,7 @@ export function EditSitePage() {
           <GpsFixedIcon sx={{ mr: 1 }} />
           Редакция на място за летене
         </Box>
-        <IconButton 
-          onClick={handleClose} 
-          size='small'
-          aria-label="Затвори диалога"
-        >
+        <IconButton onClick={handleClose} size='small' aria-label='Затвори диалога'>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

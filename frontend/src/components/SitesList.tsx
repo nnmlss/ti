@@ -16,7 +16,7 @@ export function SitesList() {
           alignItems: 'center',
         }}
       >
-        <CircularProgress />
+        <CircularProgress disableShrink />
       </Box>
     );
   }

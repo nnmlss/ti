@@ -13,7 +13,10 @@
     "start:frontend": "cd frontend && npm run dev",
     "build": "npm run build:backend && npm run build:frontend",
     "build:backend": "tsc",
-    "build:frontend": "cd frontend && npm run build"
+    "build:frontend": "cd frontend && npm run build",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "dotenv": "^17.2.1",
@@ -27,8 +30,12 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.2.0",
+    "@types/supertest": "^6.0.3",
+    "@vitest/ui": "^3.2.4",
     "concurrently": "^9.2.0",
     "nodemon": "^3.1.10",
-    "tsc-watch": "^7.1.1"
+    "supertest": "^7.1.4",
+    "tsc-watch": "^7.1.1",
+    "vitest": "^3.2.4"
   }
 }

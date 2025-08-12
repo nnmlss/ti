@@ -61,7 +61,7 @@ export const useLocalStorage = <T>(
     
     try {
       return storage.getItem(key) !== null;
-    } catch (error) {
+    } catch {
       return false;
     }
   }, [key, storage]);

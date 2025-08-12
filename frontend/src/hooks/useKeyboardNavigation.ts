@@ -21,15 +21,6 @@ export const useKeyboardNavigation = (
   options: KeyboardNavigationOptions = {}
 ) => {
   const {
-    onEscape,
-    onEnter,
-    onSpace,
-    onArrowUp,
-    onArrowDown,
-    onArrowLeft,
-    onArrowRight,
-    onHome,
-    onEnd,
     enableArrowKeys = false,
     preventDefault = true,
     stopPropagation = true,

@@ -46,25 +46,23 @@ const createStateFromStatus = <T>(
   isError: status === 'error',
 });
 
-export const useAsyncState = <T = any>(
-  initialData: T | null = null
-): AsyncStateHook<T> => {
+export const useAsyncState = <T = unknown>(initialData: T | null = null): AsyncStateHook<T> => {
   const [state, setState] = useState<AsyncState<T>>(() => {
     if (initialData) {
-      return createStateFromStatus('success', initialData);
+      return createStateFromStatus<T>('success', initialData);
     }
     return createInitialState<T>();
   });
 
   const execute = useCallback(async (asyncFn: () => Promise<T>) => {
-    setState(createStateFromStatus('loading'));
-    
+    setState(createStateFromStatus<T>('loading'));
+
     try {
       const data = await asyncFn();
-      setState(createStateFromStatus('success', data));
+      setState(createStateFromStatus<T>('success', data));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      setState(createStateFromStatus('error', null, errorMessage));
+      setState(createStateFromStatus<T>('error', null, errorMessage));
     }
   }, []);
 
@@ -73,11 +71,11 @@ export const useAsyncState = <T = any>(
   }, []);
 
   const setData = useCallback((data: T) => {
-    setState(createStateFromStatus('success', data));
+    setState(createStateFromStatus<T>('success', data));
   }, []);
 
   const setError = useCallback((error: string) => {
-    setState(createStateFromStatus('error', null, error));
+    setState(createStateFromStatus<T>('error', null, error));
   }, []);
 
   return {

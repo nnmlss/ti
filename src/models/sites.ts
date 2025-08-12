@@ -25,7 +25,7 @@ export interface LocalizedText {
 
 export interface Location {
   type: 'Point';
-  coordinates: [number | null, number | null]; // [longitude, latitude]
+  coordinates: [number, number]; // [longitude, latitude]
 }
 
 export interface GalleryImage {
@@ -165,24 +165,23 @@ const FlyingSiteSchema = new Schema(
     altitude: { type: Number },
     galleryImages: [GalleryImageSchema],
     accomodations: {
-      bg: [{ type: String }],
-      en: [{ type: String }],
+      bg: [String],
+      en: [String],
     },
     alternatives: {
-      bg: [{ type: String }],
-      en: [{ type: String }],
+      bg: [String],
+      en: [String],
     },
     access: LocalizedTextSchema,
     landingFields: [LandingFieldInfoSchema],
-    tracklogs: [{ type: String }],
+    tracklogs: [String],
     localPilotsClubs: {
-      bg: [{ type: String }],
-      en: [{ type: String }],
+      bg: [String],
+      en: [String],
     },
   },
   {
     toJSON: {
-      virtuals: true,
       transform: (_doc: any, ret: any) => {
         try {
           const removeArrayIfEmpty = (key: string) => {
@@ -231,7 +230,6 @@ const FlyingSiteSchema = new Schema(
         return ret;
       },
     },
-    toObject: { virtuals: true },
     id: false,
     versionKey: false,
   }

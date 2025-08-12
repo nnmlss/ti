@@ -23,7 +23,7 @@ export interface LocalizedText {
 
 export interface Location {
   type: 'Point';
-  coordinates: [number | null, number | null]; // [longitude, latitude]
+  coordinates: [number, number]; // [longitude, latitude]
 }
 
 export interface GalleryImage {

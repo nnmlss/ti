@@ -1,11 +1,10 @@
 import { useId } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import type { WindDirection } from '../types';
 
 interface WindDirectionCompassProps {
   windDirections: WindDirection[];
   size?: number;
-  showLabels?: boolean;
 }
 
 const WIND_DIRECTION_ANGLES: Record<WindDirection, number> = {
@@ -35,9 +34,8 @@ const CARDINAL_DIRECTIONS = [
 ];
 
 export function WindDirectionCompass({
-  windDirections,
+  windDirections = [],
   size = 120,
-  showLabels = true,
 }: WindDirectionCompassProps) {
   const theme = useTheme();
   const radius = size / 2;
@@ -49,10 +47,10 @@ export function WindDirectionCompass({
   const titleId = useId();
   const descId = useId();
 
-  const accessibleDescription = `Suitable wind directions are: ${windDirections.join(', ')}.`;
+  const accessibleDescription = `Suitable wind directions are: ${windDirections?.join(', ') || 'None specified'}.`;
 
   // Create filled segments for each wind direction
-  const segments = windDirections.map((direction, index) => {
+  const segments = (windDirections || []).map((direction, index) => {
     const angle = WIND_DIRECTION_ANGLES[direction];
     const startAngle = angle - 11.25; // 22.5° / 2 = 11.25° for each direction
     const endAngle = angle + 11.25;

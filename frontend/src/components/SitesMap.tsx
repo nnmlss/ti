@@ -167,7 +167,6 @@ export function SitesMap() {
                       <WindDirectionCompass
                         windDirections={site.windDirection}
                         size={60}
-                        showLabels={false}
                       />
                       <Typography variant='body2' sx={{ textAlign: 'center', mt: 1 }}>
                         {site.altitude ? `${site.altitude}m` : 'N/A'}

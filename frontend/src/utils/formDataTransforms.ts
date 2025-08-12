@@ -130,7 +130,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
 
   return {
     title: transformLocalizedText(site.title),
-    windDirection: [...site.windDirection],
+    windDirection: site.windDirection ? [...site.windDirection] : [],
     location: {
       type: 'Point' as const,
       coordinates: [
@@ -139,7 +139,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
       ] as [string, string],
     },
     altitude: site.altitude?.toString() || '',
-    accessOptions: [...site.accessOptions],
+    accessOptions: site.accessOptions ? [...site.accessOptions] : [],
     galleryImages: site.galleryImages ? [...site.galleryImages] : [],
     accomodations: transformBilingualArray(site.accomodations),
     alternatives: transformBilingualArray(site.alternatives),

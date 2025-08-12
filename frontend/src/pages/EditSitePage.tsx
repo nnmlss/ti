@@ -58,7 +58,7 @@ export function EditSitePage() {
     return site ? (
       <EditSite site={site} onClose={handleClose} />
     ) : (
-      <Alert severity='warning'>Site not found. ID: {id}</Alert>
+      <Alert severity='error'>Site not found. ID: {id}</Alert>
     );
   };
 
@@ -66,7 +66,7 @@ export function EditSitePage() {
     <AccessibleDialog
       open={true}
       onClose={handleClose}
-      maxWidth='md'
+      maxWidth={site ? 'md' : 'sm'}
       fullWidth
       scroll='paper'
       title='Редакция на място за летене'

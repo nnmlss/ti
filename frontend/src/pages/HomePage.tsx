@@ -4,7 +4,7 @@ import { WindDirectionFilter } from '../components/WindDirectionFilter';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import MapIcon from '@mui/icons-material/Map';
+import PublicIcon from '@mui/icons-material/Public';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
 
@@ -74,7 +74,7 @@ export function HomePage({
             onClick={() => onViewToggle('map')}
             sx={{ color: !isListView ? 'primary.main' : 'inherit' }}
           >
-            <MapIcon />
+            <PublicIcon />
           </IconButton>
           <IconButton
             onClick={() => onViewToggle('list')}

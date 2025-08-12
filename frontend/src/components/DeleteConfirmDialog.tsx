@@ -65,28 +65,8 @@ export function DeleteConfirmDialog({
         <Button onClick={onClose} disabled={isDeleting}>
           Cancel
         </Button>
-        <Button
-          onClick={handleConfirm}
-          color='error'
-          variant='contained'
-          disabled={isDeleting}
-          startIcon={
-            isDeleting ? (
-              <CircularProgress size={21} sx={{ color: 'white' }} disableShrink />
-            ) : undefined
-          }
-          sx={
-            isDeleting
-              ? {
-                  color: 'white !important',
-                  '& .MuiCircularProgress-root': {
-                    color: 'white !important',
-                  },
-                }
-              : undefined
-          }
-        >
-          {isDeleting ? '' : 'Delete'}
+        <Button onClick={handleConfirm} color='error' variant='contained' disabled={isDeleting}>
+          {isDeleting ? <CircularProgress size={21} sx={{ color: 'white' }} /> : 'Изтрии'}
         </Button>
       </DialogActions>
     </AccessibleDialog>

@@ -28,7 +28,15 @@ export function AccessOptionsView({ accessOptions, size = 24 }: AccessOptionsVie
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 1,
+      }}
+    >
       {accessOptions.map((id) => {
         const iconSrc = accessIconMap[id];
         if (!iconSrc) {

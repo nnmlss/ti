@@ -112,10 +112,6 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
 
           return (
             <Paper key={index} sx={{ p: 2, mb: 2 }}>
-              <Typography variant='subtitle1' gutterBottom>
-                Landing Field {index + 1}
-              </Typography>
-
               {(field.description?.bg || field.description?.en) && (
                 <Box sx={{ mb: 2 }}>
                   {field.description?.bg && (
@@ -203,11 +199,7 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
           {/* Wind Directions & Altitude */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{ textAlign: 'center' }}>
-              <WindDirectionCompass
-                windDirections={site.windDirection}
-                size={120}
-                showLabels={true}
-              />
+              <WindDirectionCompass windDirections={site.windDirection} size={120} />
               {site.altitude && (
                 <Typography variant='h6' sx={{ mt: 2 }}>
                   {site.altitude}m

@@ -64,6 +64,7 @@ export function SiteDetailPage() {
       open={true}
       onClose={handleClose}
       fullWidth
+      maxWidth={false}
       scroll='paper'
       title='Детайли за място за летене'
       description='Подробна информация за избраното място за летене'

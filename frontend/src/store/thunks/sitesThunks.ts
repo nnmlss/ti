@@ -42,7 +42,7 @@ export const addSiteThunk = createAsyncThunk(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.errors?.map((err: any) => err.msg).join(', ') || 'Failed to add site';
+      const errorMessage = errorData.errors?.map((err: { msg: string }) => err.msg).join(', ') || 'Failed to add site';
       return rejectWithValue(errorMessage);
     }
 

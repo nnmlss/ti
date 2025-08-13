@@ -3,9 +3,9 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSiteThunk, updateSiteThunk } from '../store/thunks/sitesThunks';
-import type { AppDispatch, RootState } from '../store/store';
+import type { AppDispatch } from '../store/store';
 import { useNotificationDialog } from './useNotificationDialog';
-import { selectAllSitesLoadState, resetLoadState } from '../store/slices/allSitesSlice';
+import { selectAllSitesLoadState } from '../store/slices/allSitesSlice';
 import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
 import type { AccessOptionId } from '../types';
 import { navigateToHome } from '../utils/navigation';
@@ -32,7 +32,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     setValue,
     setError,
     setFocus,
-    formState: { isSubmitting, errors, isValid },
+    formState: { isSubmitting, isValid },
   } = form;
 
   // Field arrays for dynamic sections
@@ -143,11 +143,11 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     }
   };
 
-  const onInvalid = (errors: any) => {
+  const onInvalid = (errors: Record<string, unknown>) => {
     // Find first error field and focus it
     const firstErrorField = Object.keys(errors)[0];
     if (firstErrorField) {
-      setFocus(firstErrorField as any);
+      setFocus(firstErrorField as keyof FormDataSite);
     }
   };
 

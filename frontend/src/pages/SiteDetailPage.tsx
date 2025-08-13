@@ -55,7 +55,10 @@ export function SiteDetailPage() {
     return site ? (
       <SiteDetailView site={site} />
     ) : (
-      <Alert severity='warning'>Site not found. ID: {id}</Alert>
+      <Alert severity='warning'>
+        Не е намерена информация за място с ID: {id}. Или не съществува, или имате проблеми с
+        интернет връзката.
+      </Alert>
     );
   };
 

@@ -53,7 +53,7 @@ export function DeleteConfirmDialog({
           thunkAction: deleteSiteThunk(siteId),
           onSuccess: () => {
             onClose();
-          }
+          },
         });
       });
     }
@@ -68,12 +68,20 @@ export function DeleteConfirmDialog({
       title='Delete flying site confirmation'
       description={`Confirm deletion of site: ${title}`}
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', color: 'error.main' }}>
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          color: 'error.main',
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
+      >
         Изтриване на място за летене
       </DialogTitle>
       <DialogContent>
-        <Box sx={{ my: 2, display: 'flex', justifyContent: 'center', gap: 1 }}>
-          <GpsOffIcon color='error' />
+        <Box sx={{ my: 2, pt: 3, display: 'flex', justifyContent: 'center' }}>
+          <GpsOffIcon color='error' sx={{ mr: 1 }} />
           <Typography>Наистина искаш да изтриеш "{title}"?</Typography>
         </Box>
       </DialogContent>

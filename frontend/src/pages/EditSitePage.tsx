@@ -81,7 +81,9 @@ export function EditSitePage() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          pb: 1,
+          p: 2,
+          borderBottom: 1,
+          borderColor: 'divider',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>

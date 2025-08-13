@@ -37,6 +37,21 @@ export interface GalleryImage {
   large?: string;
 }
 
+export interface GalleryImageItemProps {
+  image: GalleryImage;
+  onDelete: (imagePath: string) => void;
+  onUpdate: (imagePath: string, updates: Partial<GalleryImage>) => void;
+  isMarkedForDeletion: boolean;
+}
+
+export interface GalleryImageListProps {
+  images: GalleryImage[];
+  onImageDelete: (imagePath: string) => void;
+  onImageUpdate: (imagePath: string, updates: Partial<GalleryImage>) => void;
+  imagesToDelete: Set<string>;
+  error?: string | null;
+}
+
 export type AccessOptionId = 0 | 1 | 2 | 3 | 4;
 
 export interface LandingFieldInfo {

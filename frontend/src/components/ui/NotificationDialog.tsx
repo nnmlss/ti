@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogActions, Button, Alert, AlertTitle } from '@mui/material';
-import type { NotificationState } from '../hooks/useNotificationDialog';
+import type { NotificationState } from '../../hooks/useNotificationDialog';
 
 interface NotificationDialogProps {
   notification: NotificationState;

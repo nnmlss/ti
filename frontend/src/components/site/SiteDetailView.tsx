@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
-import type { FlyingSite } from '../types';
+import type { FlyingSite } from '../../types';
 
 interface SiteDetailViewProps {
   site: FlyingSite;
@@ -214,7 +214,11 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
               <Typography variant='h6' gutterBottom color='primary.main'>
                 Методи на достъп
               </Typography>
-              <AccessOptionsView accessOptions={site.accessOptions} size={60} showLabels={true} />
+              <AccessOptionsView
+                accessOptions={site.accessOptions}
+                size={60}
+                showLabels={true}
+              />
 
               {/* Location */}
             </Box>

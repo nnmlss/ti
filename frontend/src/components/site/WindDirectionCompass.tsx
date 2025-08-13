@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { Box, useTheme } from '@mui/material';
-import type { WindDirection } from '../types';
+import type { WindDirection } from '../../types';
 
 interface WindDirectionCompassProps {
   windDirections: WindDirection[];
@@ -47,7 +47,9 @@ export function WindDirectionCompass({
   const titleId = useId();
   const descId = useId();
 
-  const accessibleDescription = `Suitable wind directions are: ${windDirections?.join(', ') || 'None specified'}.`;
+  const accessibleDescription = `Suitable wind directions are: ${
+    windDirections?.join(', ') || 'None specified'
+  }.`;
 
   // Create filled segments for each wind direction
   const segments = (windDirections || []).map((direction, index) => {

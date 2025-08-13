@@ -16,12 +16,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Controller } from 'react-hook-form';
 
-import type { FlyingSite } from '../types';
-import { useEditSiteForm } from '../hooks/useEditSiteForm';
-import { accessOptions } from '../constants/accessOptions';
-import { windDirections } from '../constants/windDirections';
-import { GalleryImageUpload } from './GalleryImageUpload';
-import { GalleryImageList } from './GalleryImageList';
+import type { FlyingSite } from '../../types';
+import { useEditSiteForm } from '../../hooks/useEditSiteForm';
+import { accessOptions } from '../../constants/accessOptions';
+import { windDirections } from '../../constants/windDirections';
+import { GalleryImageUpload } from '../gallery/GalleryImageUpload';
+import { GalleryImageList } from '../gallery/GalleryImageList';
 
 interface EditSiteProps {
   site?: FlyingSite;
@@ -525,14 +525,14 @@ function EditSite({ site, onClose }: EditSiteProps) {
           <Typography variant='h6' gutterBottom sx={{ mt: 4 }}>
             Gallery Images
           </Typography>
-          
+
           <GalleryImageUpload
             onFilesSelected={handleImageUpload}
             isUploading={isUploadingImages}
             error={galleryError}
             maxFiles={20}
           />
-          
+
           <GalleryImageList
             images={galleryImages}
             onImageDelete={handleImageDelete}

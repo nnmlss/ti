@@ -12,10 +12,10 @@ import LocationPinIcon from '@mui/icons-material/LocationPin';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import type { FlyingSite } from '../types';
+import type { FlyingSite } from '../../types';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
-import { DeleteConfirmDialog } from './DeleteConfirmDialog';
+import { DeleteConfirmDialog } from '../ui/DeleteConfirmDialog';
 
 interface DeleteDialogState {
   isOpen: boolean;

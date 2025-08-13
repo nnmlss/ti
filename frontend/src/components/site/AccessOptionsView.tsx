@@ -1,13 +1,13 @@
 import { Box, Typography } from '@mui/material';
-import type { AccessOptionId } from '../types';
-import { accessOptions } from '../constants/accessOptions';
+import type { AccessOptionId } from '../../types';
+import { accessOptions } from '../../constants/accessOptions';
 
 // Import all access icons
-import access0Icon from '../assets/icons/access0.svg';
-import access1Icon from '../assets/icons/access1.svg';
-import access2Icon from '../assets/icons/access2.svg';
-import access3Icon from '../assets/icons/access3.svg';
-import access4Icon from '../assets/icons/access4.svg';
+import access0Icon from '../../assets/icons/access0.svg';
+import access1Icon from '../../assets/icons/access1.svg';
+import access2Icon from '../../assets/icons/access2.svg';
+import access3Icon from '../../assets/icons/access3.svg';
+import access4Icon from '../../assets/icons/access4.svg';
 
 interface AccessOptionsViewProps {
   accessOptions: AccessOptionId[];

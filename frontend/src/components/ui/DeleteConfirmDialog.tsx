@@ -11,11 +11,11 @@ import {
 
 import GpsOffIcon from '@mui/icons-material/GpsOff';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteSiteThunk } from '../store/thunks/sitesThunks';
-import type { RootState, AppDispatch } from '../store/store';
-import { dispatchThunkWithCallback } from '../store/utils/thunkWithCallback';
+import { deleteSiteThunk } from '../../store/thunks/sitesThunks';
+import type { RootState, AppDispatch } from '../../store/store';
+import { dispatchThunkWithCallback } from '../../store/utils/thunkWithCallback';
 import { AccessibleDialog } from './AccessibleDialog';
-import { useImmediateAsync } from '../hooks/useImmediateAsync';
+import { useImmediateAsync } from '../../hooks/useImmediateAsync';
 
 interface DeleteConfirmDialogProps {
   open: boolean;

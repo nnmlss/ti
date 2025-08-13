@@ -1,6 +1,6 @@
-import { SitesMap } from '../components/SitesMap';
-import { SitesList } from '../components/SitesList';
-import { WindDirectionFilter } from '../components/WindDirectionFilter';
+import { SitesMap } from '../components/main/SitesMap';
+import { SitesList } from '../components/main/SitesList';
+import { WindDirectionFilter } from '../components/main/WindDirectionFilter';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -29,7 +29,6 @@ export function HomePage({
 
   return (
     <Box sx={{ position: 'relative', height: '100vh', width: '100vw', overflowX: 'hidden' }}>
-      {/* Floating header with title and add button */}
       <Box
         sx={{
           position: 'fixed',

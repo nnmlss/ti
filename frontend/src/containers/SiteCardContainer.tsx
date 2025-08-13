@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { deleteSiteThunk } from '../store/thunks/sitesThunks';
-import { SiteCard } from '../components/SiteCard';
+import { SiteCard } from '../components/site/SiteCard';
 import type { FlyingSite } from '../types';
 import type { AppDispatch } from '../store/store';
 import { dispatchThunkWithCallback } from '../store/utils/thunkWithCallback';
@@ -21,7 +21,7 @@ export function SiteCardContainer({ site }: SiteCardContainerProps) {
       thunkAction: deleteSiteThunk(site._id),
       onSuccess: () => {
         handleCancel(); // Close the confirmation dialog
-      }
+      },
     });
   };
 

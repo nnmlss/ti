@@ -1,4 +1,4 @@
-import { useSites } from '../hooks/useSites';
+import { useSites } from '../../hooks/useSites';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, LayersControl } from 'react-leaflet';
 import {
   CircularProgress,
@@ -15,14 +15,14 @@ import { useNavigate } from 'react-router-dom';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { WindDirectionCompass } from './WindDirectionCompass';
-import { AccessOptionsView } from './AccessOptionsView';
-import { DeleteConfirmDialog } from './DeleteConfirmDialog';
-import { useConfirmDialog } from '../hooks/useConfirmDialog';
+import { WindDirectionCompass } from '../site/WindDirectionCompass';
+import { AccessOptionsView } from '../site/AccessOptionsView';
+import { DeleteConfirmDialog } from '../ui/DeleteConfirmDialog';
+import { useConfirmDialog } from '../../hooks/useConfirmDialog';
 import { useDispatch } from 'react-redux';
-import { deleteSiteThunk } from '../store/thunks/sitesThunks';
-import { dispatchThunkWithCallback } from '../store/utils/thunkWithCallback';
-import type { AppDispatch } from '../store/store';
+import { deleteSiteThunk } from '../../store/thunks/sitesThunks';
+import { dispatchThunkWithCallback } from '../../store/utils/thunkWithCallback';
+import type { AppDispatch } from '../../store/store';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -49,7 +49,7 @@ export function SitesMap() {
       thunkAction: deleteSiteThunk(siteId),
       onSuccess: () => {
         handleCancel(); // Close the confirmation dialog
-      }
+      },
     });
   };
 

@@ -5,8 +5,8 @@ import type { RootState, AppDispatch } from '../store/store';
 import { loadSingleSiteThunk } from '../store/thunks/sitesThunks';
 import { clearCurrentSite } from '../store/slices/singleSiteSlice';
 import { useModal } from '../hooks/useModal';
-import EditSite from '../components/EditSite';
-import { AccessibleDialog } from '../components/AccessibleDialog';
+import EditSite from '../components/site/EditSite';
+import { AccessibleDialog } from '../components/ui/AccessibleDialog';
 import {
   DialogTitle,
   DialogContent,

@@ -11,15 +11,15 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
-import type { RootState, AppDispatch } from '../store/store';
-import { hideErrorNotification, setRetrying } from '../store/slices/errorNotificationSlice';
+import type { RootState, AppDispatch } from '../../store/store';
+import { hideErrorNotification, setRetrying } from '../../store/slices/errorNotificationSlice';
 import {
   loadSitesThunk,
   loadSingleSiteThunk,
   addSiteThunk,
   updateSiteThunk,
   deleteSiteThunk,
-} from '../store/thunks/sitesThunks';
+} from '../../store/thunks/sitesThunks';
 
 export function GlobalErrorNotification() {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,7 +53,7 @@ export function GlobalErrorNotification() {
             break;
           case 'sites/loadSingleSite':
             if (payload) {
-              await dispatch(loadSingleSiteThunk(payload)).unwrap();
+              await dispatch(loadSingleSiteThunk(payload as number)).unwrap();
             }
             break;
           case 'sites/addSite':
@@ -68,7 +68,7 @@ export function GlobalErrorNotification() {
             break;
           case 'sites/deleteSite':
             if (payload) {
-              await dispatch(deleteSiteThunk(payload)).unwrap();
+              await dispatch(deleteSiteThunk(payload as number)).unwrap();
             }
             break;
           default:

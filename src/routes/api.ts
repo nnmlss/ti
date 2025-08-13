@@ -18,8 +18,8 @@ router.post(
   '/site',
   [
     body('title.bg')
-      .isLength({ min: 5 })
-      .withMessage('Bulgarian title must be at least 5 characters'),
+      .isLength({ min: 3 })
+      .withMessage('Bulgarian title must be at least 3 characters'),
     body('location').notEmpty().withMessage('Location is required'),
     // body('windDirection').notEmpty().withMessage('Wind direction is required'),
     // body('accessOptions').notEmpty().withMessage('Access options are required')

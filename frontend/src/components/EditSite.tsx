@@ -198,7 +198,11 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name={`landingFields.${index}.location.coordinates.0`}
                 control={control}
-                render={({ field: controllerField }) => (
+                rules={{ 
+                  min: { value: -180, message: 'Longitude must be between -180 and 180' },
+                  max: { value: 180, message: 'Longitude must be between -180 and 180' }
+                }}
+                render={({ field: controllerField, fieldState }) => (
                   <TextField
                     {...controllerField}
                     id={`landing-field-longitude-${index}`}
@@ -207,6 +211,8 @@ function EditSite({ site, onClose }: EditSiteProps) {
                     type='number'
                     slotProps={{ htmlInput: { step: 'any' } }}
                     sx={{ mb: 1 }}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
                   />
                 )}
               />
@@ -215,7 +221,11 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name={`landingFields.${index}.location.coordinates.1`}
                 control={control}
-                render={({ field: controllerField }) => (
+                rules={{ 
+                  min: { value: -90, message: 'Latitude must be between -90 and 90' },
+                  max: { value: 90, message: 'Latitude must be between -90 and 90' }
+                }}
+                render={({ field: controllerField, fieldState }) => (
                   <TextField
                     {...controllerField}
                     id={`landing-field-latitude-${index}`}
@@ -223,6 +233,8 @@ function EditSite({ site, onClose }: EditSiteProps) {
                     label='Latitude'
                     type='number'
                     slotProps={{ htmlInput: { step: 'any' } }}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
                   />
                 )}
               />
@@ -286,7 +298,10 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name='title.bg'
                 control={control}
-                rules={{ required: 'Bulgarian title is required' }}
+                rules={{ 
+                  required: 'Bulgarian title is required',
+                  minLength: { value: 3, message: 'Bulgarian title must be at least 3 characters' }
+                }}
                 render={({ field, fieldState }) => (
                   <TextField
                     {...field}
@@ -371,7 +386,11 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name='location.coordinates.0'
                 control={control}
-                rules={{ required: 'Longitude is required' }}
+                rules={{ 
+                  required: 'Longitude is required',
+                  min: { value: -180, message: 'Longitude must be between -180 and 180' },
+                  max: { value: 180, message: 'Longitude must be between -180 and 180' }
+                }}
                 render={({ field, fieldState }) => (
                   <TextField
                     {...field}
@@ -391,7 +410,11 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name='location.coordinates.1'
                 control={control}
-                rules={{ required: 'Latitude is required' }}
+                rules={{ 
+                  required: 'Latitude is required',
+                  min: { value: -90, message: 'Latitude must be between -90 and 90' },
+                  max: { value: 90, message: 'Latitude must be between -90 and 90' }
+                }}
                 render={({ field, fieldState }) => (
                   <TextField
                     {...field}

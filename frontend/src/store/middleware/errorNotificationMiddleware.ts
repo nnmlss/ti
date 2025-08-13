@@ -5,6 +5,11 @@ interface RejectedAction {
   type: string;
   payload?: string;
   error?: { message?: string };
+  meta?: {
+    arg?: any;
+    requestId?: string;
+    rejectedWithValue?: boolean;
+  };
 }
 
 // Middleware to automatically show error notifications when thunks are rejected
@@ -27,9 +32,17 @@ export const errorNotificationMiddleware: Middleware = (store) => (next) => (act
       .replace(/^./, (str: string) => str.toUpperCase())
       .trim() || 'Operation';
 
+    // Create retry action from the original failed action
+    const originalActionType = rejectedAction.type.replace('/rejected', '');
+    const retryAction = {
+      type: originalActionType,
+      payload: rejectedAction.meta?.arg
+    };
+
     store.dispatch(showErrorNotification({
       title: `${operationName} Failed`,
-      message: errorMessage
+      message: errorMessage,
+      retryAction
     }));
   }
 

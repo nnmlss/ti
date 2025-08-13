@@ -5,17 +5,16 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 import type { RootState, AppDispatch } from '../store/store';
 import { hideErrorNotification } from '../store/slices/errorNotificationSlice';
-import { loadSitesThunk } from '../store/thunks/sitesThunks';
-import { useEffect } from 'react';
+import { loadSitesThunk, loadSingleSiteThunk, addSiteThunk, updateSiteThunk, deleteSiteThunk } from '../store/thunks/sitesThunks';
 
 export function GlobalErrorNotification() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { open, message, title } = useSelector((state: RootState) => state.errorNotification);
+  const { open, message, title, retryAction } = useSelector((state: RootState) => state.errorNotification);
 
-  // Show retry button for certain error types
-  const showRetryButton = title?.includes('Load Sites') || message.includes('Network error');
-  
+  // Show retry button if we have a retry action available
+  const showRetryButton = !!retryAction;
+
   // Show home button for 404 errors
   const showHomeButton = title?.includes('не е намерена') || message.includes('не съществува');
 
@@ -23,12 +22,47 @@ export function GlobalErrorNotification() {
     dispatch(hideErrorNotification());
   };
 
-  const handleRetry = () => {
-    // Retry common operations based on error type
-    if (title?.includes('Load Sites')) {
-      dispatch(loadSitesThunk());
+  const handleRetry = async () => {
+    if (retryAction) {
+      // Map retry action types to actual thunk functions
+      const { type, payload } = retryAction;
+      
+      try {
+        switch (type) {
+          case 'sites/loadSites':
+            await dispatch(loadSitesThunk()).unwrap();
+            break;
+          case 'sites/loadSingleSite':
+            if (payload) {
+              await dispatch(loadSingleSiteThunk(payload)).unwrap();
+            }
+            break;
+          case 'sites/addSite':
+            if (payload) {
+              await dispatch(addSiteThunk(payload)).unwrap();
+            }
+            break;
+          case 'sites/updateSite':
+            if (payload) {
+              await dispatch(updateSiteThunk(payload)).unwrap();
+            }
+            break;
+          case 'sites/deleteSite':
+            if (payload) {
+              await dispatch(deleteSiteThunk(payload)).unwrap();
+            }
+            break;
+          default:
+            console.warn('Unknown retry action type:', type);
+            return;
+        }
+        // Close modal on successful retry
+        dispatch(hideErrorNotification());
+      } catch {
+        // If retry fails, the error middleware will show a new error notification
+        // Don't close the current modal so user can see the original error is still there
+      }
     }
-    handleClose();
   };
 
   const handleGoHome = () => {
@@ -36,16 +70,7 @@ export function GlobalErrorNotification() {
     handleClose();
   };
 
-  // Auto-close after 10 seconds (but NOT for 404 errors)
-  useEffect(() => {
-    if (open && !showHomeButton) {
-      const timer = setTimeout(() => {
-        handleClose();
-      }, 10000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [open, showHomeButton]);
+  // No auto-close for any errors - user must manually close
 
   return (
     <Dialog
@@ -63,9 +88,9 @@ export function GlobalErrorNotification() {
       </DialogContent>
       <DialogActions>
         {showRetryButton && (
-          <Button 
-            onClick={handleRetry} 
-            color='primary' 
+          <Button
+            onClick={handleRetry}
+            color='primary'
             variant='outlined'
             startIcon={<RefreshIcon />}
           >
@@ -73,9 +98,9 @@ export function GlobalErrorNotification() {
           </Button>
         )}
         {showHomeButton && (
-          <Button 
-            onClick={handleGoHome} 
-            color='primary' 
+          <Button
+            onClick={handleGoHome}
+            color='primary'
             variant='outlined'
             startIcon={<HomeIcon />}
           >

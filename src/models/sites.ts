@@ -39,6 +39,10 @@ export interface GalleryImage {
   author?: string;
   width?: number;
   height?: number;
+  format?: string;
+  thumbnail?: string;
+  small?: string;
+  large?: string;
 }
 
 // Access options are stored as numeric IDs in the DB
@@ -104,6 +108,10 @@ const GalleryImageSchema = new Schema(
     author: { type: String },
     width: { type: Number },
     height: { type: Number },
+    format: { type: String },
+    thumbnail: { type: String },
+    small: { type: String },
+    large: { type: String },
   },
   { _id: false, id: false }
 );

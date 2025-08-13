@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { body } from 'express-validator';
 import {
   getAllSites,
   createSite,
@@ -13,7 +14,18 @@ const router = Router();
 router.get('/sites', getAllSites);
 
 // POST /api/site - Create a new site
-router.post('/site', createSite);
+router.post(
+  '/site',
+  [
+    body('title.bg')
+      .isLength({ min: 5 })
+      .withMessage('Bulgarian title must be at least 5 characters'),
+    body('location').notEmpty().withMessage('Location is required'),
+    // body('windDirection').notEmpty().withMessage('Wind direction is required'),
+    // body('accessOptions').notEmpty().withMessage('Access options are required')
+  ],
+  createSite
+);
 
 // GET /api/site/:id - Get a single site
 router.get('/site/:id', getSiteById);

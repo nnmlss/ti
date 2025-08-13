@@ -541,7 +541,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
         </form>
       </Paper>
       {/* Keep NotificationDialog only for error messages */}
-      {notificationDialog.notification.severity === 'error' && (
+      {notificationDialog.notification.open && notificationDialog.notification.severity === 'error' && (
         <NotificationDialog
           notification={notificationDialog.notification}
           onClose={notificationDialog.hideNotification}

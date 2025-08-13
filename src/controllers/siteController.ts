@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import { validationResult } from 'express-validator';
 import { Site } from '../models/sites.js';
 import type { FlyingSite } from '../models/sites.js';
 
@@ -21,6 +22,11 @@ export const getAllSites = async (_req: Request, res: Response, next: NextFuncti
 
 // POST /api/site - Create a new site
 export const createSite = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   try {
     const nextId = await getNextId();
 

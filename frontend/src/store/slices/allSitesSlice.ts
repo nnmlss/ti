@@ -66,7 +66,7 @@ const allSitesSlice = createSlice({
           error: action.error.message || 'Failed to load sites',
         };
       })
-      // Add site - optimistically update the list
+      // Add site - optimistically update the list (don't affect load state)
       .addCase(addSiteThunk.fulfilled, (state, action) => {
         // Only add if not already in the list (avoid duplicates)
         const exists = state.data.find((site) => site._id === action.payload._id);
@@ -74,7 +74,7 @@ const allSitesSlice = createSlice({
           state.data.push(action.payload);
         }
       })
-      // Update site - update in the list
+      // Update site - update in the list (don't affect load state)
       .addCase(updateSiteThunk.fulfilled, (state, action) => {
         const index = state.data.findIndex((site) => site._id === action.payload._id);
         if (index !== -1) {

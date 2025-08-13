@@ -31,7 +31,7 @@ export const loadSitesThunk = createAsyncThunk('sites/loadSites', async () => {
 // Thunk for adding a site
 export const addSiteThunk = createAsyncThunk(
   'sites/addSite',
-  async (siteData: Partial<FlyingSite>) => {
+  async (siteData: Partial<FlyingSite>, { rejectWithValue }) => {
     const response = await fetch('/api/site', {
       method: 'POST',
       headers: {
@@ -41,7 +41,9 @@ export const addSiteThunk = createAsyncThunk(
     });
 
     if (!response.ok) {
-      throw new Error('Failed to add site');
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.errors?.map((err: any) => err.msg).join(', ') || 'Failed to add site';
+      return rejectWithValue(errorMessage);
     }
 
     const newSite: FlyingSite = await response.json();

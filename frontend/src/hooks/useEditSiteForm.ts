@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addSiteThunk, updateSiteThunk } from '../store/thunks/sitesThunks';
-import type { AppDispatch } from '../store/store';
+import type { AppDispatch, RootState } from '../store/store';
 import { useNotificationDialog } from './useNotificationDialog';
-import { useAsyncState } from './useAsyncState';
+import { selectAllSitesLoadState, resetLoadState } from '../store/slices/allSitesSlice';
 import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
 import type { AccessOptionId } from '../types';
 import { navigateToHome } from '../utils/navigation';
@@ -16,9 +16,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { showError, ...notificationDialog } = useNotificationDialog();
-
-  // Use AsyncState for better async operation management
-  const submitState = useAsyncState<FlyingSite>();
+  const loadState = useSelector(selectAllSitesLoadState);
 
   // Initialize form with transformed data
   const form = useForm<FormDataSite>({
@@ -32,6 +30,8 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     reset,
     watch,
     setValue,
+    setError,
+    setFocus,
     formState: { isSubmitting },
   } = form;
 
@@ -115,32 +115,63 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   };
 
   const onSubmit = async (formData: FormDataSite) => {
-    await submitState.execute(async () => {
-      // Transform form data to API format
-      const cleanedFormData = toApiData(formData, site);
+    // Transform form data to API format
+    const cleanedFormData = toApiData(formData, site);
 
-      let result: FlyingSite;
+    try {
       if (site) {
         const action = await dispatch(updateSiteThunk({ _id: site._id, ...cleanedFormData }));
-        result = action.payload as FlyingSite;
-        setShowSuccessMessage(true);
-        // Auto-close after 5 seconds
-        setTimeout(() => navigate(navigateToHome()), 3000);
+        if (action.type.endsWith('/rejected')) {
+          const errorMessage = action.payload as string || 'Failed to update site';
+          handleValidationError(errorMessage);
+          return;
+        }
       } else {
         const action = await dispatch(addSiteThunk(cleanedFormData));
-        result = action.payload as FlyingSite;
-        setShowSuccessMessage(true);
-        // Auto-close after 3 seconds
-        setTimeout(() => navigate(navigateToHome()), 3000);
+        if (action.type.endsWith('/rejected')) {
+          const errorMessage = action.payload as string || 'Failed to add site';
+          handleValidationError(errorMessage);
+          return;
+        }
       }
-
-      return result;
-    });
-
-    // Handle errors through submitState.error
-    if (submitState.isError) {
-      showError(submitState.error || 'Error saving site. Please try again.');
+      
+      // Success
+      setShowSuccessMessage(true);
+      setTimeout(() => navigate(navigateToHome()), 3000);
+    } catch (error) {
+      console.error('Unexpected error:', error);
     }
+  };
+
+  const handleValidationError = (errorMessage: string) => {
+    // Set form field errors
+    if (errorMessage.includes('Bulgarian title')) {
+      setError('title.bg', { type: 'manual', message: errorMessage });
+      setTimeout(() => {
+        const element = document.getElementById('title-bg');
+        if (element) {
+          element.focus();
+        }
+      }, 100);
+    } else if (errorMessage.includes('English title')) {
+      setError('title.en', { type: 'manual', message: errorMessage });
+      setTimeout(() => {
+        const element = document.getElementById('title-en');
+        if (element) {
+          element.focus();
+        }
+      }, 100);
+    } else if (errorMessage.includes('Location is required')) {
+      setError('location.coordinates.0', { type: 'manual', message: errorMessage });
+      setTimeout(() => {
+        const element = document.getElementById('location-longitude');
+        if (element) {
+          element.focus();
+        }
+      }, 100);
+    }
+    
+    showError(errorMessage);
   };
 
   return {
@@ -152,9 +183,8 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     setValue,
 
     // State
-    isSubmitting: isSubmitting || submitState.isLoading,
+    isSubmitting: isSubmitting || loadState.status === 'pending',
     showSuccessMessage,
-    submitState,
 
     // Field arrays (only for actual useFieldArray hooks)
     landingFields,

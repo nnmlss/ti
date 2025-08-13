@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 });
 
 // Serve static images
-app.use('/images', express.static(path.join(process.cwd(), 'images')));
+app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
 
 // All API routes are mounted under /api
 app.use('/api', apiRouter);

@@ -40,6 +40,7 @@ export const useNotificationDialog = () => {
   };
 
   const showError = (message: string, title?: string, onAutoClose?: () => void) => {
+    console.log('showError called with:', message);
     showNotification(message, 'error', title, onAutoClose);
   };
 

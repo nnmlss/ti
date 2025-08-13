@@ -16,36 +16,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Controller } from 'react-hook-form';
 
-import type { WindDirection, FlyingSite } from '../types';
+import type { FlyingSite } from '../types';
 import { useEditSiteForm } from '../hooks/useEditSiteForm';
 import { NotificationDialog } from './NotificationDialog';
-
-const windDirections: WindDirection[] = [
-  'N',
-  'NNE',
-  'NE',
-  'ENE',
-  'E',
-  'ESE',
-  'SE',
-  'SSE',
-  'S',
-  'SSW',
-  'SW',
-  'WSW',
-  'W',
-  'WNW',
-  'NW',
-  'NNW',
-];
-
-const accessOptions = [
-  { _id: 0, bg: 'hike and fly', en: 'hike and fly' },
-  { _id: 1, bg: 'автомобил', en: 'automobile' },
-  { _id: 2, bg: 'автобус', en: 'bus' },
-  { _id: 3, bg: '4х4', en: '4x4' },
-  { _id: 4, bg: 'лифт', en: 'chairlift' },
-];
+import { accessOptions } from '../constants/accessOptions';
+import { windDirections } from '../constants/windDirections';
 
 interface EditSiteProps {
   site?: FlyingSite;
@@ -198,9 +173,9 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name={`landingFields.${index}.location.coordinates.0`}
                 control={control}
-                rules={{ 
+                rules={{
                   min: { value: -180, message: 'Longitude must be between -180 and 180' },
-                  max: { value: 180, message: 'Longitude must be between -180 and 180' }
+                  max: { value: 180, message: 'Longitude must be between -180 and 180' },
                 }}
                 render={({ field: controllerField, fieldState }) => (
                   <TextField
@@ -221,9 +196,9 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name={`landingFields.${index}.location.coordinates.1`}
                 control={control}
-                rules={{ 
+                rules={{
                   min: { value: -90, message: 'Latitude must be between -90 and 90' },
-                  max: { value: 90, message: 'Latitude must be between -90 and 90' }
+                  max: { value: 90, message: 'Latitude must be between -90 and 90' },
                 }}
                 render={({ field: controllerField, fieldState }) => (
                   <TextField
@@ -259,8 +234,8 @@ function EditSite({ site, onClose }: EditSiteProps) {
   // Show success message if submission was successful
   if (showSuccessMessage) {
     return (
-      <Container maxWidth='md'>
-        <Paper elevation={0} sx={{ p: 4, my: 2 }}>
+      <Container maxWidth='xs'>
+        <Paper elevation={0} sx={{ p: 4, my: 0 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4 }}>
             <Alert severity='success' sx={{ mb: 3, width: '100%' }}>
               <Typography variant='h6' gutterBottom>
@@ -272,10 +247,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
                 Прозорецът ще се затвори автоматично след 3 секунди...
               </Typography>
             </Alert>
-            <CircularProgress disableShrink />
-            <Typography variant='body2' sx={{ mt: 2, color: 'text.secondary' }}>
-              Запазване на промените...
-            </Typography>
+
             <Button onClick={onClose} variant='contained' sx={{ mt: 2 }}>
               Затвори
             </Button>
@@ -298,9 +270,12 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name='title.bg'
                 control={control}
-                rules={{ 
+                rules={{
                   required: 'Bulgarian title is required',
-                  minLength: { value: 3, message: 'Bulgarian title must be at least 3 characters' }
+                  minLength: {
+                    value: 3,
+                    message: 'Bulgarian title must be at least 3 characters',
+                  },
                 }}
                 render={({ field, fieldState }) => (
                   <TextField
@@ -386,10 +361,10 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name='location.coordinates.0'
                 control={control}
-                rules={{ 
+                rules={{
                   required: 'Longitude is required',
                   min: { value: -180, message: 'Longitude must be between -180 and 180' },
-                  max: { value: 180, message: 'Longitude must be between -180 and 180' }
+                  max: { value: 180, message: 'Longitude must be between -180 and 180' },
                 }}
                 render={({ field, fieldState }) => (
                   <TextField
@@ -410,10 +385,10 @@ function EditSite({ site, onClose }: EditSiteProps) {
               <Controller
                 name='location.coordinates.1'
                 control={control}
-                rules={{ 
+                rules={{
                   required: 'Latitude is required',
                   min: { value: -90, message: 'Latitude must be between -90 and 90' },
-                  max: { value: 90, message: 'Latitude must be between -90 and 90' }
+                  max: { value: 90, message: 'Latitude must be between -90 and 90' },
                 }}
                 render={({ field, fieldState }) => (
                   <TextField
@@ -565,12 +540,13 @@ function EditSite({ site, onClose }: EditSiteProps) {
         </form>
       </Paper>
       {/* Keep NotificationDialog only for error messages */}
-      {notificationDialog.notification.open && notificationDialog.notification.severity === 'error' && (
-        <NotificationDialog
-          notification={notificationDialog.notification}
-          onClose={notificationDialog.hideNotification}
-        />
-      )}
+      {notificationDialog.notification.open &&
+        notificationDialog.notification.severity === 'error' && (
+          <NotificationDialog
+            notification={notificationDialog.notification}
+            onClose={notificationDialog.hideNotification}
+          />
+        )}
     </Container>
   );
 }

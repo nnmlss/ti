@@ -9,6 +9,8 @@ import {
 } from '@mui/material';
 
 import LocationPinIcon from '@mui/icons-material/LocationPin';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import type { FlyingSite } from '../types';
 import { WindDirectionCompass } from './WindDirectionCompass';
@@ -30,15 +32,14 @@ interface SiteCardProps {
   deleteDialog: DeleteDialogState;
 }
 
-export function SiteCard({ 
-  site, 
-  onEdit, 
-  onDelete, 
-  onViewDetails, 
-  onShowOnMap, 
-  deleteDialog 
+export function SiteCard({
+  site,
+  onEdit,
+  onDelete,
+  onViewDetails,
+  onShowOnMap,
+  deleteDialog,
 }: SiteCardProps) {
-
   return (
     <>
       <Card
@@ -76,16 +77,13 @@ export function SiteCard({
             <WindDirectionCompass
               windDirections={site.windDirection}
               size={75}
-              showLabels={false}
             />
             <Typography variant='body2' sx={{ textAlign: 'center', mt: 2 }}>
               {site.altitude ? `${site.altitude}m` : 'N/A'}
             </Typography>
           </Box>
           <AccessOptionsView accessOptions={site.accessOptions} size={46} />
-          <Button
-            onClick={onShowOnMap}
-          >
+          <Button onClick={onShowOnMap}>
             <LocationPinIcon sx={{ mr: 0 }} />
             Отвори в Google Maps
           </Button>
@@ -93,15 +91,11 @@ export function SiteCard({
         <Divider />
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button onClick={onEdit} size='small'>
-            Промяна
+            <EditIcon />
           </Button>
 
-          <Button 
-            onClick={onDelete} 
-            color='error' 
-            size='small'
-          >
-            Изтриване
+          <Button onClick={onDelete} color='error' size='small'>
+            <DeleteIcon />
           </Button>
         </CardActions>
       </Card>

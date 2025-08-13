@@ -3,25 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store/store';
 import { setWindDirectionFilter, clearFilters } from '../store/slices/filterSlice';
 import AirIcon from '@mui/icons-material/Air';
+import { windDirections } from '../constants/windDirections';
 
-const windDirections = [
-  'N',
-  'NNE',
-  'NE',
-  'ENE',
-  'E',
-  'ESE',
-  'SE',
-  'SSE',
-  'S',
-  'SSW',
-  'SW',
-  'WSW',
-  'W',
-  'WNW',
-  'NW',
-  'NNW',
-];
 
 interface WindDirectionFilterProps {
   onClose: () => void;

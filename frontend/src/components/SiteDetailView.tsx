@@ -99,7 +99,7 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
     return (
       <Box sx={{ mb: 3 }}>
         <Typography variant='h6' gutterBottom color='primary.main'>
-          Landing Fields
+          Кацалки / Landing Fields
         </Typography>
         {site.landingFields.map((field, index) => {
           const hasContent =
@@ -142,7 +142,7 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
                         window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
                       }}
                     >
-                      View on Map
+                      Отвори в Google Maps
                     </Button>
                   </Box>
                 )}
@@ -214,25 +214,9 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
               <Typography variant='h6' gutterBottom color='primary.main'>
                 Методи на достъп
               </Typography>
-              <AccessOptionsView accessOptions={site.accessOptions} size={60} />
+              <AccessOptionsView accessOptions={site.accessOptions} size={60} showLabels={true} />
 
               {/* Location */}
-              <Box sx={{ mt: 3 }}>
-                {/* <Typography variant='body1' gutterBottom>
-                  <strong>Coordinates:</strong> {site.location.coordinates[1]},{' '}
-                  {site.location.coordinates[0]}
-                </Typography> */}
-                <Button
-                  variant='contained'
-                  startIcon={<LocationOnIcon />}
-                  onClick={() => {
-                    const [lng, lat] = site.location.coordinates;
-                    window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
-                  }}
-                >
-                  View on Google Maps
-                </Button>
-              </Box>
             </Box>
           </Grid>
         </Grid>
@@ -246,6 +230,18 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
         {renderBilingualArray(site.localPilotsClubs, 'Local Pilots Clubs')}
         {renderLandingFields()}
         {renderTracklogs()}
+        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+          <Button
+            variant='contained'
+            startIcon={<LocationOnIcon />}
+            onClick={() => {
+              const [lng, lat] = site.location.coordinates;
+              window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
+            }}
+          >
+            Отвори в Google Maps
+          </Button>
+        </Box>
       </CardContent>
     </Card>
   );

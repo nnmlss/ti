@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import { DeleteConfirmDialog } from './DeleteConfirmDialog';
@@ -201,7 +203,7 @@ export function SitesMap() {
                         navigate(`/edit-site/${site._id}`);
                       }}
                     >
-                      Промяна
+                      <EditIcon />
                     </Button>
 
                     <Button
@@ -212,7 +214,7 @@ export function SitesMap() {
                         confirm(site._id, () => handleDelete(site._id));
                       }}
                     >
-                      Изтриване
+                      <DeleteIcon />
                     </Button>
                   </CardActions>
                 </Card>

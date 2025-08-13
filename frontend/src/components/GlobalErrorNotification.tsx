@@ -28,7 +28,7 @@ export function GlobalErrorNotification() {
       dispatch(setRetrying(true));
       
       // Map retry action types to actual thunk functions
-      const { type, payload } = retryAction;
+      const { type, payload, onSuccess } = retryAction;
       
       try {
         switch (type) {
@@ -59,6 +59,13 @@ export function GlobalErrorNotification() {
             console.warn('Unknown retry action type:', type);
             dispatch(setRetrying(false));
             return;
+        }
+        // Execute success callback if provided
+        if (onSuccess) {
+          onSuccess();
+        } else if ((window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback) {
+          (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback!();
+          (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback = undefined; // Clean up
         }
         // Close modal on successful retry
         dispatch(hideErrorNotification());

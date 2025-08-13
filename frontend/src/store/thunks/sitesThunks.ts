@@ -16,7 +16,7 @@ export const loadSingleSiteThunk = createAsyncThunk(
 
       const site: FlyingSite = await response.json();
       return site;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Network error: Unable to connect to server');
     }
   }
@@ -35,7 +35,7 @@ export const loadSitesThunk = createAsyncThunk('sites/loadSites', async (_, { re
 
     const sites: FlyingSite[] = await response.json();
     return sites;
-  } catch (error) {
+  } catch {
     return rejectWithValue('Network error: Unable to connect to server');
   }
 });
@@ -85,7 +85,7 @@ export const updateSiteThunk = createAsyncThunk(
 
       const updatedSite: FlyingSite = await response.json();
       return updatedSite;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Network error: Unable to connect to server');
     }
   }
@@ -105,7 +105,7 @@ export const deleteSiteThunk = createAsyncThunk('sites/deleteSite', async (siteI
     }
 
     return siteId;
-  } catch (error) {
+  } catch {
     return rejectWithValue('Network error: Unable to connect to server');
   }
 });

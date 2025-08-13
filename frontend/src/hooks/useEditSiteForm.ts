@@ -10,7 +10,7 @@ import type { AccessOptionId } from '../types';
 import { navigateToHome } from '../utils/navigation';
 import type { FlyingSite, WindDirection } from '../types';
 
-export const useEditSiteForm = (site?: FlyingSite) => {
+export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -116,28 +116,37 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     // Transform form data to API format
     const cleanedFormData = toApiData(formData, site);
 
+    const handleSuccess = () => {
+      // Success callback - show success message and close modal after 3s
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        if (onModalClose) {
+          onModalClose(); // Use modal's own close function
+        } else {
+          navigate(navigateToHome()); // Fallback for non-modal usage
+        }
+      }, 3000);
+    };
+
+    const handleError = (errorMessage: string) => {
+      handleValidationError(errorMessage);
+    };
+
     try {
       if (site) {
-        const action = await dispatch(updateSiteThunk({ _id: site._id, ...cleanedFormData }));
-        if (action.type.endsWith('/rejected')) {
-          const errorMessage = action.payload as string || 'Failed to update site';
-          handleValidationError(errorMessage);
-          return;
-        }
+        await dispatch(updateSiteThunk({ _id: site._id, ...cleanedFormData })).unwrap();
       } else {
-        const action = await dispatch(addSiteThunk(cleanedFormData));
-        if (action.type.endsWith('/rejected')) {
-          const errorMessage = action.payload as string || 'Failed to add site';
-          handleValidationError(errorMessage);
-          return;
-        }
+        await dispatch(addSiteThunk(cleanedFormData)).unwrap();
       }
-      
       // Success
-      setShowSuccessMessage(true);
-      setTimeout(() => navigate(navigateToHome()), 3000);
+      handleSuccess();
     } catch (error) {
-      console.error('Unexpected error:', error);
+      const errorMessage = typeof error === 'string' ? error : 'An unexpected error occurred';
+      
+      // Store the success callback globally for retry
+      (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback = handleSuccess;
+      
+      handleError(errorMessage);
     }
   };
 

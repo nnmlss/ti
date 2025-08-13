@@ -40,7 +40,7 @@ export function AddSitePage() {
         </IconButton>
       </DialogTitle>
       <DialogContent sx={{ p: 0, mb: 3 }}>
-        <EditSite />
+        <EditSite onClose={handleClose} />
       </DialogContent>
     </AccessibleDialog>
   );

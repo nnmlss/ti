@@ -1,12 +1,13 @@
 import type { Middleware } from '@reduxjs/toolkit';
 import { showErrorNotification } from '../slices/errorNotificationSlice';
+import { isHandledByCallback } from '../utils/thunkWithCallback';
 
 interface RejectedAction {
   type: string;
   payload?: string;
   error?: { message?: string };
   meta?: {
-    arg?: any;
+    arg?: unknown;
     requestId?: string;
     rejectedWithValue?: boolean;
   };
@@ -21,6 +22,14 @@ export const errorNotificationMiddleware: Middleware = (store) => (next) => (act
   
   // Check if action is a rejected thunk
   if (rejectedAction.type && rejectedAction.type.endsWith('/rejected')) {
+    const originalActionType = rejectedAction.type.replace('/rejected', '');
+    const payload = rejectedAction.meta?.arg;
+    
+    // Skip if this operation is being handled by callback utility
+    if (isHandledByCallback(originalActionType, payload)) {
+      return result;
+    }
+    
     const errorMessage = rejectedAction.payload || rejectedAction.error?.message || 'An unexpected error occurred';
     
     // Extract operation name from action type (e.g., 'sites/loadSites/rejected' -> 'Load Sites')
@@ -33,10 +42,9 @@ export const errorNotificationMiddleware: Middleware = (store) => (next) => (act
       .trim() || 'Operation';
 
     // Create retry action from the original failed action
-    const originalActionType = rejectedAction.type.replace('/rejected', '');
     const retryAction = {
       type: originalActionType,
-      payload: rejectedAction.meta?.arg
+      payload
     };
 
     store.dispatch(showErrorNotification({

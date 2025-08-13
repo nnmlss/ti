@@ -5,6 +5,7 @@ import { deleteSiteThunk } from '../store/thunks/sitesThunks';
 import { SiteCard } from '../components/SiteCard';
 import type { FlyingSite } from '../types';
 import type { AppDispatch } from '../store/store';
+import { dispatchThunkWithCallback } from '../store/utils/thunkWithCallback';
 
 interface SiteCardContainerProps {
   site: FlyingSite;
@@ -16,11 +17,12 @@ export function SiteCardContainer({ site }: SiteCardContainerProps) {
   const { isOpen, targetId, confirm, handleConfirm, handleCancel } = useConfirmDialog();
 
   const handleDelete = async () => {
-    try {
-      await dispatch(deleteSiteThunk(site._id));
-    } catch (error) {
-      console.error('Failed to delete site:', error);
-    }
+    await dispatchThunkWithCallback(dispatch, {
+      thunkAction: deleteSiteThunk(site._id),
+      onSuccess: () => {
+        handleCancel(); // Close the confirmation dialog
+      }
+    });
   };
 
   const handleEdit = () => {

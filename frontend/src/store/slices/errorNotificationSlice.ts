@@ -7,7 +7,8 @@ export interface ErrorNotificationState {
   title?: string;
   retryAction?: {
     type: string;
-    payload?: any;
+    payload?: unknown;
+    onSuccess?: () => void;
   };
   isRetrying: boolean;
 }
@@ -24,7 +25,7 @@ const errorNotificationSlice = createSlice({
   name: 'errorNotification',
   initialState,
   reducers: {
-    showErrorNotification: (state, action: PayloadAction<{ message: string; title?: string; retryAction?: { type: string; payload?: any } }>) => {
+    showErrorNotification: (state, action: PayloadAction<{ message: string; title?: string; retryAction?: { type: string; payload?: unknown; onSuccess?: () => void } }>) => {
       state.open = true;
       state.message = action.payload.message;
       state.title = action.payload.title;

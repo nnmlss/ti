@@ -21,6 +21,7 @@ import { DeleteConfirmDialog } from './DeleteConfirmDialog';
 import { useConfirmDialog } from '../hooks/useConfirmDialog';
 import { useDispatch } from 'react-redux';
 import { deleteSiteThunk } from '../store/thunks/sitesThunks';
+import { dispatchThunkWithCallback } from '../store/utils/thunkWithCallback';
 import type { AppDispatch } from '../store/store';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -44,11 +45,12 @@ export function SitesMap() {
   const error = allSitesLoadState.error;
 
   const handleDelete = async (siteId: number) => {
-    try {
-      await dispatch(deleteSiteThunk(siteId));
-    } catch (error) {
-      console.error('Failed to delete site:', error);
-    }
+    await dispatchThunkWithCallback(dispatch, {
+      thunkAction: deleteSiteThunk(siteId),
+      onSuccess: () => {
+        handleCancel(); // Close the confirmation dialog
+      }
+    });
   };
 
   if (loading === 'pending' && sites.length === 0) {

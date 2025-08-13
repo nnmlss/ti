@@ -44,7 +44,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
     removeLandingField,
     addTracklog,
     removeTracklog,
-  } = useEditSiteForm(site);
+  } = useEditSiteForm(site, onClose);
 
   const windDirectionValues = watch('windDirection') || [];
   const accessOptionValues = (watch('accessOptions') as number[]) || [];

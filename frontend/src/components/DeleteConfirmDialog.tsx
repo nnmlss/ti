@@ -73,8 +73,8 @@ export function DeleteConfirmDialog({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={deleteAction.isLoading}>
-          Cancel
+        <Button onClick={onClose} variant='outlined' disabled={deleteAction.isLoading}>
+          Не
         </Button>
         <Button
           onClick={handleConfirm}

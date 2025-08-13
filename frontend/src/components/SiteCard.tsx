@@ -44,7 +44,7 @@ export function SiteCard({
     <>
       <Card
         sx={{
-          mb: 2,
+          // mb: 2,
           height: '100%',
           width: '100%',
           display: 'flex',
@@ -64,7 +64,7 @@ export function SiteCard({
           onClick={onViewDetails}
         >
           <Typography
-            variant='h5'
+            variant='h6'
             component='div'
             sx={{ mb: 1.5, textAlign: 'center', color: 'primary.light' }}
           >
@@ -74,15 +74,12 @@ export function SiteCard({
             </Typography>
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <WindDirectionCompass
-              windDirections={site.windDirection}
-              size={75}
-            />
+            <WindDirectionCompass windDirections={site.windDirection} size={75} />
             <Typography variant='body2' sx={{ textAlign: 'center', mt: 2 }}>
-              {site.altitude ? `${site.altitude}m` : 'N/A'}
+              {site.altitude ? `${site.altitude}m` : ''}
             </Typography>
           </Box>
-          <AccessOptionsView accessOptions={site.accessOptions} size={46} />
+          <AccessOptionsView accessOptions={site.accessOptions} size={36} />
           <Button onClick={onShowOnMap}>
             <LocationPinIcon sx={{ mr: 0 }} />
             Отвори в Google Maps

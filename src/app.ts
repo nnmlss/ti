@@ -3,42 +3,14 @@ import express from 'express';
 import apiRouter from './routes/api.js';
 import { connectDB } from './config/database.js';
 import path from 'path';
-import multer from 'multer';
 
 const app = express();
-
-const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'gallery');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-
-const fileFilter = (req: any, file: any, cb: any) => {
-  if (
-    file.mimetype === 'image/png' ||
-    file.mimetype === 'image/jpg' ||
-    file.mimetype === 'image/jpeg'
-  ) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-
-// const upload = multer({ storage: fileStorage, fileFilter: fileFilter });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static images
-app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
-app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
-
 // Enable CORS for all routes
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -47,6 +19,17 @@ app.use((req, res, next) => {
 
 // All API routes are mounted under /api
 app.use('/api', apiRouter);
+
+// Serve static images - must come after API routes
+app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
+
+// 404 handler for undefined routes - must be the last route handler
+app.use((req: express.Request, res: express.Response) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Route ${req.method} ${req.originalUrl} not found`,
+  });
+});
 
 // Global error handling middleware - must be after all routes
 app.use(
@@ -106,14 +89,6 @@ app.use(
     next(err);
   }
 );
-
-// 404 handler for undefined routes
-app.use(/.*/, (req: express.Request, res: express.Response) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Route ${req.method} ${req.originalUrl} not found`,
-  });
-});
 
 const startServer = async () => {
   await connectDB();

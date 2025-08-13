@@ -3,15 +3,20 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSiteThunk, updateSiteThunk } from '../store/thunks/sitesThunks';
+import { uploadImageThunk, deleteImageThunk } from '../store/thunks/imageThunks';
 import type { AppDispatch } from '../store/store';
 import { selectAllSitesLoadState } from '../store/slices/allSitesSlice';
 import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
-import type { AccessOptionId } from '../types';
+import type { AccessOptionId, GalleryImage } from '../types';
 import { navigateToHome } from '../utils/navigation';
 import type { FlyingSite, WindDirection } from '../types';
 
 export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [galleryError, setGalleryError] = useState<string | null>(null);
+  const [imagesToDelete, setImagesToDelete] = useState<Set<string>>(new Set());
+  const [newlyUploadedImages, setNewlyUploadedImages] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const loadState = useSelector(selectAllSitesLoadState);
@@ -53,6 +58,7 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
   const windDirections = watch('windDirection');
   const accessOptions = watch('accessOptions') as AccessOptionId[] | undefined;
   const tracklogsValues = (watch('tracklogs') as string[] | undefined) || [];
+  const galleryImages = (watch('galleryImages') as GalleryImage[] | undefined) || [];
 
   const handleWindDirectionChange = (direction: WindDirection) => {
     const current = windDirections || [];
@@ -112,9 +118,86 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
     setValue('tracklogs', next);
   };
 
+  // Gallery management functions
+  const handleImageUpload = async (files: File[]) => {
+    setIsUploadingImages(true);
+    setGalleryError(null);
+
+    try {
+      const uploadPromises = files.map((file) => dispatch(uploadImageThunk(file)).unwrap());
+      const uploadResults = await Promise.all(uploadPromises);
+
+      // Add uploaded images to the form
+      const newImages: GalleryImage[] = uploadResults.map((result) => ({
+        path: result.image.path,
+        author: '',
+        width: result.image.width,
+        height: result.image.height,
+        format: result.image.format,
+        thumbnail: result.image.thumbnail,
+        small: result.image.small,
+        large: result.image.large,
+      }));
+
+      setValue('galleryImages', [...galleryImages, ...newImages]);
+      
+      // Track newly uploaded images
+      const newImagePaths = new Set([...newlyUploadedImages, ...newImages.map(img => img.path)]);
+      setNewlyUploadedImages(newImagePaths);
+    } catch (error) {
+      const errorMessage = typeof error === 'string' ? error : 'Failed to upload images';
+      setGalleryError(errorMessage);
+    } finally {
+      setIsUploadingImages(false);
+    }
+  };
+
+  const handleImageDelete = (imagePath: string) => {
+    // Toggle delete status - don't actually remove from form data
+    setImagesToDelete((prev) => {
+      const next = new Set(prev);
+      if (next.has(imagePath)) {
+        next.delete(imagePath); // Restore if already marked
+      } else {
+        next.add(imagePath); // Mark for deletion
+      }
+      return next;
+    });
+  };
+
+  const handleImageUpdate = (imagePath: string, updates: Partial<GalleryImage>) => {
+    const updatedImages = galleryImages.map((img) =>
+      img.path === imagePath ? { ...img, ...updates } : img
+    );
+    setValue('galleryImages', updatedImages);
+  };
+
   const onSubmit = async (formData: FormDataSite) => {
+    // Filter out images marked for deletion
+    const filteredFormData = {
+      ...formData,
+      galleryImages: formData.galleryImages?.filter(img => !imagesToDelete.has(img.path)) || []
+    };
+    
+    // Delete ALL files that were marked for deletion (both new and existing)
+    const filesToDelete = Array.from(imagesToDelete);
+    
+    if (filesToDelete.length > 0) {
+      try {
+        await Promise.all(
+          filesToDelete.map(imagePath => {
+            const filename = imagePath.split('/').pop() || imagePath;
+            return dispatch(deleteImageThunk(filename)).unwrap();
+          })
+        );
+      } catch (deleteError) {
+        console.warn('Failed to delete some files:', deleteError);
+        // Continue with form submission even if deletion fails
+      }
+    }
+    
     // Transform form data to API format
-    const cleanedFormData = toApiData(formData, site);
+    const cleanedFormData = toApiData(filteredFormData, site);
 
     const handleSuccess = () => {
       // Success callback - show success message and close modal after 3s
@@ -205,6 +288,12 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
     // Field arrays (only for actual useFieldArray hooks)
     landingFields,
     tracklogsValues,
+    galleryImages,
+
+    // Gallery state
+    isUploadingImages,
+    galleryError,
+    imagesToDelete,
 
     // Helper functions
     handleWindDirectionChange,
@@ -215,5 +304,8 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
     removeLandingField,
     addTracklog,
     removeTracklog,
+    handleImageUpload,
+    handleImageDelete,
+    handleImageUpdate,
   };
 };

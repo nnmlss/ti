@@ -31,6 +31,10 @@ export interface GalleryImage {
   author?: string;
   width?: number;
   height?: number;
+  format?: string;
+  thumbnail?: string;
+  small?: string;
+  large?: string;
 }
 
 export type AccessOptionId = 0 | 1 | 2 | 3 | 4;

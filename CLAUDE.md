@@ -30,6 +30,7 @@ This is "Takeoff Info" - a paragliding sites application for Bulgaria with a Nod
 - **LocalizedText**: Object with `bg` (Bulgarian) and `en` (English) properties
 - **WindDirection**: Enum for 16 compass directions (N, NNE, NE, etc.)
 - **Location**: GeoJSON Point with coordinates array [longitude, latitude]
+- **CustomError**: Extended Error interface with `status`, `isValidationError`, and `errors` properties
 
 ## Development Commands
 
@@ -62,6 +63,16 @@ npm run preview             # Preview production build
 
 ```bash
 npm run clean               # Remove dist/ directory
+```
+
+### Testing
+
+```bash
+npm test                    # Run tests in watch mode  
+npm run test:run           # Run all tests once
+npm run test:ui            # Run tests with UI interface
+npm run typecheck          # TypeScript type checking for both backend and frontend
+npm run check              # Run typecheck and frontend lint
 ```
 
 ## Key Configuration
@@ -109,11 +120,20 @@ npm run clean               # Remove dist/ directory
 - UI components should handle both `bg` and `en` properties
 - Forms collect bilingual input where applicable
 
+### Error Handling
+
+- **Global Error Handler**: All errors are processed through a centralized middleware in `app.ts`
+- **Controller Pattern**: Controllers use `next(error)` to forward errors to global handler
+- **Custom Error Types**: `CustomError` interface in `models/sites.ts` provides structured error handling
+- **Error Categories**: Validation errors, database errors, HTTP status errors all handled consistently
+- **No Direct HTTP Responses**: Controllers never send error responses directly - all go through global handler
+
 ### Type Safety
 
 - Shared type definitions between frontend (`types.ts`) and backend models
 - Strict TypeScript configuration with additional safety checks
 - Form validation and API response typing
+- Custom error interfaces for structured error handling
 
 ## Environment Requirements
 

@@ -1,16 +1,32 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { Dialog, DialogContent, DialogActions, Button, Alert, AlertTitle, CircularProgress } from '@mui/material';
+import {
+  Dialog,
+  DialogContent,
+  DialogActions,
+  Button,
+  Alert,
+  AlertTitle,
+  CircularProgress,
+} from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 import type { RootState, AppDispatch } from '../store/store';
 import { hideErrorNotification, setRetrying } from '../store/slices/errorNotificationSlice';
-import { loadSitesThunk, loadSingleSiteThunk, addSiteThunk, updateSiteThunk, deleteSiteThunk } from '../store/thunks/sitesThunks';
+import {
+  loadSitesThunk,
+  loadSingleSiteThunk,
+  addSiteThunk,
+  updateSiteThunk,
+  deleteSiteThunk,
+} from '../store/thunks/sitesThunks';
 
 export function GlobalErrorNotification() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { open, message, title, retryAction, isRetrying } = useSelector((state: RootState) => state.errorNotification);
+  const { open, message, title, retryAction, isRetrying } = useSelector(
+    (state: RootState) => state.errorNotification
+  );
 
   // Show retry button if we have a retry action available
   const showRetryButton = !!retryAction;
@@ -26,10 +42,10 @@ export function GlobalErrorNotification() {
     if (retryAction) {
       // Set retry loading state
       dispatch(setRetrying(true));
-      
+
       // Map retry action types to actual thunk functions
       const { type, payload, onSuccess } = retryAction;
-      
+
       try {
         switch (type) {
           case 'sites/loadSites':
@@ -63,9 +79,14 @@ export function GlobalErrorNotification() {
         // Execute success callback if provided
         if (onSuccess) {
           onSuccess();
-        } else if ((window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback) {
-          (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback!();
-          (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback = undefined; // Clean up
+        } else if (
+          (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback
+        ) {
+          (window as unknown as { __retrySuccessCallback?: () => void })
+            .__retrySuccessCallback!();
+          (
+            window as unknown as { __retrySuccessCallback?: () => void }
+          ).__retrySuccessCallback = undefined; // Clean up
         }
         // Close modal on successful retry
         dispatch(hideErrorNotification());

@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
+import multer from 'multer';
+import path from 'path';
 import {
   getAllSites,
   createSite,
@@ -7,8 +9,34 @@ import {
   updateSite,
   deleteSite,
 } from '../controllers/siteController.js';
+import {
+  uploadImage,
+  deleteImage,
+  generateThumbnails,
+} from '../controllers/imageController.js';
 
 const router = Router();
+
+// Configure multer for image uploads - use memory storage for processing
+const fileFilter = (_req: any, file: any, cb: any) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
 
 // GET /api/sites - List all sites
 router.get('/sites', getAllSites);
@@ -36,5 +64,14 @@ router.put('/site/:id', updateSite);
 
 // DELETE /api/site/:id - Delete a site
 router.delete('/site/:id', deleteSite);
+
+// POST /api/image/upload - Upload single image
+router.post('/image/upload', upload.single('image'), uploadImage);
+
+// DELETE /api/image/:filename - Delete image file
+router.delete('/image/:filename', deleteImage);
+
+// POST /api/image/generate-thumbnails/:filename - Generate missing thumbnails
+router.post('/image/generate-thumbnails/:filename', generateThumbnails);
 
 export default router;

@@ -18,7 +18,6 @@ import { Controller } from 'react-hook-form';
 
 import type { FlyingSite } from '../types';
 import { useEditSiteForm } from '../hooks/useEditSiteForm';
-import { NotificationDialog } from './NotificationDialog';
 import { accessOptions } from '../constants/accessOptions';
 import { windDirections } from '../constants/windDirections';
 
@@ -45,7 +44,6 @@ function EditSite({ site, onClose }: EditSiteProps) {
     removeLandingField,
     addTracklog,
     removeTracklog,
-    notificationDialog,
   } = useEditSiteForm(site);
 
   const windDirectionValues = watch('windDirection') || [];
@@ -539,14 +537,6 @@ function EditSite({ site, onClose }: EditSiteProps) {
           </Box>
         </form>
       </Paper>
-      {/* Keep NotificationDialog only for error messages */}
-      {notificationDialog.notification.open &&
-        notificationDialog.notification.severity === 'error' && (
-          <NotificationDialog
-            notification={notificationDialog.notification}
-            onClose={notificationDialog.hideNotification}
-          />
-        )}
     </Container>
   );
 }

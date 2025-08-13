@@ -1,16 +1,16 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { Dialog, DialogContent, DialogActions, Button, Alert, AlertTitle } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Button, Alert, AlertTitle, CircularProgress } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 import type { RootState, AppDispatch } from '../store/store';
-import { hideErrorNotification } from '../store/slices/errorNotificationSlice';
+import { hideErrorNotification, setRetrying } from '../store/slices/errorNotificationSlice';
 import { loadSitesThunk, loadSingleSiteThunk, addSiteThunk, updateSiteThunk, deleteSiteThunk } from '../store/thunks/sitesThunks';
 
 export function GlobalErrorNotification() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { open, message, title, retryAction } = useSelector((state: RootState) => state.errorNotification);
+  const { open, message, title, retryAction, isRetrying } = useSelector((state: RootState) => state.errorNotification);
 
   // Show retry button if we have a retry action available
   const showRetryButton = !!retryAction;
@@ -24,6 +24,9 @@ export function GlobalErrorNotification() {
 
   const handleRetry = async () => {
     if (retryAction) {
+      // Set retry loading state
+      dispatch(setRetrying(true));
+      
       // Map retry action types to actual thunk functions
       const { type, payload } = retryAction;
       
@@ -54,11 +57,14 @@ export function GlobalErrorNotification() {
             break;
           default:
             console.warn('Unknown retry action type:', type);
+            dispatch(setRetrying(false));
             return;
         }
         // Close modal on successful retry
         dispatch(hideErrorNotification());
       } catch {
+        // Reset retry state on failure
+        dispatch(setRetrying(false));
         // If retry fails, the error middleware will show a new error notification
         // Don't close the current modal so user can see the original error is still there
       }
@@ -92,9 +98,10 @@ export function GlobalErrorNotification() {
             onClick={handleRetry}
             color='primary'
             variant='outlined'
-            startIcon={<RefreshIcon />}
+            disabled={isRetrying}
+            startIcon={isRetrying ? <CircularProgress size={16} /> : <RefreshIcon />}
           >
-            Retry
+            {isRetrying ? 'Retrying...' : 'Retry'}
           </Button>
         )}
         {showHomeButton && (

@@ -9,6 +9,7 @@ export interface ErrorNotificationState {
     type: string;
     payload?: any;
   };
+  isRetrying: boolean;
 }
 
 const initialState: ErrorNotificationState = {
@@ -16,6 +17,7 @@ const initialState: ErrorNotificationState = {
   message: '',
   title: undefined,
   retryAction: undefined,
+  isRetrying: false,
 };
 
 const errorNotificationSlice = createSlice({
@@ -27,15 +29,20 @@ const errorNotificationSlice = createSlice({
       state.message = action.payload.message;
       state.title = action.payload.title;
       state.retryAction = action.payload.retryAction;
+      state.isRetrying = false;
     },
     hideErrorNotification: (state) => {
       state.open = false;
       state.message = '';
       state.title = undefined;
       state.retryAction = undefined;
+      state.isRetrying = false;
+    },
+    setRetrying: (state, action: PayloadAction<boolean>) => {
+      state.isRetrying = action.payload;
     },
   },
 });
 
-export const { showErrorNotification, hideErrorNotification } = errorNotificationSlice.actions;
+export const { showErrorNotification, hideErrorNotification, setRetrying } = errorNotificationSlice.actions;
 export const errorNotificationReducer = errorNotificationSlice.reducer;

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSiteThunk, updateSiteThunk } from '../store/thunks/sitesThunks';
 import type { AppDispatch } from '../store/store';
-import { useNotificationDialog } from './useNotificationDialog';
 import { selectAllSitesLoadState } from '../store/slices/allSitesSlice';
 import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
 import type { AccessOptionId } from '../types';
@@ -15,7 +14,6 @@ export const useEditSiteForm = (site?: FlyingSite) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { showError, ...notificationDialog } = useNotificationDialog();
   const loadState = useSelector(selectAllSitesLoadState);
 
   // Initialize form with transformed data
@@ -179,7 +177,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
       }, 100);
     }
     
-    showError(errorMessage);
+    // Error is now handled by Redux error middleware
   };
 
   return {
@@ -208,8 +206,5 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     removeLandingField,
     addTracklog,
     removeTracklog,
-
-    // Other
-    notificationDialog,
   };
 };

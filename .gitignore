@@ -38,3 +38,6 @@ Thumbs.db
 
 # Vite-specific
 .vite/
+
+# Images folder (user uploads)
+images/

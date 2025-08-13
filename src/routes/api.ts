@@ -12,8 +12,8 @@ const router = Router();
 // GET /api/sites - List all sites
 router.get('/sites', getAllSites);
 
-// POST /api/new-site - Create a new site
-router.post('/new-site', createSite);
+// POST /api/site - Create a new site
+router.post('/site', createSite);
 
 // GET /api/site/:id - Get a single site
 router.get('/site/:id', getSiteById);

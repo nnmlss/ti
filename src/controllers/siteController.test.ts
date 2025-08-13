@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response, NextFunction } from 'express';
 
+// Mock express-validator
+vi.mock('express-validator', () => ({
+  validationResult: vi.fn(),
+}));
+
 // Mock the Site model before importing controller
 vi.mock('../models/sites.js', () => ({
   Site: {
@@ -22,6 +27,7 @@ import {
   deleteSite,
 } from './siteController.js';
 import { Site } from '../models/sites.js';
+import { validationResult } from 'express-validator';
 
 // Helper to create mock request/response objects
 const createMockReq = (params = {}, body = {}) => ({
@@ -47,6 +53,7 @@ describe('Site Controller', () => {
     vi.mocked(Site.findOneAndUpdate).mockClear();
     vi.mocked(Site.findOneAndDelete).mockClear();
     vi.mocked(Site.collection.insertOne).mockClear();
+    vi.mocked(validationResult).mockClear();
   });
 
   describe('getAllSites', () => {
@@ -65,37 +72,69 @@ describe('Site Controller', () => {
       expect(Site.find).toHaveBeenCalledOnce();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(mockSites);
-      expect(mockNext).toHaveBeenCalledOnce();
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should handle database errors', async () => {
-      vi.mocked(Site.find).mockRejectedValue(new Error('Database error'));
+    it('should handle database errors via global error handler', async () => {
+      const dbError = new Error('Database error');
+      vi.mocked(Site.find).mockRejectedValue(dbError);
 
       const req = createMockReq();
       const res = createMockRes();
 
       await getAllSites(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Failed to fetch sites' });
+      expect(mockNext).toHaveBeenCalledWith(dbError);
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 
   describe('createSite', () => {
-    it('should handle creation errors', async () => {
-      vi.mocked(Site.findOne).mockRejectedValue(new Error('Database error'));
+    it('should handle validation errors via global error handler', async () => {
+      const validationErrors = [
+        { msg: 'Title is required', param: 'title', location: 'body' }
+      ];
+      vi.mocked(validationResult).mockReturnValue({
+        isEmpty: () => false,
+        array: () => validationErrors,
+      } as any);
 
       const req = createMockReq({}, {});
       const res = createMockRes();
 
       await createSite(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith(
+      expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: 'Failed to create site',
+          message: 'Validation failed',
+          isValidationError: true,
+          errors: validationErrors,
         })
       );
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    });
+
+    it('should handle creation errors via global error handler', async () => {
+      vi.mocked(validationResult).mockReturnValue({
+        isEmpty: () => true,
+      } as any);
+      
+      const dbError = new Error('Database error');
+      // Mock the findOne().sort() chain for getNextId()
+      vi.mocked(Site.findOne).mockReturnValue({
+        sort: vi.fn().mockRejectedValue(dbError)
+      } as any);
+
+      const req = createMockReq({}, {});
+      const res = createMockRes();
+
+      await createSite(req, res, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(dbError);
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 
@@ -122,21 +161,27 @@ describe('Site Controller', () => {
       expect(Site.findOne).toHaveBeenCalledWith({ _id: 1 });
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(mockSiteData);
-      expect(mockNext).toHaveBeenCalledOnce();
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should return 400 when ID is missing', async () => {
+    it('should handle missing ID via global error handler', async () => {
       const req = createMockReq({}); // No ID parameter
       const res = createMockRes();
 
       await getSiteById(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Site ID is required' });
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Site ID is required',
+          status: 400,
+        })
+      );
       expect(Site.findOne).not.toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
 
-    it('should return 404 when site not found', async () => {
+    it('should handle site not found via global error handler', async () => {
       vi.mocked(Site.findOne).mockResolvedValue(null);
 
       const req = createMockReq({ id: '999' });
@@ -144,20 +189,28 @@ describe('Site Controller', () => {
 
       await getSiteById(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Site not found' });
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Site not found',
+          status: 404,
+        })
+      );
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
 
-    it('should handle database errors', async () => {
-      vi.mocked(Site.findOne).mockRejectedValue(new Error('Database error'));
+    it('should handle database errors via global error handler', async () => {
+      const dbError = new Error('Database error');
+      vi.mocked(Site.findOne).mockRejectedValue(dbError);
 
       const req = createMockReq({ id: '1' });
       const res = createMockRes();
 
       await getSiteById(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Failed to fetch site' });
+      expect(mockNext).toHaveBeenCalledWith(dbError);
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 
@@ -184,18 +237,24 @@ describe('Site Controller', () => {
       );
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(updatedSite);
-      expect(mockNext).toHaveBeenCalledOnce();
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should return 400 when ID is missing', async () => {
+    it('should handle missing ID via global error handler', async () => {
       const req = createMockReq({}, { title: { en: 'Update' } }); // No ID parameter
       const res = createMockRes();
 
       await updateSite(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Site ID is required' });
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Site ID is required',
+          status: 400,
+        })
+      );
       expect(Site.findOneAndUpdate).not.toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
 
     it('should handle $unset operations', async () => {
@@ -223,7 +282,7 @@ describe('Site Controller', () => {
       );
     });
 
-    it('should return 404 when site not found', async () => {
+    it('should handle site not found via global error handler', async () => {
       vi.mocked(Site.findOneAndUpdate).mockResolvedValue(null);
 
       const req = createMockReq({ id: '999' }, {});
@@ -231,24 +290,28 @@ describe('Site Controller', () => {
 
       await updateSite(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Site not found' });
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Site not found',
+          status: 404,
+        })
+      );
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
 
-    it('should handle update errors', async () => {
-      vi.mocked(Site.findOneAndUpdate).mockRejectedValue(new Error('Update failed'));
+    it('should handle update errors via global error handler', async () => {
+      const dbError = new Error('Update failed');
+      vi.mocked(Site.findOneAndUpdate).mockRejectedValue(dbError);
 
       const req = createMockReq({ id: '1' }, {});
       const res = createMockRes();
 
       await updateSite(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: 'Failed to update site',
-        })
-      );
+      expect(mockNext).toHaveBeenCalledWith(dbError);
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 
@@ -272,21 +335,27 @@ describe('Site Controller', () => {
       expect(res.json).toHaveBeenCalledWith({
         message: 'Site deleted successfully',
       });
-      expect(mockNext).toHaveBeenCalledOnce();
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should return 400 when ID is missing', async () => {
+    it('should handle missing ID via global error handler', async () => {
       const req = createMockReq({}); // No ID parameter
       const res = createMockRes();
 
       await deleteSite(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Site ID is required' });
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Site ID is required',
+          status: 400,
+        })
+      );
       expect(Site.findOneAndDelete).not.toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
 
-    it('should return 404 when site not found', async () => {
+    it('should handle site not found via global error handler', async () => {
       vi.mocked(Site.findOneAndDelete).mockResolvedValue(null);
 
       const req = createMockReq({ id: '999' });
@@ -294,20 +363,28 @@ describe('Site Controller', () => {
 
       await deleteSite(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Site not found' });
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Site not found',
+          status: 404,
+        })
+      );
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
 
-    it('should handle deletion errors', async () => {
-      vi.mocked(Site.findOneAndDelete).mockRejectedValue(new Error('Delete failed'));
+    it('should handle deletion errors via global error handler', async () => {
+      const dbError = new Error('Delete failed');
+      vi.mocked(Site.findOneAndDelete).mockRejectedValue(dbError);
 
       const req = createMockReq({ id: '1' });
       const res = createMockRes();
 
       await deleteSite(req, res, mockNext);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: 'Failed to delete site' });
+      expect(mockNext).toHaveBeenCalledWith(dbError);
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
     });
   });
 });

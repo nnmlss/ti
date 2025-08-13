@@ -160,9 +160,9 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
     location: {
       type: 'Point',
       coordinates: [
-        formData.location.coordinates[0] ? parseFloat(formData.location.coordinates[0]) : null,
-        formData.location.coordinates[1] ? parseFloat(formData.location.coordinates[1]) : null,
-      ] as [number | null, number | null],
+        formData.location.coordinates[0] ? parseFloat(formData.location.coordinates[0]) : 0,
+        formData.location.coordinates[1] ? parseFloat(formData.location.coordinates[1]) : 0,
+      ] as [number, number],
     },
   };
 

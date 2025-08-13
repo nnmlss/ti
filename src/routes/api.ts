@@ -18,6 +18,7 @@ router.post(
   '/site',
   [
     body('title.bg')
+      .trim()
       .isLength({ min: 3 })
       .withMessage('Bulgarian title must be at least 3 characters'),
     body('location').notEmpty().withMessage('Location is required'),

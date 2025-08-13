@@ -14,9 +14,8 @@ export const getAllSites = async (_req: Request, res: Response, next: NextFuncti
   try {
     const sites = await Site.find();
     res.status(200).json(sites as FlyingSite[]);
-    next();
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch sites' });
+    next(error); // Pass error to global error handler
   }
 };
 
@@ -43,19 +42,8 @@ export const createSite = async (req: Request, res: Response, next: NextFunction
     const savedSite = await Site.findOne({ _id: nextId });
 
     res.status(201).json(savedSite as FlyingSite);
-    next();
-  } catch (error: any) {
-    console.error('POST /site error:', error);
-    console.error('Error message:', error.message);
-    console.error('Error name:', error.name);
-    if (error.errors) {
-      console.error('Validation errors:', error.errors);
-    }
-    res.status(500).json({
-      error: 'Failed to create site',
-      message: error.message,
-      name: error.name,
-    });
+  } catch (error) {
+    next(error); // Pass error to global error handler
   }
 };
 
@@ -71,9 +59,8 @@ export const getSiteById = async (req: Request, res: Response, next: NextFunctio
       return res.status(404).json({ error: 'Site not found' });
     }
     res.status(200).json(site as FlyingSite);
-    next();
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch site' });
+    next(error); // Pass error to global error handler
   }
 };
 
@@ -113,13 +100,8 @@ export const updateSite = async (req: Request, res: Response, next: NextFunction
     }
 
     res.status(200).json(updatedSite as FlyingSite);
-    next();
-  } catch (error: any) {
-    console.error('PUT /site/:id error:', error);
-    res.status(500).json({
-      error: 'Failed to update site',
-      message: error.message,
-    });
+  } catch (error) {
+    next(error); // Pass error to global error handler
   }
 };
 
@@ -137,8 +119,7 @@ export const deleteSite = async (req: Request, res: Response, next: NextFunction
     }
 
     res.status(200).json({ message: 'Site deleted successfully' });
-    next();
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete site' });
+    next(error); // Pass error to global error handler
   }
 };

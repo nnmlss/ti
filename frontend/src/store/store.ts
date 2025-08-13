@@ -3,6 +3,8 @@ import { allSitesReducer } from './slices/allSitesSlice';
 import { singleSiteReducer } from './slices/singleSiteSlice';
 import { homeViewReducer } from './slices/homeViewSlice';
 import { filterReducer } from './slices/filterSlice';
+import { errorNotificationReducer } from './slices/errorNotificationSlice';
+import { errorNotificationMiddleware } from './middleware/errorNotificationMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -10,7 +12,10 @@ export const store = configureStore({
     singleSite: singleSiteReducer,
     homeView: homeViewReducer,
     filter: filterReducer,
+    errorNotification: errorNotificationReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(errorNotificationMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -16,7 +16,10 @@
     "build:frontend": "cd frontend && npm run build",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit && cd frontend && npx tsc --noEmit",
+    "lint:frontend": "cd frontend && npm run lint",
+    "check": "npm run typecheck && npm run lint:frontend"
   },
   "dependencies": {
     "dotenv": "^17.2.1",

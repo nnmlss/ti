@@ -1,5 +1,5 @@
 import { useSites } from '../hooks/useSites';
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, LayersControl } from 'react-leaflet';
 import {
   CircularProgress,
   Alert,
@@ -112,10 +112,29 @@ export function SitesMap() {
   return (
     <>
       <MapContainer center={mapCenter} zoom={8} style={{ height: '100vh', width: '100vw' }}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        />
+        <LayersControl position='topright'>
+          <LayersControl.BaseLayer name='Terrain'>
+            <TileLayer
+              attribution='Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+              url='https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+              maxZoom={17}
+            />
+          </LayersControl.BaseLayer>
+
+          <LayersControl.BaseLayer checked name='Satellite'>
+            <TileLayer
+              attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+              url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+            />
+          </LayersControl.BaseLayer>
+
+          <LayersControl.BaseLayer name='OpenStreetMap'>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            />
+          </LayersControl.BaseLayer>
+        </LayersControl>
 
         {sitesWithCoordinates.map((site) => {
           const [lng, lat] = site.location.coordinates;
@@ -166,10 +185,7 @@ export function SitesMap() {
                         mb: 2,
                       }}
                     >
-                      <WindDirectionCompass
-                        windDirections={site.windDirection}
-                        size={60}
-                      />
+                      <WindDirectionCompass windDirections={site.windDirection} size={60} />
                       <Typography variant='body2' sx={{ textAlign: 'center', mt: 1 }}>
                         {site.altitude ? `${site.altitude}m` : 'N/A'}
                       </Typography>

@@ -58,6 +58,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
     handleSubmit,
     watch,
     isSubmitting,
+    isFormValid,
     showSuccessMessage,
     landingFields,
     tracklogsValues,
@@ -527,7 +528,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
                   color: 'white',
                 },
               }}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isFormValid}
             >
               {isSubmitting ? (
                 <CircularProgress size={24} disableShrink />

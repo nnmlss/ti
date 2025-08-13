@@ -32,7 +32,7 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     setValue,
     setError,
     setFocus,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors, isValid },
   } = form;
 
   // Field arrays for dynamic sections
@@ -143,6 +143,14 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     }
   };
 
+  const onInvalid = (errors: any) => {
+    // Find first error field and focus it
+    const firstErrorField = Object.keys(errors)[0];
+    if (firstErrorField) {
+      setFocus(firstErrorField as any);
+    }
+  };
+
   const handleValidationError = (errorMessage: string) => {
     // Set form field errors
     if (errorMessage.includes('Bulgarian title')) {
@@ -178,12 +186,13 @@ export const useEditSiteForm = (site?: FlyingSite) => {
     // Form controls
     form,
     control,
-    handleSubmit: handleSubmit(onSubmit),
+    handleSubmit: handleSubmit(onSubmit, onInvalid),
     watch,
     setValue,
 
     // State
     isSubmitting: isSubmitting || loadState.status === 'pending',
+    isFormValid: isValid,
     showSuccessMessage,
 
     // Field arrays (only for actual useFieldArray hooks)

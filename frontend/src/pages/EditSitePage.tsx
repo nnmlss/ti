@@ -58,7 +58,10 @@ export function EditSitePage() {
     return site ? (
       <EditSite site={site} onClose={handleClose} />
     ) : (
-      <Alert severity='error'>Site not found. ID: {id}</Alert>
+      <Alert severity='error'>
+        Ифромацията за това място не е намерена. ID: {id}. Или не съществува, или имате проблеми
+        с интернет връзката.
+      </Alert>
     );
   };
 

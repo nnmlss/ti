@@ -1,6 +1,7 @@
 import type { Middleware } from '@reduxjs/toolkit';
 import { showErrorNotification } from '../slices/errorNotificationSlice';
 import { isHandledByCallback } from '../utils/thunkWithCallback';
+import { getLocalizedOperationName, getLocalizedErrorMessage } from '../utils/errorMessages';
 
 interface RejectedAction {
   type: string;
@@ -30,16 +31,11 @@ export const errorNotificationMiddleware: Middleware = (store) => (next) => (act
       return result;
     }
     
-    const errorMessage = rejectedAction.payload || rejectedAction.error?.message || 'An unexpected error occurred';
+    const rawErrorMessage = rejectedAction.payload || rejectedAction.error?.message || 'An unexpected error occurred';
     
-    // Extract operation name from action type (e.g., 'sites/loadSites/rejected' -> 'Load Sites')
-    const operationName = rejectedAction.type
-      .replace('/rejected', '')
-      .split('/')
-      .pop()
-      ?.replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (str: string) => str.toUpperCase())
-      .trim() || 'Operation';
+    // Get localized Bulgarian messages
+    const operationName = getLocalizedOperationName(originalActionType);
+    const errorMessage = getLocalizedErrorMessage(rawErrorMessage);
 
     // Create retry action from the original failed action
     const retryAction = {
@@ -48,7 +44,7 @@ export const errorNotificationMiddleware: Middleware = (store) => (next) => (act
     };
 
     store.dispatch(showErrorNotification({
-      title: `${operationName} Failed`,
+      title: `${operationName} се провали`,
       message: errorMessage,
       retryAction
     }));

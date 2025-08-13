@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import path from 'path';
+import fs from 'fs/promises';
 import { Site } from '../models/sites.js';
 import type { FlyingSite, CustomError } from '../models/sites.js';
 
@@ -7,6 +9,48 @@ import type { FlyingSite, CustomError } from '../models/sites.js';
 async function getNextId(): Promise<number> {
   const lastSite = await Site.findOne().sort({ _id: -1 });
   return lastSite ? (lastSite._id as number) + 1 : 1;
+}
+
+// Function to delete all images associated with a site
+async function deleteSiteImages(galleryImages: any[]): Promise<{ deletedFiles: number; errors: string[] }> {
+  if (!galleryImages || galleryImages.length === 0) {
+    return { deletedFiles: 0, errors: [] };
+  }
+
+  let deletedFiles = 0;
+  const errors: string[] = [];
+
+  for (const image of galleryImages) {
+    if (!image.path) continue;
+
+    try {
+      // Extract the base filename without extension for thumbnail deletion
+      const baseName = path.basename(image.path, path.extname(image.path));
+      
+      const filesToDelete = [
+        path.join(process.cwd(), 'gallery', image.path), // Original image
+        path.join(process.cwd(), 'gallery', 'thmb', `${baseName}.jpg`), // Thumbnail
+        path.join(process.cwd(), 'gallery', 'small', `${baseName}.jpg`), // Small version
+        path.join(process.cwd(), 'gallery', 'large', `${baseName}.jpg`) // Large version
+      ];
+
+      for (const filePath of filesToDelete) {
+        try {
+          await fs.access(filePath);
+          await fs.unlink(filePath);
+          deletedFiles++;
+        } catch (fileError: any) {
+          if (fileError.code !== 'ENOENT') {
+            errors.push(`Failed to delete ${path.basename(filePath)}: ${fileError.message}`);
+          }
+        }
+      }
+    } catch (error: any) {
+      errors.push(`Failed to process image ${image.path}: ${error.message}`);
+    }
+  }
+
+  return { deletedFiles, errors };
 }
 
 // GET /api/sites - List all sites
@@ -125,15 +169,36 @@ export const deleteSite = async (req: Request, res: Response, next: NextFunction
       error.status = 400;
       return next(error);
     }
-    const deletedSite = await Site.findOneAndDelete({ _id: parseInt(id) });
 
-    if (!deletedSite) {
+    // First, find the site to get its gallery images
+    const siteToDelete = await Site.findOne({ _id: parseInt(id) });
+    if (!siteToDelete) {
       const error: CustomError = new Error('Site not found');
       error.status = 404;
       return next(error);
     }
 
-    res.status(200).json({ message: 'Site deleted successfully' });
+    // Delete all gallery images from filesystem
+    let imageDeleteResult = { deletedFiles: 0, errors: [] as string[] };
+    if (siteToDelete.galleryImages && siteToDelete.galleryImages.length > 0) {
+      imageDeleteResult = await deleteSiteImages(siteToDelete.galleryImages);
+    }
+
+    // Delete the site from database
+    const deletedSite = await Site.findOneAndDelete({ _id: parseInt(id) });
+
+    if (!deletedSite) {
+      const error: CustomError = new Error('Site not found during deletion');
+      error.status = 404;
+      return next(error);
+    }
+
+    // Return success response with image deletion details
+    res.status(200).json({
+      message: 'Site deleted successfully',
+      deletedImages: imageDeleteResult.deletedFiles,
+      imageErrors: imageDeleteResult.errors.length > 0 ? imageDeleteResult.errors : undefined
+    });
   } catch (error) {
     next(error); // Pass error to global error handler
   }

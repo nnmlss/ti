@@ -318,11 +318,17 @@ describe('Site Controller', () => {
   describe('deleteSite', () => {
     it('should delete a site successfully', async () => {
       const siteId = '1';
+      const siteToDelete = {
+        _id: 1,
+        title: { en: 'Site to Delete', bg: 'Място за изтриване' },
+        galleryImages: []
+      };
       const deletedSite = {
         _id: 1,
         title: { en: 'Deleted Site', bg: 'Изтрито място' },
       };
 
+      vi.mocked(Site.findOne).mockResolvedValue(siteToDelete as any);
       vi.mocked(Site.findOneAndDelete).mockResolvedValue(deletedSite as any);
 
       const req = createMockReq({ id: siteId });
@@ -330,11 +336,49 @@ describe('Site Controller', () => {
 
       await deleteSite(req, res, mockNext);
 
+      expect(Site.findOne).toHaveBeenCalledWith({ _id: 1 });
       expect(Site.findOneAndDelete).toHaveBeenCalledWith({ _id: 1 });
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Site deleted successfully',
+        deletedImages: 0,
+        imageErrors: undefined
       });
+      expect(mockNext).not.toHaveBeenCalled();
+    });
+
+    it('should delete a site with gallery images successfully', async () => {
+      const siteId = '1';
+      const siteToDelete = {
+        _id: 1,
+        title: { en: 'Site with Images', bg: 'Място с изображения' },
+        galleryImages: [
+          { path: 'test1.jpg', author: 'Test Author 1' },
+          { path: 'test2.jpg', author: 'Test Author 2' }
+        ]
+      };
+      const deletedSite = {
+        _id: 1,
+        title: { en: 'Deleted Site', bg: 'Изтрито място' },
+      };
+
+      vi.mocked(Site.findOne).mockResolvedValue(siteToDelete as any);
+      vi.mocked(Site.findOneAndDelete).mockResolvedValue(deletedSite as any);
+
+      const req = createMockReq({ id: siteId });
+      const res = createMockRes();
+
+      await deleteSite(req, res, mockNext);
+
+      expect(Site.findOne).toHaveBeenCalledWith({ _id: 1 });
+      expect(Site.findOneAndDelete).toHaveBeenCalledWith({ _id: 1 });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Site deleted successfully',
+          deletedImages: expect.any(Number)
+        })
+      );
       expect(mockNext).not.toHaveBeenCalled();
     });
 
@@ -356,7 +400,7 @@ describe('Site Controller', () => {
     });
 
     it('should handle site not found via global error handler', async () => {
-      vi.mocked(Site.findOneAndDelete).mockResolvedValue(null);
+      vi.mocked(Site.findOne).mockResolvedValue(null);
 
       const req = createMockReq({ id: '999' });
       const res = createMockRes();
@@ -369,13 +413,14 @@ describe('Site Controller', () => {
           status: 404,
         })
       );
+      expect(Site.findOneAndDelete).not.toHaveBeenCalled();
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
 
     it('should handle deletion errors via global error handler', async () => {
       const dbError = new Error('Delete failed');
-      vi.mocked(Site.findOneAndDelete).mockRejectedValue(dbError);
+      vi.mocked(Site.findOne).mockRejectedValue(dbError);
 
       const req = createMockReq({ id: '1' });
       const res = createMockRes();

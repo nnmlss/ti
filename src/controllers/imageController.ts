@@ -111,16 +111,19 @@ export const deleteImage = async (req: Request, res: Response, next: NextFunctio
       return next(error);
     }
 
+    // Decode the filename in case it contains URL-encoded characters
+    const decodedFilename = decodeURIComponent(filename);
+    
     // Validate filename to prevent directory traversal
-    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+    if (decodedFilename.includes('..') || decodedFilename.includes('/') || decodedFilename.includes('\\')) {
       const error: CustomError = new Error('Invalid filename');
       error.status = 400;
       return next(error);
     }
 
     // Delete original image
-    const originalPath = path.join(process.cwd(), 'gallery', filename);
-    const baseName = path.basename(filename, path.extname(filename));
+    const originalPath = path.join(process.cwd(), 'gallery', decodedFilename);
+    const baseName = path.basename(decodedFilename, path.extname(decodedFilename));
     
     const filesToDelete = [
       originalPath,
@@ -152,7 +155,7 @@ export const deleteImage = async (req: Request, res: Response, next: NextFunctio
 
     res.status(200).json({
       message: 'Image deleted successfully',
-      filename,
+      filename: decodedFilename,
       deletedFiles,
       errors: errors.length > 0 ? errors : undefined
     });
@@ -172,14 +175,17 @@ export const generateThumbnails = async (req: Request, res: Response, next: Next
       return next(error);
     }
 
+    // Decode the filename in case it contains URL-encoded characters
+    const decodedFilename = decodeURIComponent(filename);
+    
     // Validate filename to prevent directory traversal
-    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+    if (decodedFilename.includes('..') || decodedFilename.includes('/') || decodedFilename.includes('\\')) {
       const error: CustomError = new Error('Invalid filename');
       error.status = 400;
       return next(error);
     }
 
-    const originalPath = path.join(process.cwd(), 'gallery', filename);
+    const originalPath = path.join(process.cwd(), 'gallery', decodedFilename);
     
     // Check if original file exists
     try {
@@ -195,7 +201,7 @@ export const generateThumbnails = async (req: Request, res: Response, next: Next
 
     // Read original image
     const buffer = await fs.readFile(originalPath);
-    const baseName = path.basename(filename, path.extname(filename));
+    const baseName = path.basename(decodedFilename, path.extname(decodedFilename));
     
     // Create resized JPG versions
     const sizes = [
@@ -239,7 +245,7 @@ export const generateThumbnails = async (req: Request, res: Response, next: Next
     
     res.status(200).json({
       message: 'Thumbnails processed successfully',
-      filename,
+      filename: decodedFilename,
       versions: generatedVersions
     });
   } catch (error) {

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { Site } from '../models/sites.js';
-import type { FlyingSite } from '../models/sites.js';
+import type { FlyingSite, CustomError } from '../models/sites.js';
 
 // Function to get the next numeric ID
 async function getNextId(): Promise<number> {
@@ -23,7 +23,10 @@ export const getAllSites = async (_req: Request, res: Response, next: NextFuncti
 export const createSite = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    const validationError: CustomError = new Error('Validation failed');
+    validationError.isValidationError = true;
+    validationError.errors = errors.array();
+    return next(validationError);
   }
 
   try {
@@ -52,11 +55,15 @@ export const getSiteById = async (req: Request, res: Response, next: NextFunctio
   try {
     const id = req.params.id;
     if (!id) {
-      return res.status(400).json({ error: 'Site ID is required' });
+      const error: CustomError = new Error('Site ID is required');
+      error.status = 400;
+      return next(error);
     }
     const site = await Site.findOne({ _id: parseInt(id) });
     if (!site) {
-      return res.status(404).json({ error: 'Site not found' });
+      const error: CustomError = new Error('Site not found');
+      error.status = 404;
+      return next(error);
     }
     res.status(200).json(site as FlyingSite);
   } catch (error) {
@@ -87,7 +94,9 @@ export const updateSite = async (req: Request, res: Response, next: NextFunction
 
     const id = req.params.id;
     if (!id) {
-      return res.status(400).json({ error: 'Site ID is required' });
+      const error: CustomError = new Error('Site ID is required');
+      error.status = 400;
+      return next(error);
     }
 
     const updatedSite = await Site.findOneAndUpdate({ _id: parseInt(id) }, finalUpdate, {
@@ -96,7 +105,9 @@ export const updateSite = async (req: Request, res: Response, next: NextFunction
     });
 
     if (!updatedSite) {
-      return res.status(404).json({ error: 'Site not found' });
+      const error: CustomError = new Error('Site not found');
+      error.status = 404;
+      return next(error);
     }
 
     res.status(200).json(updatedSite as FlyingSite);
@@ -110,12 +121,16 @@ export const deleteSite = async (req: Request, res: Response, next: NextFunction
   try {
     const id = req.params.id;
     if (!id) {
-      return res.status(400).json({ error: 'Site ID is required' });
+      const error: CustomError = new Error('Site ID is required');
+      error.status = 400;
+      return next(error);
     }
     const deletedSite = await Site.findOneAndDelete({ _id: parseInt(id) });
 
     if (!deletedSite) {
-      return res.status(404).json({ error: 'Site not found' });
+      const error: CustomError = new Error('Site not found');
+      error.status = 404;
+      return next(error);
     }
 
     res.status(200).json({ message: 'Site deleted successfully' });

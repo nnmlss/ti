@@ -23,6 +23,12 @@ export interface LocalizedText {
   en?: string;
 }
 
+export interface CustomError extends Error {
+  status?: number;
+  isValidationError?: boolean;
+  errors?: any[];
+}
+
 export interface Location {
   type: 'Point';
   coordinates: [number, number]; // [longitude, latitude]

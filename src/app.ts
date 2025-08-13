@@ -62,6 +62,15 @@ app.use(
       });
     }
 
+    // Handle express-validator validation errors
+    if (err.isValidationError) {
+      return res.status(422).json({
+        error: 'Validation Failed',
+        message: 'Request validation failed',
+        errors: err.errors || null,
+      });
+    }
+
     if (err.name === 'CastError') {
       return res.status(400).json({
         error: 'Invalid ID format',

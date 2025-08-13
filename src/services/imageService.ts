@@ -19,7 +19,7 @@ export const getImageQuality = (folder: string): number => folder === 'thmb' ? 9
 
 export const generateFilename = (originalname: string): string => {
   const timestamp = Date.now();
-  const ext = path.extname(originalname).toLowerCase();
+  const ext = path.extname(originalname);
   const basename = path.basename(originalname, ext);
   return `${timestamp}-${basename}`;
 };

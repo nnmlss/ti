@@ -22,9 +22,16 @@
     "check": "npm run typecheck && npm run lint:frontend"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "csrf": "^3.1.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "express-session": "^1.18.2",
     "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.0",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.5",
@@ -32,9 +39,13 @@
     "sharp": "^0.34.3"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/express-session": "^1.18.2",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.2.0",
+    "@types/nodemailer": "^6.4.17",
     "@types/supertest": "^6.0.3",
     "@vitest/ui": "^3.2.4",
     "concurrently": "^9.2.0",

@@ -68,7 +68,7 @@ npm run clean               # Remove dist/ directory
 ### Testing
 
 ```bash
-npm test                    # Run tests in watch mode  
+npm test                    # Run tests in watch mode
 npm run test:run           # Run all tests once
 npm run test:ui            # Run tests with UI interface
 npm run typecheck          # TypeScript type checking for both backend and frontend
@@ -141,3 +141,157 @@ npm run check              # Run typecheck and frontend lint
 - MongoDB instance
 - MONGO_URI environment variable for database connection
 
+## Planned User Management System
+
+### Overview
+
+Implementing admin-controlled user registration with two-step activation process:
+
+- Anonymous users: read-only access, can suggest edits/creations
+- Authenticated users: create and edit sites  
+- Admin users (id:1): create email-only accounts and approve suggestions
+
+### Registration Flow
+
+#### Step 1: Admin Account Creation
+- Admin creates accounts with email only (multiple emails via dynamic form)
+- Accounts created with: id, email, isActive:false
+
+#### Step 2: Public Account Activation  
+- Public page where anyone can enter email for activation
+- If email exists in database → generate 7-minute token + send activation email
+- If email doesn't exist → same "you will receive an email..." message (prevents enumeration)
+- User completes username/password form via token link
+- Success → isActive:true, token cleared
+- Timeout → token deleted
+
+### Implementation Plan
+
+#### Phase 1: User Model & Database Updates ✓
+
+1. **Update User model** - Add `email`, `invitationToken`, `tokenExpiry`, `isActive` fields
+2. **Create admin user** - Manually insert user with id:1 in database
+
+#### Phase 2: Admin Account Creation
+
+3. **Admin account creation endpoint** - Admin-only route to create email-only accounts
+4. **Dynamic email form** - Admin frontend form with + button for multiple emails
+5. **Token expiry constant** - Configurable 7-minute timeout (ACTIVATION_TOKEN_EXPIRY_MINUTES)
+
+#### Phase 3: Public Activation System
+
+6. **Public activation page** - Email input form for account activation requests
+7. **Token generation service** - Create secure tokens with expiry
+8. **Email service** - Send activation emails with token links
+9. **Token validation endpoint** - Verify tokens and allow username/password creation
+
+#### Phase 4: Authentication & Authorization
+
+10. **Login system** - Standard username/password authentication
+11. **Middleware** - Protect routes based on authentication status
+12. **Permission checks** - Ensure only authenticated users can create/edit sites
+
+#### Phase 5: Future Features Foundation
+
+13. **Suggestion system schema** - Database structure for anonymous suggestions
+14. **Approval workflow** - Admin interface for managing suggestions
+
+### Current Status
+
+- User management system fully implemented ✓
+- Email activation system working ✓ 
+- JWT authentication and authorization ✓
+- Admin account creation functionality ✓
+- Security middleware implemented ✓
+
+### Security Implementation
+
+#### XSS Protection
+- Helmet middleware with Content Security Policy
+- CSP restricts scripts/styles to self-hosted only
+- Input sanitization via express-validator
+
+#### CSRF Protection  
+- Session-based CSRF tokens
+- `/api/csrf-token` endpoint for token retrieval
+- `X-CSRF-Token` header validation on state-changing requests
+- Frontend `fetchWithCsrf` utility for automatic token inclusion
+- Auth endpoints exempt (use JWT authentication)
+
+#### CORS Protection
+- Dynamic origin configuration based on environment
+- Development: localhost only
+- Production: any subdomain of `borislav.space`
+
+#### Rate Limiting
+- General API: 100 requests per 15 minutes per IP
+- Auth endpoints: 5 attempts per 15 minutes per IP
+
+#### Additional Security
+- Body size limits (10mb)
+- Secure session configuration  
+- HTTP security headers via Helmet
+
+### API Endpoints (Security-Protected)
+
+#### Authentication (Rate Limited)
+- `POST /api/auth/request-activation` - Public email activation request
+- `GET /api/auth/validate/:token` - Token validation
+- `POST /api/auth/activate/:token` - Complete account activation  
+- `POST /api/auth/login` - User login
+- `POST /api/auth/admin/create-accounts` - Admin create accounts (JWT required)
+
+#### Sites API (CSRF Protected)
+- `GET /api/sites` - List all sites (no CSRF)
+- `POST /api/site` - Create site (CSRF + auth required)
+- `GET /api/site/:id` - Get single site (no CSRF)  
+- `PUT /api/site/:id` - Update site (CSRF + auth required)
+- `DELETE /api/site/:id` - Delete site (CSRF + auth required)
+
+#### Security Utilities
+- `GET /api/csrf-token` - Retrieve CSRF token for session
+
+### Environment Variables Required
+
+```bash
+MONGO_URI=mongodb-connection-string
+SMTP_PASS=email-password  
+SESSION_SECRET=session-secret-key (production)
+NODE_ENV=production|development
+```
+
+### Frontend Security Integration
+
+- `fetchWithCsrf` utility automatically handles CSRF tokens
+- Token caching with 10-minute refresh
+- All state-changing operations protected
+- Session credentials included in requests
+
+## Development Roadmap
+
+### Phase 1: Core Security & UI Protection
+1. **Route Protection** - Authenticate create/edit site endpoints with middleware
+2. **UI Element Hiding** - Hide edit/delete/create buttons for non-authenticated users
+3. **Frontend Auth State** - User context for authentication status management
+4. **Navigation Guards** - Protect admin routes from unauthorized access
+
+### Phase 2: Hidden Login UX
+5. **User Icon Menu** - Replace "Места за летене" with user icon dropdown:
+   - Profile (edit username/password)
+   - Logout
+   - Admin only: "Add Users" → account creation page
+6. **Profile Management** - Username/password editing with validation
+7. **Email Change Notifications** - Send notifications to fly@borislav.space when users change email/username
+8. **Admin Menu Item** - Special "Add Users" option for user ID 1 only
+9. **Logout Functionality** - Clear auth state and redirect
+
+### Phase 3: Pre-Deployment
+10. **GraphQL Implementation** - Replace REST API with GraphQL for better performance
+11. **Production Environment** - Add SESSION_SECRET and other production configs
+12. **End-to-End Testing** - Complete authentication flow validation
+13. **Subdomain Deployment** - Configure for deployment on borislav.space subdomain
+
+### Design Philosophy
+- **Hidden Authentication**: No visible login button - only those who need access know about it
+- **Clean Anonymous UX**: Regular users see read-only site without auth UI clutter
+- **Progressive Enhancement**: Authenticated users get additional functionality seamlessly

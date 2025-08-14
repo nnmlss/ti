@@ -10,8 +10,12 @@ import {
   deleteSite,
 } from '../controllers/sites.js';
 import { uploadImage, deleteImage, generateThumbnails } from '../controllers/image.js';
+import authRoutes from './auth.js';
 
 const router = Router();
+
+// Auth routes
+router.use('/auth', authRoutes);
 
 // Configure multer for image uploads - use memory storage for processing
 const fileFilter = (

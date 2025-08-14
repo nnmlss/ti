@@ -35,7 +35,6 @@ export const dispatchThunkWithCallback = async (
 /**
  * Check if an operation is currently being handled by callback utility
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const isHandledByCallback = (_actionType: string, _payload: unknown): boolean => {
   // No longer needed since we're using global callback approach, but keep parameters for compatibility
   return false;

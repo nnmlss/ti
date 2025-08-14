@@ -120,12 +120,17 @@ export const deleteImageFiles = async (filename: string) => {
   for (const filePath of filesToDelete) {
     try {
       await fs.access(filePath);
-      await fs.unlink(filePath);
-      deletedFiles++;
-    } catch (fileError: unknown) {
-      if (fileError instanceof Error && 'code' in fileError && fileError.code !== 'ENOENT') {
-        errors.push(`Failed to delete ${path.basename(filePath)}: ${fileError.message}`);
+      // File exists, try to delete it
+      try {
+        await fs.unlink(filePath);
+        deletedFiles++;
+      } catch (deleteError: unknown) {
+        if (deleteError instanceof Error) {
+          errors.push(`Failed to delete ${path.basename(filePath)}: ${deleteError.message}`);
+        }
       }
+    } catch (accessError: unknown) {
+      // File doesn't exist, skip silently (ENOENT is expected for missing files)
     }
   }
 

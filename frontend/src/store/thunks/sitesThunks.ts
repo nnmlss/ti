@@ -1,12 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { FlyingSite } from '../../types';
+import { fetchWithCsrf } from '../../utils/fetchWithCsrf';
 
 // Thunk for loading a single site (for edit/view with full data)
 export const loadSingleSiteThunk = createAsyncThunk(
   'sites/loadSingleSite',
   async (siteId: number, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/site/${siteId}`);
+      const response = await fetchWithCsrf(`/api/site/${siteId}`);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -25,7 +26,7 @@ export const loadSingleSiteThunk = createAsyncThunk(
 // Thunk for loading all sites
 export const loadSitesThunk = createAsyncThunk('sites/loadSites', async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch('/api/sites');
+    const response = await fetchWithCsrf('/api/sites');
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -44,7 +45,7 @@ export const loadSitesThunk = createAsyncThunk('sites/loadSites', async (_, { re
 export const addSiteThunk = createAsyncThunk(
   'sites/addSite',
   async (siteData: Partial<FlyingSite>, { rejectWithValue }) => {
-    const response = await fetch('/api/site', {
+    const response = await fetchWithCsrf('/api/site', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -69,7 +70,7 @@ export const updateSiteThunk = createAsyncThunk(
   async (siteData: Partial<FlyingSite>, { rejectWithValue }) => {
     try {
       const { _id, ...body } = siteData;
-      const response = await fetch(`/api/site/${_id}`, {
+      const response = await fetchWithCsrf(`/api/site/${_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ export const updateSiteThunk = createAsyncThunk(
 // Thunk for deleting a site
 export const deleteSiteThunk = createAsyncThunk('sites/deleteSite', async (siteId: number, { rejectWithValue }) => {
   try {
-    const response = await fetch(`/api/site/${siteId}`, {
+    const response = await fetchWithCsrf(`/api/site/${siteId}`, {
       method: 'DELETE',
     });
 

@@ -82,4 +82,6 @@ export interface FlyingSite {
     bg?: string[];
     en?: string[];
   };
+  unique?: LocalizedText;
+  monuments?: LocalizedText;
 }

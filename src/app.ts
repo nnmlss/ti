@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import apiRouter from './routes/api.js';
+// import authRouter from './routes/auth.js';
 import { connectDB } from './config/database.js';
 import path from 'path';
 import type { CustomError } from './models/sites.js';
@@ -18,8 +19,9 @@ app.use((_req, res, next) => {
   next();
 });
 
-// All API routes are mounted under /api
+// All API and AUTH routes are mounted under /api and /auth
 app.use('/api', apiRouter);
+// app.use('/auth', authRouter);
 
 // Serve static images - must come after API routes
 app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
@@ -74,8 +76,10 @@ app.use(
     const errorObj = err as CustomError;
     res.status(errorObj.status || 500).json({
       error: (err instanceof Error ? err.name : undefined) || 'Internal Server Error',
-      message: (err instanceof Error ? err.message : undefined) || 'An unexpected error occurred',
-      ...(process.env.NODE_ENV === 'development' && err instanceof Error && { stack: err.stack }),
+      message:
+        (err instanceof Error ? err.message : undefined) || 'An unexpected error occurred',
+      ...(process.env.NODE_ENV === 'development' &&
+        err instanceof Error && { stack: err.stack }),
     });
   }
 );

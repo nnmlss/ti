@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { body } from 'express-validator';
 import multer from 'multer';
-import path from 'path';
+// import path from 'path';
 import {
   getAllSites,
   createSite,
@@ -9,16 +9,16 @@ import {
   updateSite,
   deleteSite,
 } from '../controllers/sites.js';
-import {
-  uploadImage,
-  deleteImage,
-  generateThumbnails,
-} from '../controllers/image.js';
+import { uploadImage, deleteImage, generateThumbnails } from '../controllers/image.js';
 
 const router = Router();
 
 // Configure multer for image uploads - use memory storage for processing
-const fileFilter = (_req: express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (
+  _req: express.Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   if (
     file.mimetype === 'image/png' ||
     file.mimetype === 'image/jpg' ||
@@ -30,12 +30,12 @@ const fileFilter = (_req: express.Request, file: Express.Multer.File, cb: multer
   }
 };
 
-const upload = multer({ 
+const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
-  }
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
 });
 
 // GET /api/sites - List all sites

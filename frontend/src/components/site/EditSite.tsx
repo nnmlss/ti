@@ -480,6 +480,108 @@ function EditSite({ site, onClose }: EditSiteProps) {
             </Grid>
           </Grid>
 
+          {/* Unique Features Section */}
+          <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
+            Особености
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid component='div' size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='unique.bg'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id='unique-bg'
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label='Особености (Bulgarian)'
+                    slotProps={{
+                      htmlInput: {
+                        id: 'unique-bg',
+                        name: 'unique-bg',
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid component='div' size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='unique.en'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id='unique-en'
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label='Особености (English)'
+                    slotProps={{
+                      htmlInput: {
+                        id: 'unique-en',
+                        name: 'unique-en',
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+
+          {/* Monuments Section */}
+          <Typography variant='h6' gutterBottom sx={{ mt: 3 }}>
+            Забележителности
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid component='div' size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='monuments.bg'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id='monuments-bg'
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label='Забележителности (Bulgarian)'
+                    slotProps={{
+                      htmlInput: {
+                        id: 'monuments-bg',
+                        name: 'monuments-bg',
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid component='div' size={{ xs: 12, md: 6 }}>
+              <Controller
+                name='monuments.en'
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id='monuments-en'
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label='Забележителности (English)'
+                    slotProps={{
+                      htmlInput: {
+                        id: 'monuments-en',
+                        name: 'monuments-en',
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+
           {/* Bilingual Array Fields */}
           {renderBilingualArrayFields('accomodations', 'Настаняване')}
           {renderBilingualArrayFields('alternatives', 'Друго за правене')}

@@ -229,6 +229,8 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
 
         {/* Detailed Information */}
         {renderLocalizedText(site.access, 'Достъп')}
+        {renderLocalizedText(site.unique, 'Особености')}
+        {renderLocalizedText(site.monuments, 'Забележителности')}
         {renderBilingualArray(site.accomodations, 'Настаняване')}
         {renderBilingualArray(site.alternatives, 'Други занимания')}
         {renderBilingualArray(site.localPilotsClubs, 'Local Pilots Clubs')}

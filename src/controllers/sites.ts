@@ -12,7 +12,9 @@ async function getNextId(): Promise<number> {
 }
 
 // Function to delete all images associated with a site
-async function deleteSiteImages(galleryImages: GalleryImage[]): Promise<{ deletedFiles: number; errors: string[] }> {
+async function deleteSiteImages(
+  galleryImages: GalleryImage[]
+): Promise<{ deletedFiles: number; errors: string[] }> {
   if (!galleryImages || galleryImages.length === 0) {
     return { deletedFiles: 0, errors: [] };
   }
@@ -26,12 +28,12 @@ async function deleteSiteImages(galleryImages: GalleryImage[]): Promise<{ delete
     try {
       // Extract the base filename without extension for thumbnail deletion
       const baseName = path.basename(image.path, path.extname(image.path));
-      
+
       const filesToDelete = [
         path.join(process.cwd(), 'gallery', image.path), // Original image
         path.join(process.cwd(), 'gallery', 'thmb', `${baseName}.jpg`), // Thumbnail
         path.join(process.cwd(), 'gallery', 'small', `${baseName}.jpg`), // Small version
-        path.join(process.cwd(), 'gallery', 'large', `${baseName}.jpg`) // Large version
+        path.join(process.cwd(), 'gallery', 'large', `${baseName}.jpg`), // Large version
       ];
 
       for (const filePath of filesToDelete) {
@@ -40,13 +42,25 @@ async function deleteSiteImages(galleryImages: GalleryImage[]): Promise<{ delete
           await fs.unlink(filePath);
           deletedFiles++;
         } catch (fileError: unknown) {
-          if (fileError instanceof Error && 'code' in fileError && fileError.code !== 'ENOENT') {
-            errors.push(`Failed to delete ${path.basename(filePath)}: ${fileError instanceof Error ? fileError.message : String(fileError)}`);
+          if (
+            fileError instanceof Error &&
+            'code' in fileError &&
+            fileError.code !== 'ENOENT'
+          ) {
+            errors.push(
+              `Failed to delete ${path.basename(filePath)}: ${
+                fileError instanceof Error ? fileError.message : String(fileError)
+              }`
+            );
           }
         }
       }
     } catch (error: unknown) {
-      errors.push(`Failed to process image ${image.path}: ${error instanceof Error ? error.message : String(error)}`);
+      errors.push(
+        `Failed to process image ${image.path}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     }
   }
 
@@ -201,7 +215,7 @@ export const deleteSite = async (req: Request, res: Response, next: NextFunction
     res.status(200).json({
       message: 'Site deleted successfully',
       deletedImages: imageDeleteResult.deletedFiles,
-      imageErrors: imageDeleteResult.errors.length > 0 ? imageDeleteResult.errors : undefined
+      imageErrors: imageDeleteResult.errors.length > 0 ? imageDeleteResult.errors : undefined,
     });
   } catch (error) {
     next(error); // Pass error to global error handler

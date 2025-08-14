@@ -80,6 +80,8 @@ export interface FlyingSite {
     bg?: string[];
     en?: string[];
   };
+  unique?: LocalizedText;
+  monuments?: LocalizedText;
 }
 
 // For site creation only - before _id is assigned
@@ -196,6 +198,8 @@ const FlyingSiteSchema = new Schema(
       bg: [String],
       en: [String],
     },
+    unique: LocalizedTextSchema,
+    monuments: LocalizedTextSchema,
   },
   {
     toJSON: {
@@ -237,6 +241,18 @@ const FlyingSiteSchema = new Schema(
             const bgEmpty = ret.access.bg === undefined || isEmptyString(ret.access.bg);
             const enEmpty = ret.access.en === undefined || isEmptyString(ret.access.en);
             if (bgEmpty && enEmpty) delete ret.access;
+          }
+          // Remove unique if both bg/en empty or missing
+          if (ret.unique) {
+            const bgEmpty = ret.unique.bg === undefined || isEmptyString(ret.unique.bg);
+            const enEmpty = ret.unique.en === undefined || isEmptyString(ret.unique.en);
+            if (bgEmpty && enEmpty) delete ret.unique;
+          }
+          // Remove monuments if both bg/en empty or missing
+          if (ret.monuments) {
+            const bgEmpty = ret.monuments.bg === undefined || isEmptyString(ret.monuments.bg);
+            const enEmpty = ret.monuments.en === undefined || isEmptyString(ret.monuments.en);
+            if (bgEmpty && enEmpty) delete ret.monuments;
           }
           // Do not expose id virtual or version key
           delete ret.id;

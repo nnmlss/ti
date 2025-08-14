@@ -9,6 +9,10 @@ export interface ImageUploadResponse {
     size: number;
     width?: number;
     height?: number;
+    format?: string;
+    thumbnail?: string;
+    small?: string;
+    large?: string;
   };
 }
 

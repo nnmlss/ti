@@ -3,32 +3,32 @@
 export const errorMessages = {
   // Operation names mapping (from thunk action types to Bulgarian)
   operationNames: {
-    'loadSingleSite': 'Зареждането на мястото',
-    'loadSites': 'Зареждането на местата', 
-    'addSite': 'Добавянето на място',
-    'updateSite': 'Обновяването на място',
-    'deleteSite': 'Изтриването на място'
+    loadSingleSite: 'Зареждане на мястото за летене',
+    loadSites: 'Зареждането на информация',
+    addSite: 'Добавянето на място',
+    updateSite: 'Обновяването на място',
+    deleteSite: 'Изтриването на място',
   },
 
   // Error messages mapping (from technical to user-friendly Bulgarian)
   messages: {
-    'Network error: Unable to connect to server': 'Няма връзка с интернет',
-    'Failed to load site': 'Не може да се зареди информацията за мястото',
+    'Network error: Unable to connect to server': 'Няма интернет връзка със сървъра',
+    'Failed to load site': 'Неуспешно зареждане на сайта',
     'Failed to load sites': 'Не може да се заредят местата',
     'Failed to add site': 'Не може да се добави мястото',
-    'Failed to update site': 'Не може да се обнови мястото', 
+    'Failed to update site': 'Не може да се обнови мястото',
     'Failed to delete site': 'Не може да се изтрие мястото',
     'An unexpected error occurred': 'Възникна неочаквана грешка',
     'Site not found': 'Мястото не е намерено',
     'Invalid request': 'Неvalidна заявка',
-    'Server error': 'Грешка в сървъра'
+    'Server error': 'Грешка в сървъра',
   },
 
   // Default messages
   defaults: {
     operationName: 'Операцията',
-    errorMessage: 'Възникна грешка'
-  }
+    errorMessage: 'Възникна грешка',
+  },
 };
 
 /**
@@ -36,10 +36,15 @@ export const errorMessages = {
  */
 export function getLocalizedOperationName(actionType: string): string {
   const operationKey = actionType.split('/').pop();
-  if (operationKey && errorMessages.operationNames[operationKey as keyof typeof errorMessages.operationNames]) {
-    return errorMessages.operationNames[operationKey as keyof typeof errorMessages.operationNames];
+  if (
+    operationKey &&
+    errorMessages.operationNames[operationKey as keyof typeof errorMessages.operationNames]
+  ) {
+    return errorMessages.operationNames[
+      operationKey as keyof typeof errorMessages.operationNames
+    ];
   }
-  
+
   // Fallback to English conversion for unmapped operations
   const fallback = actionType
     .split('/')
@@ -47,7 +52,7 @@ export function getLocalizedOperationName(actionType: string): string {
     ?.replace(/([A-Z])/g, ' $1')
     .replace(/^./, (str: string) => str.toUpperCase())
     .trim();
-    
+
   return fallback || errorMessages.defaults.operationName;
 }
 
@@ -59,14 +64,14 @@ export function getLocalizedErrorMessage(errorMessage: string): string {
   if (errorMessages.messages[errorMessage as keyof typeof errorMessages.messages]) {
     return errorMessages.messages[errorMessage as keyof typeof errorMessages.messages];
   }
-  
+
   // Check for partial matches (e.g., "Failed to load site (404)")
   for (const [key, value] of Object.entries(errorMessages.messages)) {
     if (errorMessage.includes(key)) {
       return value;
     }
   }
-  
+
   // Return original message if no translation found
   return errorMessage || errorMessages.defaults.errorMessage;
 }

@@ -8,12 +8,12 @@ import {
   getSiteById,
   updateSite,
   deleteSite,
-} from '../controllers/siteController.js';
+} from '../controllers/sites.js';
 import {
   uploadImage,
   deleteImage,
   generateThumbnails,
-} from '../controllers/imageController.js';
+} from '../controllers/image.js';
 
 const router = Router();
 

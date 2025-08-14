@@ -25,7 +25,7 @@ import {
   getSiteById,
   updateSite,
   deleteSite,
-} from './siteController.js';
+} from './sites.js';
 import { Site } from '../models/sites.js';
 import { validationResult } from 'express-validator';
 

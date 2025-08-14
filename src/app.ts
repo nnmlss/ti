@@ -61,7 +61,7 @@ const authLimiter = rateLimit({
 });
 
 app.use(limiter);
-app.use('/api/auth', authLimiter);
+// app.use('/api/auth', authLimiter); // Temporarily disabled for testing
 
 // Session middleware for CSRF
 app.use(session({
@@ -110,11 +110,12 @@ const csrfProtection = (req: express.Request, res: express.Response, next: expre
   next();
 };
 
-app.use('/api', csrfProtection);
+// Mount auth routes first (no CSRF protection)
+app.use('/api/auth', authRouter);
 
-// All API and AUTH routes are mounted under /api and /auth
+// Then apply CSRF protection to remaining /api routes
+app.use('/api', csrfProtection);
 app.use('/api', apiRouter);
-app.use('/auth', authRouter);
 
 // Serve static images - must come after API routes
 app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));

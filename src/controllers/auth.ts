@@ -210,13 +210,8 @@ export const createUserAccounts = async (req: AuthenticatedRequest, res: Respons
           continue;
         }
 
-        // Get next ID
-        const lastUser = await User.findOne().sort({ _id: -1 });
-        const nextId = lastUser ? lastUser._id + 1 : 2; // Start from 2 (admin is 1)
-
-        // Create user with email only
+        // Create user with email only (let MongoDB auto-generate ObjectId)
         const newUser = new User({
-          _id: nextId,
           email,
           isActive: false,
         });
@@ -227,9 +222,10 @@ export const createUserAccounts = async (req: AuthenticatedRequest, res: Respons
           email,
           success: true,
           message: 'Account created successfully',
-          id: nextId,
+          id: newUser._id.toString(),
         });
       } catch (userError) {
+        console.error('Error creating user:', userError);
         results.push({
           email,
           success: false,

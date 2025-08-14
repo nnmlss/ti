@@ -86,8 +86,8 @@ export const generateThumbnails = async (req: Request, res: Response, next: Next
         filename: decodedFilename,
         versions: generatedVersions
       });
-    } catch (serviceError: any) {
-      if (serviceError.message === 'Original image file not found') {
+    } catch (serviceError: unknown) {
+      if (serviceError instanceof Error && serviceError.message === 'Original image file not found') {
         return next(createError('Original image file not found', 404));
       }
       throw serviceError;

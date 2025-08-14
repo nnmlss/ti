@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import { body } from 'express-validator';
 import multer from 'multer';
 import path from 'path';
@@ -18,7 +18,7 @@ import {
 const router = Router();
 
 // Configure multer for image uploads - use memory storage for processing
-const fileFilter = (_req: any, file: any, cb: any) => {
+const fileFilter = (_req: express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   if (
     file.mimetype === 'image/png' ||
     file.mimetype === 'image/jpg' ||

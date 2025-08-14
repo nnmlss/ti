@@ -75,8 +75,8 @@ export const generateThumbnailsForImage = async (filename: string) => {
   
   try {
     await fs.access(paths.original);
-  } catch (fileError: any) {
-    if (fileError.code === 'ENOENT') {
+  } catch (fileError: unknown) {
+    if (fileError instanceof Error && 'code' in fileError && fileError.code === 'ENOENT') {
       throw new Error('Original image file not found');
     }
     throw fileError;
@@ -122,8 +122,8 @@ export const deleteImageFiles = async (filename: string) => {
       await fs.access(filePath);
       await fs.unlink(filePath);
       deletedFiles++;
-    } catch (fileError: any) {
-      if (fileError.code !== 'ENOENT') {
+    } catch (fileError: unknown) {
+      if (fileError instanceof Error && 'code' in fileError && fileError.code !== 'ENOENT') {
         errors.push(`Failed to delete ${path.basename(filePath)}: ${fileError.message}`);
       }
     }

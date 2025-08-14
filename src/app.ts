@@ -3,6 +3,7 @@ import express from 'express';
 import apiRouter from './routes/api.js';
 import { connectDB } from './config/database.js';
 import path from 'path';
+import type { CustomError } from './models/sites.js';
 
 const app = express();
 
@@ -33,35 +34,36 @@ app.use((req: express.Request, res: express.Response) => {
 
 // Global error handling middleware - must be after all routes
 app.use(
-  (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  (err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     console.error('Unhandled error:', err);
 
     // Handle different error types
-    if (err.name === 'ValidationError') {
+    if (err instanceof Error && err.name === 'ValidationError') {
       return res.status(400).json({
         error: 'Validation Error',
         message: err.message,
-        details: err.errors || null,
+        details: 'errors' in err ? err.errors : null,
       });
     }
 
     // Handle express-validator validation errors
-    if (err.isValidationError) {
+    const customErr = err as CustomError;
+    if (customErr.isValidationError) {
       return res.status(422).json({
         error: 'Validation Failed',
         message: 'Request validation failed',
-        errors: err.errors || null,
+        errors: customErr.errors || null,
       });
     }
 
-    if (err.name === 'CastError') {
+    if (err instanceof Error && err.name === 'CastError') {
       return res.status(400).json({
         error: 'Invalid ID format',
         message: 'The provided ID is not valid',
       });
     }
 
-    if (err.code === 11000) {
+    if (err && typeof err === 'object' && 'code' in err && err.code === 11000) {
       return res.status(409).json({
         error: 'Duplicate Entry',
         message: 'A record with this data already exists',
@@ -69,17 +71,18 @@ app.use(
     }
 
     // Default error response
-    res.status(err.status || 500).json({
-      error: err.name || 'Internal Server Error',
-      message: err.message || 'An unexpected error occurred',
-      ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    const errorObj = err as CustomError;
+    res.status(errorObj.status || 500).json({
+      error: (err instanceof Error ? err.name : undefined) || 'Internal Server Error',
+      message: (err instanceof Error ? err.message : undefined) || 'An unexpected error occurred',
+      ...(process.env.NODE_ENV === 'development' && err instanceof Error && { stack: err.stack }),
     });
   }
 );
 
 // Handle malformed JSON requests
 app.use(
-  (err: any, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+  (err: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (err instanceof SyntaxError && 'body' in err) {
       return res.status(400).json({
         error: 'Invalid JSON',

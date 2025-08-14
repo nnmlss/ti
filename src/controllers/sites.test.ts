@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response, NextFunction } from 'express';
+import type { ValidationError, Result } from 'express-validator';
+import type { FlyingSite } from '../models/sites.js';
 
 // Mock express-validator
 vi.mock('express-validator', () => ({
@@ -62,7 +64,7 @@ describe('Site Controller', () => {
         { _id: 1, title: { en: 'Site 1', bg: 'Място 1' } },
         { _id: 2, title: { en: 'Site 2', bg: 'Място 2' } },
       ];
-      vi.mocked(Site.find).mockResolvedValue(mockSites as any);
+      vi.mocked(Site.find).mockResolvedValue(mockSites as FlyingSite[]);
 
       const req = createMockReq();
       const res = createMockRes();
@@ -92,13 +94,13 @@ describe('Site Controller', () => {
 
   describe('createSite', () => {
     it('should handle validation errors via global error handler', async () => {
-      const validationErrors = [
-        { msg: 'Title is required', param: 'title', location: 'body' }
+      const validationErrors: Partial<ValidationError>[] = [
+        { msg: 'Title is required' }
       ];
       vi.mocked(validationResult).mockReturnValue({
         isEmpty: () => false,
-        array: () => validationErrors,
-      } as any);
+        array: () => validationErrors as ValidationError[],
+      } as Result<ValidationError>);
 
       const req = createMockReq({}, {});
       const res = createMockRes();
@@ -119,13 +121,14 @@ describe('Site Controller', () => {
     it('should handle creation errors via global error handler', async () => {
       vi.mocked(validationResult).mockReturnValue({
         isEmpty: () => true,
-      } as any);
+        array: () => [],
+      } as unknown as Result<ValidationError>);
       
       const dbError = new Error('Database error');
       // Mock the findOne().sort() chain for getNextId()
       vi.mocked(Site.findOne).mockReturnValue({
         sort: vi.fn().mockRejectedValue(dbError)
-      } as any);
+      } as unknown as ReturnType<typeof Site.findOne>);
 
       const req = createMockReq({}, {});
       const res = createMockRes();

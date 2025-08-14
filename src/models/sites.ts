@@ -26,7 +26,10 @@ export interface LocalizedText {
 export interface CustomError extends Error {
   status?: number;
   isValidationError?: boolean;
-  errors?: any[];
+  errors?: Array<{
+    msg: string;
+    [key: string]: unknown;
+  }>;
 }
 
 export interface Location {
@@ -196,7 +199,7 @@ const FlyingSiteSchema = new Schema(
   },
   {
     toJSON: {
-      transform: (_doc: any, ret: any) => {
+      transform: (_doc: unknown, ret: Record<string, any>) => {
         try {
           const removeArrayIfEmpty = (key: string) => {
             if (Array.isArray(ret[key]) && ret[key].length === 0) delete ret[key];
@@ -213,8 +216,8 @@ const FlyingSiteSchema = new Schema(
           // Normalize accessOptions to numbers if legacy objects are present
           if (Array.isArray(ret.accessOptions)) {
             ret.accessOptions = ret.accessOptions
-              .map((v: any) => (typeof v === 'number' ? v : v?._id))
-              .filter((id: any) => [0, 1, 2, 3, 4].includes(id));
+              .map((v: unknown) => (typeof v === 'number' ? v : (v as { _id?: number })?._id))
+              .filter((id: unknown) => typeof id === 'number' && [0, 1, 2, 3, 4].includes(id));
           }
 
           // Remove empty arrays

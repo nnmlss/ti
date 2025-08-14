@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 import path from 'path';
 import fs from 'fs/promises';
 import { Site } from '../models/sites.js';
-import type { FlyingSite, CustomError } from '../models/sites.js';
+import type { FlyingSite, CustomError, GalleryImage } from '../models/sites.js';
 
 // Function to get the next numeric ID
 async function getNextId(): Promise<number> {
@@ -12,7 +12,7 @@ async function getNextId(): Promise<number> {
 }
 
 // Function to delete all images associated with a site
-async function deleteSiteImages(galleryImages: any[]): Promise<{ deletedFiles: number; errors: string[] }> {
+async function deleteSiteImages(galleryImages: GalleryImage[]): Promise<{ deletedFiles: number; errors: string[] }> {
   if (!galleryImages || galleryImages.length === 0) {
     return { deletedFiles: 0, errors: [] };
   }
@@ -39,14 +39,14 @@ async function deleteSiteImages(galleryImages: any[]): Promise<{ deletedFiles: n
           await fs.access(filePath);
           await fs.unlink(filePath);
           deletedFiles++;
-        } catch (fileError: any) {
-          if (fileError.code !== 'ENOENT') {
-            errors.push(`Failed to delete ${path.basename(filePath)}: ${fileError.message}`);
+        } catch (fileError: unknown) {
+          if (fileError instanceof Error && 'code' in fileError && fileError.code !== 'ENOENT') {
+            errors.push(`Failed to delete ${path.basename(filePath)}: ${fileError instanceof Error ? fileError.message : String(fileError)}`);
           }
         }
       }
-    } catch (error: any) {
-      errors.push(`Failed to process image ${image.path}: ${error.message}`);
+    } catch (error: unknown) {
+      errors.push(`Failed to process image ${image.path}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -121,7 +121,11 @@ export const updateSite = async (req: Request, res: Response, next: NextFunction
     const { $unset, ...updateData } = req.body;
 
     // Build the update operation
-    const updateOperation: any = {};
+    interface UpdateOperation {
+      $set?: Record<string, unknown>;
+      $unset?: Record<string, number>;
+    }
+    const updateOperation: UpdateOperation = {};
 
     // Add regular update data if present
     if (Object.keys(updateData).length > 0) {

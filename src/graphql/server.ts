@@ -3,10 +3,10 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import type { Express } from 'express';
 import jwt from 'jsonwebtoken';
 
-import { typeDefs } from './types/typeDefs.js';
-import { resolvers } from './resolvers/index.js';
-import type { GraphQLContext } from './types/context.js';
-import { User } from '../models/user.js';
+import { typeDefs } from '@gql-app/types/typeDefs.js';
+import { resolvers } from '@gql-app/resolvers/index.js';
+import type { GraphQLContext } from '@gql-app/types/context.js';
+import { User } from '@models/user.js';
 
 // Create the executable schema
 const schema = makeExecutableSchema({

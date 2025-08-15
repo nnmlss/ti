@@ -1,7 +1,7 @@
 import { Site } from '@models/sites.js';
 import { User } from '@models/user.js';
-import { customScalars } from '../scalars/index.js';
-import type { GraphQLContext } from '../types/context.js';
+import { customScalars } from '@gql-app/scalars/index.js';
+import type { GraphQLContext } from '@gql-app/types/context.js';
 import type { CreateSiteData, FlyingSite } from '@models/sites.js';
 
 // Resolver argument types

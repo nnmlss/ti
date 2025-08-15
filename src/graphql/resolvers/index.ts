@@ -1,8 +1,10 @@
 import { Site } from '@models/sites.js';
-import { User } from '@models/user.js';
+// import { User } from '@models/user.js';
 import { customScalars } from '@gql-app/scalars/index.js';
 import type { GraphQLContext } from '@gql-app/types/context.js';
-import type { CreateSiteData, FlyingSite } from '@models/sites.js';
+import type { CreateSiteData, FlyingSite, GalleryImage } from '@models/sites.js';
+import path from 'path';
+import fs from 'fs/promises';
 
 // Resolver argument types
 interface SiteByIdArgs {
@@ -54,13 +56,69 @@ interface CreateUserAccountsArgs {
   emails: string[];
 }
 
+// Function to delete all images associated with a site
+async function deleteSiteImages(
+  galleryImages: GalleryImage[]
+): Promise<{ deletedFiles: number; errors: string[] }> {
+  if (!galleryImages || galleryImages.length === 0) {
+    return { deletedFiles: 0, errors: [] };
+  }
+
+  let deletedFiles = 0;
+  const errors: string[] = [];
+
+  for (const image of galleryImages) {
+    if (!image.path) continue;
+
+    try {
+      // Extract the base filename without extension for thumbnail deletion
+      const baseName = path.basename(image.path, path.extname(image.path));
+
+      const filesToDelete = [
+        path.join(process.cwd(), 'gallery', image.path), // Original image
+        path.join(process.cwd(), 'gallery', 'thmb', `${baseName}.jpg`), // Thumbnail
+        path.join(process.cwd(), 'gallery', 'small', `${baseName}.jpg`), // Small version
+        path.join(process.cwd(), 'gallery', 'large', `${baseName}.jpg`), // Large version
+      ];
+
+      for (const filePath of filesToDelete) {
+        try {
+          await fs.access(filePath);
+          await fs.unlink(filePath);
+          deletedFiles++;
+        } catch (fileError: unknown) {
+          if (
+            fileError instanceof Error &&
+            'code' in fileError &&
+            fileError.code !== 'ENOENT'
+          ) {
+            errors.push(
+              `Failed to delete ${path.basename(filePath)}: ${
+                fileError instanceof Error ? fileError.message : String(fileError)
+              }`
+            );
+          }
+        }
+      }
+    } catch (error: unknown) {
+      errors.push(
+        `Failed to process image ${image.path}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
+  }
+
+  return { deletedFiles, errors };
+}
+
 export const resolvers = {
   // Custom scalars
   ...customScalars,
 
   // Query resolvers
   Query: {
-    sites: async (): Promise<FlyingSite[]> => {
+    sites: async (_parent: unknown): Promise<FlyingSite[]> => {
       try {
         const sites = await Site.find();
         return sites;
@@ -72,19 +130,19 @@ export const resolvers = {
     site: async (_parent: unknown, { id }: SiteByIdArgs): Promise<FlyingSite | null> => {
       try {
         const site = await Site.findById(Number(id));
-        if (!site) {
-          throw new Error('Site not found');
-        }
-        return site;
+        return site; // Returns null if not found, no error
       } catch (error) {
         throw new Error(`Failed to fetch site: ${error}`);
       }
     },
 
-    sitesByWindDirection: async (_parent: unknown, { directions }: SitesByWindDirectionArgs): Promise<FlyingSite[]> => {
+    sitesByWindDirection: async (
+      _parent: unknown,
+      { directions }: SitesByWindDirectionArgs
+    ): Promise<FlyingSite[]> => {
       try {
         const sites = await Site.find({
-          windDirection: { $in: directions }
+          windDirection: { $in: directions },
         });
         return sites;
       } catch (error) {
@@ -96,15 +154,18 @@ export const resolvers = {
       // TODO: Implement token validation logic
       return {
         valid: false,
-        message: 'Token validation not implemented yet'
+        message: 'Token validation not implemented yet',
       };
     },
   },
 
   // Mutation resolvers
   Mutation: {
-    createSite: async (_parent: unknown, { input }: CreateSiteArgs, context: GraphQLContext): Promise<FlyingSite> => {
-      
+    createSite: async (
+      _parent: unknown,
+      { input }: CreateSiteArgs,
+      context: GraphQLContext
+    ): Promise<FlyingSite> => {
       if (!context.user) {
         throw new Error('Authentication required');
       }
@@ -116,7 +177,7 @@ export const resolvers = {
 
         const newSite = new Site({
           _id: nextId,
-          ...input
+          ...input,
         });
 
         const savedSite = await newSite.save();
@@ -126,18 +187,20 @@ export const resolvers = {
       }
     },
 
-    updateSite: async (_parent: unknown, { id, input }: UpdateSiteArgs, context: GraphQLContext): Promise<FlyingSite> => {
-      
+    updateSite: async (
+      _parent: unknown,
+      { id, input }: UpdateSiteArgs,
+      context: GraphQLContext
+    ): Promise<FlyingSite> => {
       if (!context.user) {
         throw new Error('Authentication required');
       }
 
       try {
-        const updatedSite = await Site.findByIdAndUpdate(
-          Number(id),
-          input,
-          { new: true, runValidators: true }
-        );
+        const updatedSite = await Site.findByIdAndUpdate(Number(id), input, {
+          new: true,
+          runValidators: true,
+        });
 
         if (!updatedSite) {
           throw new Error('Site not found');
@@ -149,7 +212,11 @@ export const resolvers = {
       }
     },
 
-    unsetSiteFields: async (_parent: unknown, { id, fields }: UnsetSiteFieldsArgs, context: GraphQLContext): Promise<FlyingSite> => {
+    unsetSiteFields: async (
+      _parent: unknown,
+      { id, fields }: UnsetSiteFieldsArgs,
+      context: GraphQLContext
+    ): Promise<FlyingSite> => {
       if (!context.user) {
         throw new Error('Authentication required');
       }
@@ -157,7 +224,7 @@ export const resolvers = {
       try {
         // Create unset operation for MongoDB
         const unsetFields: Record<string, 1> = {};
-        fields.forEach(field => {
+        fields.forEach((field) => {
           unsetFields[field] = 1;
         });
 
@@ -177,13 +244,29 @@ export const resolvers = {
       }
     },
 
-    deleteSite: async (_parent: unknown, { id }: DeleteSiteArgs, context: GraphQLContext): Promise<boolean> => {
+    deleteSite: async (
+      _parent: unknown,
+      { id }: DeleteSiteArgs,
+      context: GraphQLContext
+    ): Promise<boolean> => {
       if (!context.user) {
         throw new Error('Authentication required');
       }
 
       try {
-        const deletedSite = await Site.findByIdAndDelete(Number(id));
+        // First, find the site to get its gallery images
+        const siteToDelete = await Site.findOne({ _id: Number(id) });
+        if (!siteToDelete) {
+          throw new Error('Site not found');
+        }
+
+        // Delete all gallery images from filesystem
+        if (siteToDelete.galleryImages && siteToDelete.galleryImages.length > 0) {
+          await deleteSiteImages(siteToDelete.galleryImages);
+        }
+
+        // Delete the site from database
+        const deletedSite = await Site.findOneAndDelete({ _id: Number(id) });
         return !!deletedSite;
       } catch (error) {
         throw new Error(`Failed to delete site: ${error}`);
@@ -199,11 +282,18 @@ export const resolvers = {
       throw new Error('Request activation mutation not implemented yet');
     },
 
-    activateAccount: async (_parent: unknown, { token, username, password }: ActivateAccountArgs) => {
+    activateAccount: async (
+      _parent: unknown,
+      { token, username, password }: ActivateAccountArgs
+    ) => {
       throw new Error('Activate account mutation not implemented yet');
     },
 
-    createUserAccounts: async (_parent: unknown, { emails }: CreateUserAccountsArgs, context: GraphQLContext) => {
+    createUserAccounts: async (
+      _parent: unknown,
+      { emails }: CreateUserAccountsArgs,
+      context: GraphQLContext
+    ) => {
       if (!context.user?.isSuperAdmin) {
         throw new Error('Super admin access required');
       }

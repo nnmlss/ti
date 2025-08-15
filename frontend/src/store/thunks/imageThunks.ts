@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { fetchWithCsrf } from '@utils/fetchWithCsrf';
 
 export interface ImageUploadResponse {
   message: string;
@@ -29,7 +30,7 @@ export const uploadImageThunk = createAsyncThunk(
       const formData = new FormData();
       formData.append('image', file);
 
-      const response = await fetch('/api/image/upload', {
+      const response = await fetchWithCsrf('/api/image/upload', {
         method: 'POST',
         body: formData,
       });
@@ -53,7 +54,7 @@ export const deleteImageThunk = createAsyncThunk(
   'images/deleteImage',
   async (filename: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/image/${encodeURIComponent(filename)}`, {
+      const response = await fetchWithCsrf(`/api/image/${encodeURIComponent(filename)}`, {
         method: 'DELETE',
       });
 

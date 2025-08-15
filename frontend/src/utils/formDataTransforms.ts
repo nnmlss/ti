@@ -180,15 +180,19 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
     cleanedFormData.$unset = { ...cleanedFormData.$unset, accessOptions: 1 };
   }
 
-  // Handle galleryImages array - remove _id from objects if present
+  // Handle galleryImages array - keep all properties
   if (formData.galleryImages && formData.galleryImages.length > 0) {
     cleanedFormData.galleryImages = formData.galleryImages.map((img) => {
-      // Create a clean image object with only the expected properties
+      // Create a clean image object with all properties
       const cleanImage: GalleryImage = {
         path: img.path,
         ...(img.author && { author: img.author }),
         ...(img.width && { width: img.width }),
         ...(img.height && { height: img.height }),
+        ...(img.format && { format: img.format }),
+        ...(img.thumbnail && { thumbnail: img.thumbnail }),
+        ...(img.small && { small: img.small }),
+        ...(img.large && { large: img.large }),
       };
       return cleanImage;
     });

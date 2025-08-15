@@ -304,6 +304,11 @@ NODE_ENV=production|development
 ### Overview
 Migrate from REST API to GraphQL for better performance, type safety, and developer experience while maintaining all existing functionality.
 
+### Current Status: ~70% Complete ✅
+- **COMPLETED**: GraphQL foundation, core site CRUD operations, frontend integration
+- **IN PROGRESS**: Auth system migration (schema ready, resolvers need implementation)  
+- **REMAINING**: Auth mutations implementation, REST cleanup
+
 ### Phase 1: GraphQL Foundation ✓
 1. **Install GraphQL Dependencies** ✓
    - `graphql-yoga`
@@ -321,21 +326,22 @@ Migrate from REST API to GraphQL for better performance, type safety, and develo
    - Single `/graphql` endpoint
    - GraphiQL interface for development
 
-### Phase 2: Core Resolvers
-4. **Site Resolvers (Query)**
-   - `sites: [Site]` - List all sites
-   - `site(id: ID!): Site` - Get single site
-   - `sitesByWindDirection(directions: [WindDirection!]): [Site]`
+### Phase 2: Core Resolvers ✓
+4. **Site Resolvers (Query)** ✓
+   - `sites: [Site]` - List all sites ✓
+   - `site(id: ID!): Site` - Get single site ✓
+   - `sitesByWindDirection(directions: [WindDirection!]): [Site]` ✓
 
-5. **Site Resolvers (Mutation)**
-   - `createSite(input: SiteInput!): Site`
-   - `updateSite(id: ID!, input: SiteInput!): Site`
-   - `deleteSite(id: ID!): Boolean`
+5. **Site Resolvers (Mutation)** ✓
+   - `createSite(input: SiteInput!): Site` ✓
+   - `updateSite(id: ID!, input: SiteInput!): Site` ✓
+   - `unsetSiteFields(id: ID!, fields: [String!]!): Site` ✓ (BONUS: proper field removal)
+   - `deleteSite(id: ID!): Boolean` ✓
 
-6. **Authentication Context**
-   - Extract JWT from Authorization header
-   - Inject user context into resolvers
-   - Replace Express middleware auth with context-based auth
+6. **Authentication Context** ✓
+   - Extract JWT from Authorization header ✓
+   - Inject user context into resolvers ✓
+   - Replace Express middleware auth with context-based auth ✓
 
 ### Phase 3: Auth System Migration
 7. **Auth Resolvers**
@@ -353,16 +359,16 @@ Migrate from REST API to GraphQL for better performance, type safety, and develo
    - Structured error responses
    - Input validation using GraphQL schema
 
-### Phase 4: Frontend Migration
-10. **GraphQL Client Setup**
-    - Choose GraphQL client (urql, graphql-request, or React Query + fetch)
-    - Replace Redux slices/thunks with GraphQL client
-    - Configure client with auth headers
+### Phase 4: Frontend Migration ✓
+10. **GraphQL Client Setup** ✓
+    - Chose graphql-request for simplicity ✓
+    - Keep Redux slices/thunks (better for this project) ✓
+    - Configure client with auth headers ✓
 
-11. **Update React Components**
-    - Replace async thunks with GraphQL queries/mutations
-    - Use GraphQL client hooks for data fetching
-    - Update loading and error states
+11. **Update React Components** ✓
+    - Update Redux thunks to use GraphQL instead of REST ✓
+    - Maintain existing Redux state management patterns ✓
+    - Keep existing loading and error states ✓
 
 12. **Authentication Flow**
     - Update login to use GraphQL mutations
@@ -370,10 +376,10 @@ Migrate from REST API to GraphQL for better performance, type safety, and develo
     - Update admin account creation forms
 
 ### Phase 5: Security & Optimization
-13. **Security Migration**
-    - CSRF protection only for GraphQL endpoint
-    - Rate limiting on GraphQL operations
-    - Query complexity analysis and depth limiting
+13. **Security Migration** ✓ (Partial)
+    - CSRF protection for GraphQL mutations ✓
+    - Rate limiting on GraphQL operations ✓ (inherited from Express)
+    - Query complexity analysis and depth limiting (optional)
 
 14. **Performance Optimization**
     - DataLoader for batching database queries

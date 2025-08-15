@@ -11,8 +11,8 @@ import type {
   Location,
   AccessOptionId,
   GraphQLSite
-} from '../../types';
-import { getGraphQLClient } from '../../utils/graphqlClient';
+} from '@types';
+import { getGraphQLClient } from '@utils/graphqlClient';
 import {
   GET_SITES_LIST,
   GET_SITE_DETAIL,
@@ -20,7 +20,7 @@ import {
   UPDATE_SITE,
   UNSET_SITE_FIELDS,
   DELETE_SITE,
-} from '../../utils/graphqlQueries';
+} from '@utils/graphqlQueries';
 
 // Helper function to transform frontend FlyingSite to GraphQL input format
 function transformToGraphQLInput(siteData: Partial<FlyingSite>): Omit<Partial<FlyingSite>, '_id'> {
@@ -120,9 +120,15 @@ export const loadSitesThunk = createAsyncThunk('sites/loadSites', async (_, { re
 export const addSiteThunk = createAsyncThunk(
   'sites/addSite',
   async (siteData: Partial<FlyingSite>, { rejectWithValue }) => {
+    console.log('🚀 addSiteThunk called!');
     try {
       const client = getGraphQLClient(true); // Mutation with CSRF
       const input = transformToGraphQLInput(siteData); // Transform to GraphQL format
+      
+      // Debug: Log what we're sending
+      console.log('Frontend addSite siteData:', JSON.stringify(siteData, null, 2));
+      console.log('Frontend addSite input after transform:', JSON.stringify(input, null, 2));
+      
       const data = await client.request<CreateSiteResponse>(CREATE_SITE, { input });
 
       // Transform GraphQL response to match frontend FlyingSite type
@@ -180,26 +186,28 @@ export const updateSiteThunk = createAsyncThunk(
 
       const client = getGraphQLClient(true); // Mutation with CSRF
       
-      // Handle $unset operation (explicit or auto-detected)
+      // Always do regular update first with non-empty fields
+      const input = transformToGraphQLInput(siteData); // Transform to GraphQL format
+      
+      const data = await client.request<UpdateSiteResponse>(UPDATE_SITE, { 
+        id: _id.toString(), 
+        input 
+      });
+
+      // Handle $unset operation (explicit or auto-detected) AFTER regular update
       const finalFieldsToUnset = $unset ? Object.keys($unset) : fieldsToUnset;
+      
       if (finalFieldsToUnset.length > 0) {
-        const data = await client.request<UnsetSiteFieldsResponse>(UNSET_SITE_FIELDS, { 
+        const unsetData = await client.request<UnsetSiteFieldsResponse>(UNSET_SITE_FIELDS, { 
           id: _id.toString(), 
           fields: finalFieldsToUnset 
         });
         
-        // Transform GraphQL response to match frontend FlyingSite type
-        const updatedSite = transformGraphQLSite(data.unsetSiteFields);
+        // Transform GraphQL response from unset operation
+        const updatedSite = transformGraphQLSite(unsetData.unsetSiteFields);
         return updatedSite;
       } else {
-        // Regular update
-        const input = transformToGraphQLInput(siteData); // Transform to GraphQL format
-        const data = await client.request<UpdateSiteResponse>(UPDATE_SITE, { 
-          id: _id.toString(), 
-          input 
-        });
-
-        // Transform GraphQL response to match frontend FlyingSite type
+        // Transform GraphQL response from regular update
         const updatedSite = transformGraphQLSite(data.updateSite);
         return updatedSite;
       }

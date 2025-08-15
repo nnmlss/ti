@@ -62,8 +62,10 @@ export async function setupGraphQLBeforeRoutes(app: Express) {
   sites {
     id
     title
-    altitude
+    location
     windDirection
+    accessOptions
+    altitude
   }
 }`,
     },

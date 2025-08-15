@@ -1,6 +1,6 @@
 {
   "name": "takeoff-info",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Nodejs driven API and Frontend for paragliding sites in Bulgaria",
   "license": "ISC",
   "author": "Borislav Denizov",

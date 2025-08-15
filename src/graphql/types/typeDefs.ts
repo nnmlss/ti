@@ -143,6 +143,7 @@ export const typeDefs = gql`
     # Site mutations
     createSite(input: CreateSiteInput!): FlyingSite!
     updateSite(id: ID!, input: CreateSiteInput!): FlyingSite!
+    unsetSiteFields(id: ID!, fields: [String!]!): FlyingSite!
     deleteSite(id: ID!): Boolean!
     
     # Auth mutations

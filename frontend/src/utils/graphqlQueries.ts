@@ -4,14 +4,8 @@ import { gql } from 'graphql-request';
 export const SITE_LIST_FRAGMENT = gql`
   fragment SiteListFields on FlyingSite {
     id
-    title {
-      bg
-      en
-    }
-    location {
-      type
-      coordinates
-    }
+    title
+    location
     windDirection
     accessOptions
     altitude
@@ -22,21 +16,12 @@ export const SITE_LIST_FRAGMENT = gql`
 export const SITE_DETAIL_FRAGMENT = gql`
   fragment SiteDetailFields on FlyingSite {
     id
-    title {
-      bg
-      en
-    }
+    title
     windDirection
-    location {
-      type
-      coordinates
-    }
+    location
     accessOptions
     altitude
-    access {
-      bg
-      en
-    }
+    access
     accomodations {
       bg
       en
@@ -56,28 +41,16 @@ export const SITE_DETAIL_FRAGMENT = gql`
       large
     }
     landingFields {
-      description {
-        bg
-        en
-      }
-      location {
-        type
-        coordinates
-      }
+      description
+      location
     }
     tracklogs
     localPilotsClubs {
       bg
       en
     }
-    unique {
-      bg
-      en
-    }
-    monuments {
-      bg
-      en
-    }
+    unique
+    monuments
   }
 `;
 
@@ -125,6 +98,15 @@ export const UPDATE_SITE = gql`
   ${SITE_DETAIL_FRAGMENT}
   mutation UpdateSite($id: ID!, $input: CreateSiteInput!) {
     updateSite(id: $id, input: $input) {
+      ...SiteDetailFields
+    }
+  }
+`;
+
+export const UNSET_SITE_FIELDS = gql`
+  ${SITE_DETAIL_FRAGMENT}
+  mutation UnsetSiteFields($id: ID!, $fields: [String!]!) {
+    unsetSiteFields(id: $id, fields: $fields) {
       ...SiteDetailFields
     }
   }

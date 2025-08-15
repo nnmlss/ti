@@ -26,6 +26,11 @@ interface DeleteSiteArgs {
   id: string;
 }
 
+interface UnsetSiteFieldsArgs {
+  id: string;
+  fields: string[];
+}
+
 interface LoginArgs {
   username: string;
   password: string;
@@ -99,6 +104,7 @@ export const resolvers = {
   // Mutation resolvers
   Mutation: {
     createSite: async (_parent: unknown, { input }: CreateSiteArgs, context: GraphQLContext): Promise<FlyingSite> => {
+      
       if (!context.user) {
         throw new Error('Authentication required');
       }
@@ -121,6 +127,7 @@ export const resolvers = {
     },
 
     updateSite: async (_parent: unknown, { id, input }: UpdateSiteArgs, context: GraphQLContext): Promise<FlyingSite> => {
+      
       if (!context.user) {
         throw new Error('Authentication required');
       }
@@ -139,6 +146,34 @@ export const resolvers = {
         return updatedSite;
       } catch (error) {
         throw new Error(`Failed to update site: ${error}`);
+      }
+    },
+
+    unsetSiteFields: async (_parent: unknown, { id, fields }: UnsetSiteFieldsArgs, context: GraphQLContext): Promise<FlyingSite> => {
+      if (!context.user) {
+        throw new Error('Authentication required');
+      }
+
+      try {
+        // Create unset operation for MongoDB
+        const unsetFields: Record<string, 1> = {};
+        fields.forEach(field => {
+          unsetFields[field] = 1;
+        });
+
+        const updatedSite = await Site.findByIdAndUpdate(
+          Number(id),
+          { $unset: unsetFields },
+          { new: true, runValidators: true }
+        );
+
+        if (!updatedSite) {
+          throw new Error('Site not found');
+        }
+
+        return updatedSite;
+      } catch (error) {
+        throw new Error(`Failed to unset site fields: ${error}`);
       }
     },
 

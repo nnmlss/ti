@@ -15,8 +15,9 @@ const schema = makeExecutableSchema({
 });
 
 export async function createGraphQLContext({ req }: { req: any }): Promise<GraphQLContext> {
-  // Extract JWT token from Authorization header
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  // GraphQL Yoga uses native Request object, try different ways to get headers
+  const authHeader = req.headers?.authorization || req.headers?.get?.('authorization');
+  const token = authHeader?.replace('Bearer ', '');
 
   if (!token) {
     return { user: null };

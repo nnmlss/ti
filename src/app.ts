@@ -15,36 +15,37 @@ import type { CustomError } from './models/sites.js';
 
 const app = express();
 
-// Security middleware - COMMENTED OUT FOR GRAPHQL DEVELOPMENT
-// app.use(helmet({
-//   contentSecurityPolicy: {
-//     directives: {
-//       defaultSrc: ["'self'"],
-//       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-//       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-//       imgSrc: ["'self'", "data:", "blob:"],
-//       scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-//       scriptSrcAttr: ["'unsafe-inline'"],
-//       connectSrc: ["'self'"],
-//     },
-//   },
-//   crossOriginEmbedderPolicy: false,
-// }));
+// Security middleware with GraphQL Yoga/GraphiQL support
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+      fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://unpkg.com"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      connectSrc: ["'self'"],
+      workerSrc: ["'self'", "blob:"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+}));
 
-// Dynamic CORS configuration - COMMENTED OUT FOR GRAPHQL DEVELOPMENT
-// const getAllowedOrigins = () => {
-//   if (process.env.NODE_ENV === 'production') {
-//     // In production, allow any subdomain of borislav.space
-//     return /^https:\/\/([a-zA-Z0-9-]+\.)?borislav\.space$/;
-//   }
-//   // In development
-//   return ['http://localhost:5173', 'http://localhost:3000'];
-// };
+// Dynamic CORS configuration
+const getAllowedOrigins = () => {
+  if (process.env.NODE_ENV === 'production') {
+    // In production, allow any subdomain of borislav.space
+    return /^https:\/\/([a-zA-Z0-9-]+\.)?borislav\.space$/;
+  }
+  // In development
+  return ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'];
+};
 
-// app.use(cors({
-//   origin: getAllowedOrigins(),
-//   credentials: true,
-// }));
+app.use(cors({
+  origin: getAllowedOrigins(),
+  credentials: true,
+}));
 
 // Rate limiting
 const limiter = rateLimit({

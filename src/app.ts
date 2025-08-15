@@ -5,43 +5,47 @@ import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import session from 'express-session';
 import csrf from 'csrf';
+import { createServer } from 'http';
 import apiRouter from './routes/api.js';
 import authRouter from './routes/auth.js';
 import { connectDB } from './config/database.js';
 import { EmailService } from './services/emailService.js';
+import { setupGraphQLBeforeRoutes } from './graphql/server.js';
 import path from 'path';
 import type { CustomError } from './models/sites.js';
 
 const app = express();
 
-// Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      fontSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "blob:"],
-      scriptSrc: ["'self'"],
-    },
-  },
-  crossOriginEmbedderPolicy: false,
-}));
+// Security middleware - COMMENTED OUT FOR GRAPHQL DEVELOPMENT
+// app.use(helmet({
+//   contentSecurityPolicy: {
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+//       fontSrc: ["'self'", "https://fonts.gstatic.com"],
+//       imgSrc: ["'self'", "data:", "blob:"],
+//       scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+//       scriptSrcAttr: ["'unsafe-inline'"],
+//       connectSrc: ["'self'"],
+//     },
+//   },
+//   crossOriginEmbedderPolicy: false,
+// }));
 
-// Dynamic CORS configuration based on environment
-const getAllowedOrigins = () => {
-  if (process.env.NODE_ENV === 'production') {
-    // In production, allow any subdomain of borislav.space
-    return /^https:\/\/([a-zA-Z0-9-]+\.)?borislav\.space$/;
-  }
-  // In development
-  return ['http://localhost:5173', 'http://localhost:3000'];
-};
+// Dynamic CORS configuration - COMMENTED OUT FOR GRAPHQL DEVELOPMENT
+// const getAllowedOrigins = () => {
+//   if (process.env.NODE_ENV === 'production') {
+//     // In production, allow any subdomain of borislav.space
+//     return /^https:\/\/([a-zA-Z0-9-]+\.)?borislav\.space$/;
+//   }
+//   // In development
+//   return ['http://localhost:5173', 'http://localhost:3000'];
+// };
 
-app.use(cors({
-  origin: getAllowedOrigins(),
-  credentials: true,
-}));
+// app.use(cors({
+//   origin: getAllowedOrigins(),
+//   credentials: true,
+// }));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -54,26 +58,28 @@ const limiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5,
+  max: 7,
   message: 'Too many authentication attempts, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 app.use(limiter);
-// app.use('/api/auth', authLimiter); // Temporarily disabled for testing
+app.use('/api/auth', authLimiter);
 
 // Session middleware for CSRF
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  },
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
 // Body parsing with size limits
 app.use(express.json({ limit: '10mb' }));
@@ -83,50 +89,44 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 const tokens = new csrf();
 
 // CSRF token endpoint
-app.get('/api/csrf-token', (req, res) => {
-  const secret = tokens.secretSync();
-  const token = tokens.create(secret);
-  
-  // Store secret in session
-  (req.session as any).csrfSecret = secret;
-  
-  res.json({ csrfToken: token });
-});
+// app.get('/api/csrf-token', (req, res) => {
+//   const secret = tokens.secretSync();
+//   const token = tokens.create(secret);
+
+//   // Store secret in session
+//   (req.session as any).csrfSecret = secret;
+
+//   res.json({ csrfToken: token });
+// });
 
 // CSRF validation middleware
-const csrfProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // Skip CSRF for GET requests and auth endpoints (they use JWT)
-  if (req.method === 'GET' || req.path.startsWith('/api/auth/')) {
-    return next();
-  }
-  
-  const token = req.headers['x-csrf-token'] as string;
-  const secret = (req.session as any).csrfSecret;
-  
-  if (!token || !secret || !tokens.verify(secret, token)) {
-    return res.status(403).json({ error: 'Invalid CSRF token' });
-  }
-  
-  next();
-};
+// const csrfProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+//   // Skip CSRF for GET requests, auth endpoints (they use JWT), GraphQL and GraphiQL
+//   if (req.method === 'GET' || req.path.startsWith('/api/auth/') || req.path.startsWith('/graphql') || req.path.startsWith('/graphiql')) {
+//     return next();
+//   }
+
+//   const token = req.headers['x-csrf-token'] as string;
+//   const secret = (req.session as any).csrfSecret;
+
+//   if (!token || !secret || !tokens.verify(secret, token)) {
+//     return res.status(403).json({ error: 'Invalid CSRF token' });
+//   }
+
+//   next();
+// };
 
 // Mount auth routes first (no CSRF protection)
 app.use('/api/auth', authRouter);
 
 // Then apply CSRF protection to remaining /api routes
-app.use('/api', csrfProtection);
+// app.use('/api', csrfProtection);
 app.use('/api', apiRouter);
 
 // Serve static images - must come after API routes
 app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
 
-// 404 handler for undefined routes - must be the last route handler
-app.use((req: express.Request, res: express.Response) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Route ${req.method} ${req.originalUrl} not found`,
-  });
-});
+// 404 handler will be added after GraphQL setup in startServer function
 
 // Global error handling middleware - must be after all routes
 app.use(
@@ -193,7 +193,7 @@ app.use(
 
 const startServer = async () => {
   await connectDB();
-  
+
   // Initialize email service
   try {
     await EmailService.initialize();
@@ -201,8 +201,24 @@ const startServer = async () => {
     console.warn('Email service initialization failed:', error);
   }
 
-  app.listen(3000, () => {
+  // Set up GraphQL BEFORE adding 404 handler
+  await setupGraphQLBeforeRoutes(app);
+
+  // NOW add the 404 handler after GraphQL is set up
+  app.use((req: express.Request, res: express.Response) => {
+    res.status(404).json({
+      error: 'Not Found',
+      message: `Route ${req.method} ${req.originalUrl} not found`,
+    });
+  });
+
+  // Create HTTP server
+  const httpServer = createServer(app);
+
+
+  httpServer.listen(3000, () => {
     console.log('Server is running on port 3000');
+    console.log('GraphQL Playground available at http://localhost:3000/graphql');
   });
 };
 

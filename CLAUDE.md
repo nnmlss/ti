@@ -203,6 +203,7 @@ Implementing admin-controlled user registration with two-step activation process
 - JWT authentication and authorization ✓
 - Admin account creation functionality ✓
 - Security middleware implemented ✓
+- ObjectId-based super admin system ✓
 
 ### Security Implementation
 
@@ -285,8 +286,10 @@ NODE_ENV=production|development
 8. **Admin Menu Item** - Special "Add Users" option for user ID 1 only
 9. **Logout Functionality** - Clear auth state and redirect
 
-### Phase 3: Pre-Deployment
-10. **GraphQL Implementation** - Replace REST API with GraphQL for better performance
+### Phase 3: GraphQL Migration  
+10. **GraphQL Implementation** - Replace REST API with GraphQL (see GraphQL Migration Plan below)
+
+### Phase 4: Pre-Deployment
 11. **Production Environment** - Add SESSION_SECRET and other production configs
 12. **End-to-End Testing** - Complete authentication flow validation
 13. **Subdomain Deployment** - Configure for deployment on borislav.space subdomain
@@ -295,3 +298,125 @@ NODE_ENV=production|development
 - **Hidden Authentication**: No visible login button - only those who need access know about it
 - **Clean Anonymous UX**: Regular users see read-only site without auth UI clutter
 - **Progressive Enhancement**: Authenticated users get additional functionality seamlessly
+
+## GraphQL Migration Plan
+
+### Overview
+Migrate from REST API to GraphQL for better performance, type safety, and developer experience while maintaining all existing functionality.
+
+### Phase 1: GraphQL Foundation
+1. **Install GraphQL Dependencies**
+   - `apollo-server-express`
+   - `graphql`
+   - `@graphql-tools/schema`
+   - `graphql-scalars` (for custom scalars)
+
+2. **Create GraphQL Schema**
+   - Type definitions for Site, User, LocalizedText
+   - Custom scalars (LocalizedText, WindDirection, Location)
+   - Query and Mutation root types
+
+3. **Set Up Apollo Server**
+   - Apollo Server Express integration
+   - Single `/graphql` endpoint
+   - GraphQL Playground for development
+
+### Phase 2: Core Resolvers
+4. **Site Resolvers (Query)**
+   - `sites: [Site]` - List all sites
+   - `site(id: ID!): Site` - Get single site
+   - `sitesByWindDirection(directions: [WindDirection!]): [Site]`
+
+5. **Site Resolvers (Mutation)**
+   - `createSite(input: SiteInput!): Site`
+   - `updateSite(id: ID!, input: SiteInput!): Site`
+   - `deleteSite(id: ID!): Boolean`
+
+6. **Authentication Context**
+   - Extract JWT from Authorization header
+   - Inject user context into resolvers
+   - Replace Express middleware auth with context-based auth
+
+### Phase 3: Auth System Migration
+7. **Auth Resolvers**
+   - `login(username: String!, password: String!): AuthPayload`
+   - `requestActivation(email: String!): ActivationResponse`
+   - `validateToken(token: String!): TokenValidation`
+   - `activateAccount(token: String!, username: String!, password: String!): AuthPayload`
+
+8. **Admin Resolvers**
+   - `createUserAccounts(emails: [String!]!): [AccountCreationResult!]`
+   - Require `isSuperAdmin` context check
+
+9. **Error Handling**
+   - Custom error classes for GraphQL
+   - Structured error responses
+   - Input validation using GraphQL schema
+
+### Phase 4: Frontend Migration
+10. **Apollo Client Setup**
+    - Install `@apollo/client`
+    - Replace Redux RTK Query with Apollo Client
+    - Configure Apollo Client with auth headers
+
+11. **Update React Components**
+    - Replace `fetch()` calls with GraphQL queries
+    - Use `useQuery` and `useMutation` hooks
+    - Update loading and error states
+
+12. **Authentication Flow**
+    - Update login to use GraphQL mutations
+    - Modify JWT token handling for GraphQL context
+    - Update admin account creation forms
+
+### Phase 5: Security & Optimization
+13. **Security Migration**
+    - CSRF protection only for GraphQL endpoint
+    - Rate limiting on GraphQL operations
+    - Query complexity analysis and depth limiting
+
+14. **Performance Optimization**
+    - DataLoader for batching database queries
+    - Query optimization and N+1 problem prevention
+    - Caching strategies for frequently accessed data
+
+15. **Testing Migration**
+    - Update existing tests for GraphQL resolvers
+    - Integration tests for GraphQL endpoints
+    - Type safety validation
+
+### Phase 6: Cleanup & Documentation
+16. **Remove REST Infrastructure**
+    - Delete REST controllers and routes
+    - Remove unused Express middleware
+    - Clean up import statements
+
+17. **Documentation Updates**
+    - GraphQL schema documentation
+    - API endpoint documentation
+    - Frontend query examples
+
+### What Stays the Same
+- **Models** - Mongoose schemas unchanged
+- **Services** - Email, token, image services unchanged
+- **Database** - MongoDB structure unchanged
+- **Authentication** - JWT tokens and user system unchanged
+- **Frontend Routes** - React Router paths unchanged (`/site/123`, `/activate`, etc.)
+
+### What Changes
+- **API Layer** - REST endpoints → GraphQL resolvers
+- **Data Fetching** - fetch/RTK Query → Apollo Client
+- **Error Handling** - Express error middleware → GraphQL error handling
+- **Route Protection** - Express middleware → resolver-level authorization
+
+### Benefits After Migration
+- **Type Safety** - End-to-end TypeScript types from schema
+- **Performance** - Single endpoint, optimized queries, reduced overfetching
+- **Developer Experience** - GraphQL Playground, better tooling
+- **Scalability** - Easier to add new features and fields
+- **Mobile-Friendly** - Better suited for React Native apps
+
+### Rollback Strategy
+- Keep REST endpoints during parallel development
+- Feature flags for gradual migration
+- Database unchanged - can revert to REST if needed

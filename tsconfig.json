@@ -4,6 +4,18 @@
     // File Layout
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": "./src",
+    "paths": {
+      "@models/*": ["models/*"],
+      "@controllers/*": ["controllers/*"],
+      "@services/*": ["services/*"],
+      "@middleware/*": ["middleware/*"],
+      "@routes/*": ["routes/*"],
+      "@config/*": ["config/*"],
+      "@utils/*": ["utils/*"],
+      "@gql-app/*": ["graphql/*"],
+      "@types/*": ["types/*"]
+    },
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module

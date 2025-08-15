@@ -1,7 +1,7 @@
 {
   "name": "takeoff-info",
-  "version": "2.0.0",
-  "description": "Nodejs driven API for paragliding sites in Bulgaria",
+  "version": "3.0.0",
+  "description": "Nodejs driven API and Frontend for paragliding sites in Bulgaria",
   "license": "ISC",
   "author": "Borislav Denizov",
   "type": "module",
@@ -9,10 +9,11 @@
   "scripts": {
     "clean": "rm -rf dist",
     "start": "npm run clean && concurrently \"npm:start:backend\" \"npm:start:frontend\"",
-    "start:backend": "tsc-watch --onSuccess \"node dist/app.js\"",
+    "start:backend": "tsc-watch --onSuccess \"npm run postcompile\"",
+    "postcompile": "tsc-alias && node fix-graphql-import.js && node dist/app.js",
     "start:frontend": "cd frontend && npm run dev",
     "build": "npm run build:backend && npm run build:frontend",
-    "build:backend": "tsc",
+    "build:backend": "tsc && tsc-alias -p tsconfig.json && node fix-graphql-import.js",
     "build:frontend": "cd frontend && npm run build",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -22,6 +23,8 @@
     "check": "npm run typecheck && npm run lint:frontend"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.25",
+    "@graphql-yoga/plugin-graphql-sse": "^3.15.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "csrf": "^3.1.0",
@@ -30,6 +33,10 @@
     "express-rate-limit": "^8.0.1",
     "express-session": "^1.18.2",
     "express-validator": "^7.2.1",
+    "graphql": "^16.11.0",
+    "graphql-scalars": "^1.24.2",
+    "graphql-tag": "^2.12.6",
+    "graphql-yoga": "^5.15.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.0",
@@ -44,14 +51,17 @@
     "@types/express-session": "^1.18.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.2.0",
+    "@types/node": "^24.2.1",
     "@types/nodemailer": "^6.4.17",
     "@types/supertest": "^6.0.3",
     "@vitest/ui": "^3.2.4",
     "concurrently": "^9.2.0",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.4",
+    "tsc-alias": "^1.8.16",
     "tsc-watch": "^7.1.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }
 }

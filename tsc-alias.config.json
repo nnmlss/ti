@@ -1,0 +1,15 @@
+{
+  "verbose": false,
+  "resolveFullPaths": true,
+  "replacers": {
+    "@models/*": ["./models/*"],
+    "@controllers/*": ["./controllers/*"],
+    "@services/*": ["./services/*"],
+    "@middleware/*": ["./middleware/*"],
+    "@routes/*": ["./routes/*"],
+    "@config/*": ["./config/*"],
+    "@utils/*": ["./utils/*"],
+    "@gql-app/*": ["./graphql/*"],
+    "@types/*": ["./types/*"]
+  }
+}

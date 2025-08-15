@@ -12,25 +12,17 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
-  Chip
+  Chip,
 } from '@mui/material';
 import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
-
-interface CreateAccountsResponse {
-  message: string;
-  results: Array<{
-    email: string;
-    success: boolean;
-    message: string;
-    id?: number;
-  }>;
-}
+import { getGraphQLClient } from '@utils/graphqlClient';
+import { CREATE_USER_ACCOUNTS } from '@utils/graphqlQueries';
+import type { CreateUserAccountsResponse, AccountCreationResult } from '@types';
 
 export const AdminCreateAccounts: React.FC = () => {
   const [emails, setEmails] = useState<string[]>(['']);
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<CreateAccountsResponse['results']>([]);
+  const [results, setResults] = useState<AccountCreationResult[]>([]);
   const [error, setError] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
 
@@ -53,12 +45,10 @@ export const AdminCreateAccounts: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Filter out empty emails and validate
-    const validEmails = emails
-      .map(email => email.trim())
-      .filter(email => email.length > 0);
-    
+    const validEmails = emails.map((email) => email.trim()).filter((email) => email.length > 0);
+
     if (validEmails.length === 0) {
       setError('At least one email is required');
       return;
@@ -66,8 +56,8 @@ export const AdminCreateAccounts: React.FC = () => {
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const invalidEmails = validEmails.filter(email => !emailRegex.test(email));
-    
+    const invalidEmails = validEmails.filter((email) => !emailRegex.test(email));
+
     if (invalidEmails.length > 0) {
       setError(`Invalid email format: ${invalidEmails.join(', ')}`);
       return;
@@ -79,40 +69,21 @@ export const AdminCreateAccounts: React.FC = () => {
     setSuccessMessage('');
 
     try {
-      // Get token from localStorage (assuming user is logged in)
-      const token = localStorage.getItem('authToken');
-      
-      if (!token) {
-        setError('Authentication required. Please log in.');
-        setLoading(false);
-        return;
-      }
-
-      const response = await fetch('/api/auth/admin/create-accounts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ emails: validEmails }),
+      const client = getGraphQLClient(true); // Requires CSRF and auth
+      const data = await client.request<CreateUserAccountsResponse>(CREATE_USER_ACCOUNTS, {
+        emails: validEmails,
       });
 
-      const data: CreateAccountsResponse = await response.json();
+      setResults(data.createUserAccounts);
+      setSuccessMessage('Account creation process completed');
 
-      if (response.ok) {
-        setResults(data.results);
-        setSuccessMessage(data.message);
-        
-        // Reset form with successful emails removed
-        const failedEmails = data.results
-          .filter(result => !result.success)
-          .map(result => result.email);
-        
-        setEmails(failedEmails.length > 0 ? failedEmails : ['']);
-      } else {
-        setError(data.message || 'Failed to create accounts');
-      }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // Reset form with successful emails removed
+      const failedEmails = data.createUserAccounts
+        .filter((result) => !result.success)
+        .map((result) => result.email);
+
+      setEmails(failedEmails.length > 0 ? failedEmails : ['']);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_err) {
       setError('Failed to create accounts. Please try again.');
     } finally {
@@ -127,23 +98,26 @@ export const AdminCreateAccounts: React.FC = () => {
   // Check if user is authenticated
   React.useEffect(() => {
     if (!getToken()) {
-      setError('You must be logged in as admin to access this page.');
+      setError('не си с профил');
     }
   }, []);
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
+    <Container maxWidth='md' sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
-          Create User Accounts
-        </Typography>
-        
-        <Typography variant="body1" color="textSecondary" paragraph align="center">
-          Create new user accounts with email addresses. Users will need to use the activation page to set their credentials.
+        <Typography variant='h4' component='h1' gutterBottom align='center'>
+          Още профили
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-          <Typography variant="h6" gutterBottom>
+        <Typography variant='body1' color='textSecondary' align='center' sx={{ mb: 2 }}>
+          Потребителите трябва да използват страницата за активация от мейла, за да зададат
+          потребител и парола.
+          <br />
+          Users will need to use the activation page to set their credentials.
+        </Typography>
+
+        <Box component='form' onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Typography variant='h6' gutterBottom>
             Email Addresses
           </Typography>
 
@@ -152,17 +126,17 @@ export const AdminCreateAccounts: React.FC = () => {
               <TextField
                 fullWidth
                 label={`Email ${index + 1}`}
-                type="email"
+                type='email'
                 value={email}
                 onChange={(e) => updateEmail(index, e.target.value)}
                 disabled={loading}
               />
-              
+
               {emails.length > 1 && (
                 <IconButton
                   onClick={() => removeEmailField(index)}
                   disabled={loading}
-                  color="error"
+                  color='error'
                   sx={{ ml: 1 }}
                 >
                   <RemoveIcon />
@@ -176,15 +150,15 @@ export const AdminCreateAccounts: React.FC = () => {
               startIcon={<AddIcon />}
               onClick={addEmailField}
               disabled={loading}
-              variant="outlined"
+              variant='outlined'
             >
               Add Email
             </Button>
 
             <Button
-              type="submit"
-              variant="contained"
-              disabled={loading || emails.every(email => !email.trim())}
+              type='submit'
+              variant='contained'
+              disabled={loading || emails.every((email) => !email.trim())}
               sx={{ ml: 'auto' }}
             >
               {loading ? <CircularProgress size={24} /> : 'Create Accounts'}
@@ -192,45 +166,41 @@ export const AdminCreateAccounts: React.FC = () => {
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity='error' sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
 
           {successMessage && (
-            <Alert severity="info" sx={{ mb: 2 }}>
+            <Alert severity='info' sx={{ mb: 2 }}>
               {successMessage}
             </Alert>
           )}
 
           {results.length > 0 && (
             <Box sx={{ mt: 3 }}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant='h6' gutterBottom>
                 Results
               </Typography>
-              
+
               <List>
                 {results.map((result, index) => (
-                  <ListItem key={index}>
-                    <ListItemText
-                      primary={result.email}
-                      secondary={result.message}
-                    />
-                    <ListItemSecondaryAction>
-                      <Chip
-                        label={result.success ? 'Success' : 'Failed'}
-                        color={result.success ? 'success' : 'error'}
-                        size="small"
-                      />
-                      {result.success && result.id && (
+                  <ListItem
+                    key={index}
+                    secondaryAction={
+                      <Box sx={{ display: 'flex', gap: 1 }}>
                         <Chip
-                          label={`ID: ${result.id}`}
-                          size="small"
-                          variant="outlined"
-                          sx={{ ml: 1 }}
+                          label={result.success ? 'Success' : 'Failed'}
+                          color={result.success ? 'success' : 'error'}
+                          size='small'
                         />
-                      )}
-                    </ListItemSecondaryAction>
+                        {result.success && result.id && (
+                          <Chip label={`ID: ${result.id}`} size='small' variant='outlined' />
+                        )}
+                      </Box>
+                    }
+                  >
+                    <ListItemText primary={result.email} secondary={result.message} />
                   </ListItem>
                 ))}
               </List>

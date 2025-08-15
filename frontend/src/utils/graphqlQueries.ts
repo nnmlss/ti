@@ -178,3 +178,11 @@ export const VALIDATE_TOKEN = gql`
     }
   }
 `;
+
+export const GET_CONSTANTS = gql`
+  query GetConstants {
+    constants {
+      activationTokenExpiryMinutes
+    }
+  }
+`;

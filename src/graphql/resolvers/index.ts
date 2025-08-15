@@ -1,8 +1,14 @@
 import { Site } from '@models/sites.js';
-// import { User } from '@models/user.js';
+import { User } from '@models/user.js';
 import { customScalars } from '@gql-app/scalars/index.js';
 import type { GraphQLContext } from '@gql-app/types/context.js';
 import type { CreateSiteData, FlyingSite, GalleryImage } from '@models/sites.js';
+import type { User as UserType } from '@models/user.js';
+import { TokenService } from '@services/tokenService.js';
+import { EmailService } from '@services/emailService.js';
+import { generateToken } from '@middleware/auth.js';
+import { ACTIVATION_TOKEN_EXPIRY_MINUTES } from '@config/constants.js';
+import bcrypt from 'bcryptjs';
 import path from 'path';
 import fs from 'fs/promises';
 
@@ -150,12 +156,40 @@ export const resolvers = {
       }
     },
 
-    validateToken: async (_parent: unknown, { token }: ValidateTokenArgs) => {
-      // TODO: Implement token validation logic
+    constants: async (): Promise<{ activationTokenExpiryMinutes: number }> => {
       return {
-        valid: false,
-        message: 'Token validation not implemented yet',
+        activationTokenExpiryMinutes: ACTIVATION_TOKEN_EXPIRY_MINUTES,
       };
+    },
+
+    validateToken: async (_parent: unknown, { token }: ValidateTokenArgs) => {
+      if (!token) {
+        return {
+          valid: false,
+          message: 'Token is required',
+        };
+      }
+
+      try {
+        const user = await TokenService.validateToken(token);
+        
+        if (!user) {
+          return {
+            valid: false,
+            message: 'Invalid or expired token',
+          };
+        }
+        
+        return {
+          valid: true,
+          message: 'Token is valid',
+        };
+      } catch (error) {
+        return {
+          valid: false,
+          message: `Token validation failed: ${error}`,
+        };
+      }
     },
   },
 
@@ -273,20 +307,135 @@ export const resolvers = {
       }
     },
 
-    // Auth mutations - TODO: Implement these
+    // Auth mutations
     login: async (_parent: unknown, { username, password }: LoginArgs) => {
-      throw new Error('Login mutation not implemented yet');
+      if (!username || !password) {
+        throw new Error('Username and password are required');
+      }
+
+      try {
+        // Find user by username
+        const user = await User.findOne({ username, isActive: true });
+        
+        if (!user || !user.password) {
+          throw new Error('Invalid credentials');
+        }
+        
+        // Verify password
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        
+        if (!isValidPassword) {
+          throw new Error('Invalid credentials');
+        }
+        
+        // Generate JWT token
+        const token = generateToken(user);
+        
+        return {
+          token,
+          user: {
+            _id: user._id, // Use _id so the field resolver can convert it to id
+            email: user.email,
+            username: user.username || '',
+            isActive: user.isActive,
+            isSuperAdmin: user.isSuperAdmin || false,
+          },
+          message: 'Login successful',
+        };
+      } catch (error) {
+        throw new Error(`Login failed: ${error}`);
+      }
     },
 
     requestActivation: async (_parent: unknown, { email }: RequestActivationArgs) => {
-      throw new Error('Request activation mutation not implemented yet');
+      if (!email) {
+        throw new Error('Email is required');
+      }
+
+      try {
+        // Generate token (returns null if user doesn't exist)
+        const token = await TokenService.generateActivationToken(email);
+        
+        if (token) {
+          // Send activation email
+          await EmailService.sendActivationEmail(email, token);
+        }
+        
+        // Always return the same message to prevent email enumeration
+        return {
+          success: true,
+          message: 'If your email is registered, you will receive an activation link.',
+        };
+      } catch (error) {
+        throw new Error(`Request activation failed: ${error}`);
+      }
     },
 
     activateAccount: async (
       _parent: unknown,
       { token, username, password }: ActivateAccountArgs
     ) => {
-      throw new Error('Activate account mutation not implemented yet');
+      if (!token || !username || !password) {
+        throw new Error('Token, username, and password are required');
+      }
+
+      if (username.trim().length < 3) {
+        throw new Error('Username must be at least 3 characters long');
+      }
+
+      if (password.trim().length < 6) {
+        throw new Error('Password must be at least 6 characters long');
+      }
+
+      try {
+        // Validate token first
+        const user = await TokenService.validateToken(token);
+        
+        if (!user) {
+          throw new Error('Invalid or expired token');
+        }
+        
+        // Hash password
+        const passEnc = await bcrypt.hash(password, 15);
+        
+        // Update user with username, password and activate account
+        await User.updateOne(
+          { _id: user._id },
+          { 
+            username: username.trim(),
+            password: passEnc,
+            isActive: true
+          }
+        );
+        
+        // Clear the token
+        await TokenService.clearToken(token);
+        
+        // Generate JWT token for immediate login
+        const jwtToken = generateToken({
+          _id: user._id,
+          email: user.email,
+          username: username.trim(),
+          isActive: true,
+          isSuperAdmin: user.isSuperAdmin || false,
+        });
+        
+        const response = {
+          token: jwtToken,
+          user: {
+            _id: user._id, // Use _id for field resolver
+            email: user.email,
+            username: username.trim(),
+            isActive: true,
+            isSuperAdmin: user.isSuperAdmin || false,
+          },
+          message: 'Account activated successfully',
+        };
+
+        return response;
+      } catch (error) {
+        throw new Error(`Account activation failed: ${error}`);
+      }
     },
 
     createUserAccounts: async (
@@ -298,7 +447,61 @@ export const resolvers = {
         throw new Error('Super admin access required');
       }
 
-      throw new Error('Create user accounts mutation not implemented yet');
+      if (!Array.isArray(emails) || emails.length === 0) {
+        throw new Error('Emails array is required with at least one email');
+      }
+
+      const results = [];
+      
+      for (const email of emails) {
+        try {
+          // Validate email format (basic validation)
+          if (!email || !email.includes('@')) {
+            results.push({
+              email: email || 'invalid',
+              success: false,
+              message: 'Invalid email format',
+            });
+            continue;
+          }
+
+          // Check if user already exists
+          const existingUser = await User.findOne({ email });
+          
+          if (existingUser) {
+            results.push({
+              email,
+              success: false,
+              message: 'User already exists',
+            });
+            continue;
+          }
+
+          // Create user with email only
+          const newUser = new User({
+            email,
+            isActive: false,
+          });
+
+          await newUser.save();
+
+          results.push({
+            email,
+            success: true,
+            message: 'Account created successfully',
+            id: newUser._id.toString(),
+          });
+        } catch (userError) {
+          console.error('Error creating user:', userError);
+          results.push({
+            email,
+            success: false,
+            message: 'Failed to create account',
+          });
+        }
+      }
+
+      return results;
     },
   },
 
@@ -308,6 +511,6 @@ export const resolvers = {
   },
 
   User: {
-    id: (user: { _id: string | number }): string => user._id.toString(),
+    id: (user: UserType): string => user._id.toString(),
   },
 };

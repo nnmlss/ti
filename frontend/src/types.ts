@@ -151,3 +151,76 @@ export interface UpdateSiteResponse {
 export interface UnsetSiteFieldsResponse {
   unsetSiteFields: GraphQLSite;
 }
+
+// Auth types
+export interface AuthUser {
+  id: string;
+  email: string;
+  username: string;
+  isActive: boolean;
+  isSuperAdmin?: boolean;
+}
+
+export interface LoginResponse {
+  login: {
+    message: string;
+    token: string;
+    user: AuthUser;
+  };
+}
+
+export interface RequestActivationResponse {
+  requestActivation: {
+    success: boolean;
+    message: string;
+  };
+}
+
+export interface ActivateAccountResponse {
+  activateAccount: {
+    message: string;
+    token: string;
+    user: AuthUser;
+  };
+}
+
+export interface ValidateTokenResponse {
+  validateToken: {
+    valid: boolean;
+    message: string;
+  };
+}
+
+export interface AccountCreationResult {
+  email: string;
+  id?: string;
+  success: boolean;
+  message: string;
+}
+
+export interface CreateUserAccountsResponse {
+  createUserAccounts: AccountCreationResult[];
+}
+
+export interface AppConstants {
+  activationTokenExpiryMinutes: number;
+}
+
+export interface GetConstantsResponse {
+  constants: AppConstants;
+}
+
+// Custom hooks interfaces
+export interface UseActivationRequestReturn {
+  loading: boolean;
+  message: string;
+  error: string;
+  submitActivationRequest: (email: string) => Promise<void>;
+  clearMessages: () => void;
+}
+
+export interface UseConstantsReturn {
+  expiryMinutes: number | null;
+  loading: boolean;
+  error: string | null;
+}

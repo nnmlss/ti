@@ -10,17 +10,9 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
-
-interface LoginResponse {
-  message: string;
-  token?: string;
-  user?: {
-    id: number;
-    email: string;
-    username: string;
-    isActive: boolean;
-  };
-}
+import { getGraphQLClient } from '@utils/graphqlClient';
+import { LOGIN } from '@utils/graphqlQueries';
+import type { LoginResponse } from '@types';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -41,26 +33,20 @@ export const Login: React.FC = () => {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username.trim(),
-          password,
-        }),
+      const client = getGraphQLClient(false); // No CSRF needed for login
+      const data = await client.request<LoginResponse>(LOGIN, {
+        username: username.trim(),
+        password,
       });
 
-      const data: LoginResponse = await response.json();
-
-      if (response.ok && data.token) {
+      if (data.login.token) {
         // Store token in localStorage
-        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('authToken', data.login.token);
 
-        navigate('/');
+        // Immediate redirect and clear history to prevent password exposure
+        window.location.replace('/');
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.login.message || 'Login failed');
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_err) {

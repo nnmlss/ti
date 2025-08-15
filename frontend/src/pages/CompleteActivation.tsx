@@ -10,21 +10,14 @@ import {
   Box,
   CircularProgress
 } from '@mui/material';
-
-interface ValidationResponse {
-  message: string;
-  email?: string;
-}
-
-interface ActivationResponse {
-  message: string;
-}
+import { getGraphQLClient } from '@utils/graphqlClient';
+import { VALIDATE_TOKEN, ACTIVATE_ACCOUNT } from '@utils/graphqlQueries';
+import type { ValidateTokenResponse, ActivateAccountResponse } from '@types';
 
 export const CompleteActivation: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   
-  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -44,14 +37,16 @@ export const CompleteActivation: React.FC = () => {
       }
 
       try {
-        const response = await fetch(`/api/auth/validate/${token}`);
-        const data: ValidationResponse = await response.json();
+        const client = getGraphQLClient(false); // No CSRF needed for validation
+        const data = await client.request<ValidateTokenResponse>(VALIDATE_TOKEN, {
+          token,
+        });
 
-        if (response.ok) {
+        if (data.validateToken.valid) {
           setTokenValid(true);
-          setEmail(data.email || '');
+          // Note: GraphQL validateToken doesn't return email, but we can get it during activation
         } else {
-          setError(data.message || 'Invalid or expired token');
+          setError(data.validateToken.message || 'Invalid or expired token');
         }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_err) {
@@ -98,28 +93,21 @@ export const CompleteActivation: React.FC = () => {
     setMessage('');
 
     try {
-      const response = await fetch(`/api/auth/activate/${token}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username.trim(),
-          password,
-        }),
+      const client = getGraphQLClient(false); // No CSRF needed for activation
+      const data = await client.request<ActivateAccountResponse>(ACTIVATE_ACCOUNT, {
+        token: token!,
+        username: username.trim(),
+        password,
       });
 
-      const data: ActivationResponse = await response.json();
-
-      if (response.ok) {
-        setMessage(data.message);
+      if (data.activateAccount.token) {
+        // Store token for immediate login
+        localStorage.setItem('authToken', data.activateAccount.token);
         
-        // Redirect to login page after success
-        setTimeout(() => {
-          navigate('/adm1n');
-        }, 2000);
+        // Immediate redirect and clear history to prevent password exposure
+        window.location.replace('/');
       } else {
-        setError(data.message || 'Activation failed');
+        setError(data.activateAccount.message || 'Activation failed');
       }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_err) {
@@ -172,7 +160,7 @@ export const CompleteActivation: React.FC = () => {
         </Typography>
         
         <Typography variant="body1" color="textSecondary" paragraph align="center">
-          Create your username and password for: <strong>{email}</strong>
+          Create your username and password to complete account activation
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>

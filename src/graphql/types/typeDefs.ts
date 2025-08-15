@@ -128,12 +128,19 @@ export const typeDefs = gql`
     id: String
   }
 
+  type AppConstants {
+    activationTokenExpiryMinutes: Int!
+  }
+
   # Root types
   type Query {
     # Site queries
     sites: [FlyingSite!]!
     site(id: ID!): FlyingSite
     sitesByWindDirection(directions: [WindDirection!]!): [FlyingSite!]!
+    
+    # App constants
+    constants: AppConstants!
     
     # Auth queries
     validateToken(token: String!): TokenValidation!

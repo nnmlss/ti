@@ -9,51 +9,20 @@ import {
   Box,
   CircularProgress 
 } from '@mui/material';
-
-interface ActivationRequestResponse {
-  message: string;
-}
+import { useActivationRequest } from '@hooks/useActivationRequest';
+import { useConstants } from '@hooks/useConstants';
 
 export const ActivationRequest: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const { loading, message, error, submitActivationRequest, clearMessages } = useActivationRequest();
+  const { expiryMinutes } = useConstants();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email.trim()) {
-      setError('Email is required');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    setMessage('');
-
-    try {
-      const response = await fetch('/api/auth/request-activation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-
-      const data: ActivationRequestResponse = await response.json();
-
-      if (response.ok) {
-        setMessage(data.message);
-        setEmail(''); // Clear form
-      } else {
-        setError(data.message || 'An error occurred');
-      }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_err) {
-      setError('Failed to send activation request. Please try again.');
-    } finally {
-      setLoading(false);
+    await submitActivationRequest(email);
+    // Clear form after successful submission (checked inside hook)
+    if (message && !error) {
+      setEmail('');
     }
   };
 
@@ -74,7 +43,10 @@ export const ActivationRequest: React.FC = () => {
             label="Email Address"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (error || message) clearMessages();
+            }}
             margin="normal"
             required
             disabled={loading}
@@ -104,7 +76,9 @@ export const ActivationRequest: React.FC = () => {
         </Box>
 
         <Typography variant="body2" color="textSecondary" align="center" sx={{ mt: 3 }}>
-          If your email is registered, you will receive an activation link valid for 7 minutes.
+          If your email is registered, you will receive an activation link valid for {expiryMinutes || '7'} minutes.
+          <br />
+          Ако вашият имейл е регистриран, ще получите линк за активация валиден за {expiryMinutes || '7'} минути.
         </Typography>
       </Paper>
     </Container>

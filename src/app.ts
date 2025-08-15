@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import session from 'express-session';
-import csrf from 'csrf';
 import { createServer } from 'http';
 import apiRouter from './routes/api.js';
 import authRouter from './routes/auth.js';
@@ -85,42 +84,29 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// CSRF Protection
-const tokens = new csrf();
+// CSRF Protection via custom headers
 
-// CSRF token endpoint
-// app.get('/api/csrf-token', (req, res) => {
-//   const secret = tokens.secretSync();
-//   const token = tokens.create(secret);
+// Custom header CSRF protection middleware
+const customHeaderProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  // Skip for GET requests, auth endpoints (they use JWT), GraphQL and GraphiQL
+  if (req.method === 'GET' || req.path.startsWith('/api/auth/') || req.path.startsWith('/graphql') || req.path.startsWith('/graphiql')) {
+    return next();
+  }
 
-//   // Store secret in session
-//   (req.session as any).csrfSecret = secret;
+  const customHeader = req.headers['x-requested-with'] as string;
 
-//   res.json({ csrfToken: token });
-// });
+  if (!customHeader || customHeader !== 'XMLHttpRequest') {
+    return res.status(403).json({ error: 'Missing required custom header for CSRF protection' });
+  }
 
-// CSRF validation middleware
-// const csrfProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-//   // Skip CSRF for GET requests, auth endpoints (they use JWT), GraphQL and GraphiQL
-//   if (req.method === 'GET' || req.path.startsWith('/api/auth/') || req.path.startsWith('/graphql') || req.path.startsWith('/graphiql')) {
-//     return next();
-//   }
-
-//   const token = req.headers['x-csrf-token'] as string;
-//   const secret = (req.session as any).csrfSecret;
-
-//   if (!token || !secret || !tokens.verify(secret, token)) {
-//     return res.status(403).json({ error: 'Invalid CSRF token' });
-//   }
-
-//   next();
-// };
+  next();
+};
 
 // Mount auth routes first (no CSRF protection)
 app.use('/api/auth', authRouter);
 
 // Then apply CSRF protection to remaining /api routes
-// app.use('/api', csrfProtection);
+app.use('/api', customHeaderProtection);
 app.use('/api', apiRouter);
 
 // Serve static images - must come after API routes

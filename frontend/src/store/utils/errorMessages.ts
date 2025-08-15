@@ -13,6 +13,10 @@ export const errorMessages = {
   // Error messages mapping (from technical to user-friendly Bulgarian)
   messages: {
     'Network error: Unable to connect to server': 'Няма интернет връзка със сървъра',
+    'CSRF token error: Failed to fetch CSRF token': 'Проблем със сигурността. CSRF защитата не е активна.',
+    'Failed to fetch CSRF token': 'Проблем със сигурността. CSRF защитата не е активна.',
+    'Route GET /api/csrf-token not found': 'CSRF защитата не е активна на сървъра.',
+    'CSRF token error: Route GET /api/csrf-token not found': 'CSRF защитата не е активна на сървъра.',
     'Failed to load site': 'Неуспешно зареждане на сайта',
     'Failed to load sites': 'Не може да се заредят местата',
     'Failed to add site': 'Не може да се добави мястото',

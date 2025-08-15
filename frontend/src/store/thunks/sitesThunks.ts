@@ -86,8 +86,8 @@ export const updateSiteThunk = createAsyncThunk(
 
       const updatedSite: FlyingSite = await response.json();
       return updatedSite;
-    } catch {
-      return rejectWithValue('Network error: Unable to connect to server');
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Network error: Unable to connect to server');
     }
   }
 );

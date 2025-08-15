@@ -93,7 +93,7 @@ npm run check              # Run typecheck and frontend lint
 ### Frontend Architecture
 
 - **Store**: Redux store in `frontend/src/store/`
-- **API Layer**: RTK Query slice handles all backend communication
+- **API Layer**: Redux Toolkit slices with async thunks for backend communication
 - **Components**: Reusable UI components in `frontend/src/components/`
 - **Pages**: Route components in `frontend/src/pages/`
 - **Hooks**: Custom hooks in `frontend/src/hooks/`
@@ -110,9 +110,9 @@ npm run check              # Run typecheck and frontend lint
 
 ### State Management Pattern
 
-- RTK Query for server state with automatic caching and invalidation
+- Redux Toolkit slices with async thunks for server state management
 - Separate slices for sites data, loading states, and errors
-- Tagged cache invalidation strategy
+- Manual cache invalidation and state updates
 
 ### Bilingual Support
 
@@ -304,22 +304,22 @@ NODE_ENV=production|development
 ### Overview
 Migrate from REST API to GraphQL for better performance, type safety, and developer experience while maintaining all existing functionality.
 
-### Phase 1: GraphQL Foundation
-1. **Install GraphQL Dependencies**
-   - `apollo-server-express`
+### Phase 1: GraphQL Foundation ✓
+1. **Install GraphQL Dependencies** ✓
+   - `graphql-yoga`
    - `graphql`
    - `@graphql-tools/schema`
    - `graphql-scalars` (for custom scalars)
 
-2. **Create GraphQL Schema**
+2. **Create GraphQL Schema** ✓
    - Type definitions for Site, User, LocalizedText
    - Custom scalars (LocalizedText, WindDirection, Location)
    - Query and Mutation root types
 
-3. **Set Up Apollo Server**
-   - Apollo Server Express integration
+3. **Set Up GraphQL Yoga Server** ✓
+   - GraphQL Yoga Express integration
    - Single `/graphql` endpoint
-   - GraphQL Playground for development
+   - GraphiQL interface for development
 
 ### Phase 2: Core Resolvers
 4. **Site Resolvers (Query)**
@@ -354,14 +354,14 @@ Migrate from REST API to GraphQL for better performance, type safety, and develo
    - Input validation using GraphQL schema
 
 ### Phase 4: Frontend Migration
-10. **Apollo Client Setup**
-    - Install `@apollo/client`
-    - Replace Redux RTK Query with Apollo Client
-    - Configure Apollo Client with auth headers
+10. **GraphQL Client Setup**
+    - Choose GraphQL client (urql, graphql-request, or React Query + fetch)
+    - Replace Redux slices/thunks with GraphQL client
+    - Configure client with auth headers
 
 11. **Update React Components**
-    - Replace `fetch()` calls with GraphQL queries
-    - Use `useQuery` and `useMutation` hooks
+    - Replace async thunks with GraphQL queries/mutations
+    - Use GraphQL client hooks for data fetching
     - Update loading and error states
 
 12. **Authentication Flow**
@@ -405,7 +405,7 @@ Migrate from REST API to GraphQL for better performance, type safety, and develo
 
 ### What Changes
 - **API Layer** - REST endpoints → GraphQL resolvers
-- **Data Fetching** - fetch/RTK Query → Apollo Client
+- **Data Fetching** - Redux slices/thunks → GraphQL client
 - **Error Handling** - Express error middleware → GraphQL error handling
 - **Route Protection** - Express middleware → resolver-level authorization
 

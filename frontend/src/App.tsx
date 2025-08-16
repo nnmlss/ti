@@ -1,17 +1,23 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
+import { HelmetProvider } from 'react-helmet-async';
+import { MainLayoutContainer } from '@containers/MainLayoutContainer';
 import { theme } from './theme';
 import AppRoutes from './AppRoutes';
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <AppRoutes />
-      </Router>
-    </ThemeProvider>
+    <HelmetProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <MainLayoutContainer>
+            <AppRoutes />
+          </MainLayoutContainer>
+        </Router>
+      </ThemeProvider>
+    </HelmetProvider>
   );
 }
 

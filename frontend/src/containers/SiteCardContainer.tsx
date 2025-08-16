@@ -6,6 +6,7 @@ import { SiteCard } from '@components/site/SiteCard';
 import type { SiteCardContainerProps } from '@types';
 import type { AppDispatch } from '@store/store';
 import { dispatchThunkWithCallback } from '@store/utils/thunkWithCallback';
+import { getSiteUrl } from '@utils/slugUtils';
 
 export function SiteCardContainer({ site }: SiteCardContainerProps) {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export function SiteCardContainer({ site }: SiteCardContainerProps) {
   };
 
   const handleViewDetails = () => {
-    navigate(`/site/${site._id}`);
+    navigate(getSiteUrl(site));
   };
 
   const handleShowOnMap = () => {

@@ -5,7 +5,9 @@ import { useSites } from '@hooks/business/useSites';
 import { deleteSiteThunk } from '@store/thunks/sitesThunks';
 import { dispatchThunkWithCallback } from '@store/utils/thunkWithCallback';
 import type { AppDispatch } from '@store/store';
+import type { FlyingSite } from '@types';
 import { SitesMap } from '@components/main/SitesMap';
+import { getSiteUrl } from '@utils/slugUtils';
 
 export function SitesMapContainer() {
   const navigate = useNavigate();
@@ -26,8 +28,8 @@ export function SitesMapContainer() {
     navigate(`/edit-site/${siteId}`);
   };
 
-  const handleViewDetails = (siteId: number) => {
-    navigate(`/site/${siteId}`);
+  const handleViewDetails = (site: FlyingSite) => {
+    navigate(getSiteUrl(site));
   };
 
   const handleShowOnMap = (coordinates: [number, number]) => {

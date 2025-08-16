@@ -71,4 +71,5 @@ export type {
   AccessibleDialogRef,
   NotificationState,
   NotificationDialogProps,
+  SEOConfig,
 } from './ui';

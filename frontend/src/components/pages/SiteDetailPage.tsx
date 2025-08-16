@@ -1,15 +1,13 @@
 import { SiteDetailView } from '@components/site/SiteDetailView';
-import { AccessibleDialog } from '@components/ui/AccessibleDialog';
+import { PageHeader } from '@components/common/PageHeader';
 import {
-  DialogTitle,
-  DialogContent,
-  IconButton,
+  Container,
   CircularProgress,
   Alert,
   Box,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { useSiteDetailPage } from '@hooks/pages/useSiteDetailPage';
+import { SEOHead } from '@components/seo/SEOHead';
 
 export function SiteDetailPage() {
   const { site, loading, siteId, onClose } = useSiteDetailPage();
@@ -34,31 +32,21 @@ export function SiteDetailPage() {
   };
 
   return (
-    <AccessibleDialog
-      open={true}
-      onClose={onClose}
-      fullWidth
-      maxWidth={site ? false : 'sm'}
-      scroll='paper'
-      title='Детайли за място за летене'
-      description='Подробна информация за избраното място за летене'
-      aria-label='Детайли за място за летене'
-    >
-      <DialogTitle
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          pb: 1,
-        }}
-      >
-        <IconButton onClick={onClose} size='small' aria-label='Затвори диалога'>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent sx={{ p: 0, boxShadow: 'none', border: 'none' }}>
+    <>
+      <SEOHead config={{
+        title: site ? `${site.title.bg || site.title.en}` : 'Зареждане...',
+        description: site ? `Подробна информация за място за летене ${site.title.bg || site.title.en}` : undefined,
+        canonical: site?.url ? `/sites/${site.url}` : undefined
+      }} site={site || undefined} />
+      
+      <Container maxWidth={false} sx={{ py: 2, minHeight: '100vh', pb: 10 }}>
+        <PageHeader 
+          title={site ? (site.title.bg || site.title.en || 'Без име') : 'Зареждане...'} 
+          onBackClick={onClose} 
+        />
         {renderContent()}
-      </DialogContent>
-    </AccessibleDialog>
+      </Container>
+      
+    </>
   );
 }

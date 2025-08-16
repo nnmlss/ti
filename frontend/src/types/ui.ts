@@ -31,3 +31,11 @@ export interface NotificationDialogProps {
   notification: NotificationState;
   onClose: () => void;
 }
+
+// ===== SEO TYPES =====
+export interface SEOConfig {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  keywords?: string;
+}

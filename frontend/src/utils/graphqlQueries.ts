@@ -5,6 +5,7 @@ export const SITE_LIST_FRAGMENT = gql`
   fragment SiteListFields on FlyingSite {
     id
     title
+    url
     location
     windDirection
     accessOptions
@@ -17,6 +18,7 @@ export const SITE_DETAIL_FRAGMENT = gql`
   fragment SiteDetailFields on FlyingSite {
     id
     title
+    url
     windDirection
     location
     accessOptions

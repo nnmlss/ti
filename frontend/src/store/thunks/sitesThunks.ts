@@ -75,10 +75,11 @@ function transformGraphQLSite(graphqlSite: GraphQLSite): FlyingSite {
 // Thunk for loading a single site (for edit/view with full data)
 export const loadSingleSiteThunk = createAsyncThunk(
   'sites/loadSingleSite',
-  async (siteId: number, { rejectWithValue }) => {
+  async (siteIdentifier: string | number, { rejectWithValue }) => {
     try {
       const client = getGraphQLClient(false); // Read-only query
-      const data = await client.request<GetSiteDetailResponse>(GET_SITE_DETAIL, { id: siteId.toString() });
+      const id = typeof siteIdentifier === 'number' ? siteIdentifier.toString() : siteIdentifier;
+      const data = await client.request<GetSiteDetailResponse>(GET_SITE_DETAIL, { id });
       
       if (!data.site) {
         return rejectWithValue('Site not found');

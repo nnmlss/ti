@@ -131,7 +131,7 @@ export function SitesMap({
                     site={site}
                     onEdit={() => onEdit(site._id)}
                     onDelete={() => onDelete(site._id)}
-                    onViewDetails={() => onViewDetails(site._id)}
+                    onViewDetails={() => onViewDetails(site)}
                     onShowOnMap={() => onShowOnMap(site.location.coordinates)}
                     variant='popup'
                     compassSize={60}

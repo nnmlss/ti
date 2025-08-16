@@ -8,9 +8,9 @@ import { ACTIVATION_TOKEN_EXPIRY_MINUTES } from '@config/constants.js';
 import bcrypt from 'bcryptjs';
 import path from 'path';
 import fs from 'fs/promises';
+
 import type {
   GraphQLContext,
-  CreateSiteData,
   FlyingSite,
   GalleryImage,
   User as UserType,
@@ -26,7 +26,19 @@ import type {
   ValidateTokenArgs,
   CreateUserAccountsArgs,
   UpdateProfileArgs,
-} from '@types'
+} from '@types';
+
+// Generate URL slug from Bulgarian site title
+function generateUrlSlug(title: { bg?: string; en?: string }): string {
+  const siteTitle = title.bg || title.en || '';
+  const slug = siteTitle
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .trim();
+
+  return slug || 'site';
+}
 
 // Function to delete all images associated with a site
 async function deleteSiteImages(
@@ -101,9 +113,19 @@ export const resolvers = {
 
     site: async (_parent: unknown, { id }: SiteByIdArgs): Promise<FlyingSite | null> => {
       try {
-        const site = await Site.findById(Number(id));
-        return site; // Returns null if not found, no error
+        // First try to find by URL (clean approach)
+        let site = await Site.findOne({ url: id });
+        if (site) return site;
+
+        // Fallback: try to find by numeric ID (for backward compatibility)
+        if (/^\d+$/.test(id)) {
+          site = await Site.findOne({ _id: Number(id) });
+          if (site) return site;
+        }
+
+        return null; // Not found
       } catch (error) {
+        console.error('Site lookup error:', error);
         throw new Error(`Failed to fetch site: ${error}`);
       }
     },
@@ -138,14 +160,14 @@ export const resolvers = {
 
       try {
         const user = await TokenService.validateToken(token);
-        
+
         if (!user) {
           return {
             valid: false,
             message: 'Invalid or expired token',
           };
         }
-        
+
         return {
           valid: true,
           message: 'Token is valid',
@@ -175,9 +197,19 @@ export const resolvers = {
         const lastSite = await Site.findOne().sort({ _id: -1 });
         const nextId = lastSite ? lastSite._id + 1 : 1;
 
+        // Generate URL slug if not provided
+        const url = input.url || generateUrlSlug(input.title);
+
+        // Check if URL already exists
+        const existingUrl = await Site.findOne({ url });
+        if (existingUrl) {
+          throw new Error(`URL "${url}" already exists`);
+        }
+
         const newSite = new Site({
           _id: nextId,
           ...input,
+          url,
         });
 
         const savedSite = await newSite.save();
@@ -197,7 +229,19 @@ export const resolvers = {
       }
 
       try {
-        const updatedSite = await Site.findByIdAndUpdate(Number(id), input, {
+        // Handle URL generation if title changed
+        const updateData = { ...input };
+        if (input.title && !input.url) {
+          const newUrl = generateUrlSlug(input.title);
+          // Check if new URL conflicts with existing sites (excluding current site)
+          const existingUrl = await Site.findOne({ url: newUrl, _id: { $ne: Number(id) } });
+          if (existingUrl) {
+            throw new Error(`URL "${newUrl}" already exists`);
+          }
+          updateData.url = newUrl;
+        }
+
+        const updatedSite = await Site.findOneAndUpdate({ _id: Number(id) }, updateData, {
           new: true,
           runValidators: true,
         });
@@ -282,21 +326,21 @@ export const resolvers = {
       try {
         // Find user by username
         const user = await User.findOne({ username, isActive: true });
-        
+
         if (!user || !user.password) {
           throw new Error('Invalid credentials');
         }
-        
+
         // Verify password
         const isValidPassword = await bcrypt.compare(password, user.password);
-        
+
         if (!isValidPassword) {
           throw new Error('Invalid credentials');
         }
-        
+
         // Generate JWT token
         const token = generateToken(user);
-        
+
         return {
           token,
           user: {
@@ -321,12 +365,12 @@ export const resolvers = {
       try {
         // Generate token (returns null if user doesn't exist)
         const token = await TokenService.generateActivationToken(email);
-        
+
         if (token) {
           // Send activation email
           await EmailService.sendActivationEmail(email, token);
         }
-        
+
         // Always return the same message to prevent email enumeration
         return {
           success: true,
@@ -356,27 +400,27 @@ export const resolvers = {
       try {
         // Validate token first
         const user = await TokenService.validateToken(token);
-        
+
         if (!user) {
           throw new Error('Invalid or expired token');
         }
-        
+
         // Hash password
         const passEnc = await bcrypt.hash(password, 15);
-        
+
         // Update user with username, password and activate account
         await User.updateOne(
           { _id: user._id },
-          { 
+          {
             username: username.trim(),
             password: passEnc,
-            isActive: true
+            isActive: true,
           }
         );
-        
+
         // Clear the token
         await TokenService.clearToken(token);
-        
+
         // Generate JWT token for immediate login
         const jwtToken = generateToken({
           _id: user._id,
@@ -385,7 +429,7 @@ export const resolvers = {
           isActive: true,
           isSuperAdmin: user.isSuperAdmin || false,
         });
-        
+
         // Send activation success email
         try {
           await EmailService.sendActivationSuccessEmail(user.email, username.trim());
@@ -426,7 +470,7 @@ export const resolvers = {
       }
 
       const results = [];
-      
+
       for (const email of emails) {
         try {
           // Validate email format (basic validation)
@@ -441,7 +485,7 @@ export const resolvers = {
 
           // Check if user already exists
           const existingUser = await User.findOne({ email });
-          
+
           if (existingUser) {
             results.push({
               email,
@@ -478,6 +522,49 @@ export const resolvers = {
       return results;
     },
 
+    // Super admin migration
+    migrateAddUrls: async (_parent: unknown, _args: unknown, context: GraphQLContext) => {
+      if (!context.user?.isSuperAdmin) {
+        throw new Error('Super admin access required');
+      }
+
+      try {
+        // Get all sites that don't have a url field
+        const sites = await Site.find({ url: { $exists: false } });
+
+        let updated = 0;
+        const errors: string[] = [];
+
+        for (const site of sites) {
+          try {
+            const url = generateUrlSlug(site.title);
+
+            // Check if URL already exists
+            const existingUrl = await Site.findOne({ url, _id: { $ne: site._id } });
+            if (existingUrl) {
+              errors.push(`URL conflict for site ${site._id}: ${url} already exists`);
+              continue;
+            }
+
+            // Update the site with the URL
+            await Site.updateOne({ _id: site._id }, { url });
+            updated++;
+          } catch (error) {
+            errors.push(`Site ${site._id}: ${error}`);
+          }
+        }
+
+        return {
+          success: errors.length === 0,
+          message: `Migration completed: ${updated} sites updated, ${errors.length} errors`,
+          sitesUpdated: updated,
+          errors,
+        };
+      } catch (error) {
+        throw new Error(`Migration failed: ${error}`);
+      }
+    },
+
     updateProfile: async (
       _parent: unknown,
       { input }: UpdateProfileArgs,
@@ -501,7 +588,10 @@ export const resolvers = {
           throw new Error('Current password not set');
         }
 
-        const isCurrentPasswordValid = await bcrypt.compare(currentPassword, currentUser.password);
+        const isCurrentPasswordValid = await bcrypt.compare(
+          currentPassword,
+          currentUser.password
+        );
         if (!isCurrentPasswordValid) {
           throw new Error('Current password is incorrect');
         }
@@ -547,11 +637,10 @@ export const resolvers = {
         }
 
         // Update user in database
-        const updatedUser = await User.findByIdAndUpdate(
-          context.user.id,
-          updateData,
-          { new: true, runValidators: true }
-        );
+        const updatedUser = await User.findByIdAndUpdate(context.user.id, updateData, {
+          new: true,
+          runValidators: true,
+        });
 
         if (!updatedUser) {
           throw new Error('Failed to update user');
@@ -560,11 +649,7 @@ export const resolvers = {
         // Send email notification if email or username changed
         if (email !== currentUser.email || username !== currentUser.username) {
           try {
-            await EmailService.sendProfileChangeNotification(
-              oldData,
-              newData,
-              context.user.id
-            );
+            await EmailService.sendProfileChangeNotification(oldData, newData, context.user.id);
           } catch (emailError) {
             // Log error but don't fail the profile update
             console.error('Failed to send profile change notification:', emailError);

@@ -71,7 +71,7 @@ export interface SitesMapProps {
   error: string | null;
   onEdit: (siteId: number) => void;
   onDelete: (siteId: number) => void;
-  onViewDetails: (siteId: number) => void;
+  onViewDetails: (site: FlyingSite) => void;
   onShowOnMap: (coordinates: [number, number]) => void;
   deleteDialog: {
     isOpen: boolean;
@@ -106,6 +106,23 @@ export interface UserIconGroupProps {
   onProfileClick: () => void;
   onLogout: () => void;
   onAddUser: () => void;
+  onMigrateUrls: () => void;
+}
+
+// ===== MIGRATION DIALOG PROPS =====
+export interface MigrationResult {
+  success: boolean;
+  message: string;
+  sitesUpdated: number;
+  errors: string[];
+}
+
+export interface MigrationResultDialogProps {
+  open: boolean;
+  onClose: () => void;
+  isLoading: boolean;
+  result: MigrationResult | null;
+  error: string | null;
 }
 
 // ===== DIALOG TYPES =====

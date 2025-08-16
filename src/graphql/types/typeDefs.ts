@@ -32,6 +32,7 @@ export const typeDefs = gql`
   type FlyingSite {
     id: ID!
     title: LocalizedText!
+    url: String
     windDirection: [WindDirection!]!
     location: Location!
     accessOptions: [Int!]!
@@ -79,6 +80,7 @@ export const typeDefs = gql`
 
   input CreateSiteInput {
     title: LocalizedTextInput!
+    url: String
     windDirection: [WindDirection!]!
     location: LocationInput!
     accessOptions: [Int!]!
@@ -128,6 +130,13 @@ export const typeDefs = gql`
     id: String
   }
 
+  type MigrationResult {
+    success: Boolean!
+    message: String!
+    sitesUpdated: Int!
+    errors: [String!]!
+  }
+
   type AppConstants {
     activationTokenExpiryMinutes: Int!
   }
@@ -167,6 +176,9 @@ export const typeDefs = gql`
     
     # Admin mutations
     createUserAccounts(emails: [String!]!): [AccountCreationResult!]!
+    
+    # Super admin migrations
+    migrateAddUrls: MigrationResult!
     
     # Profile mutations
     updateProfile(input: UpdateProfileInput!): User!

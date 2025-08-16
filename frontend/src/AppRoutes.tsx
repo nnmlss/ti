@@ -14,22 +14,10 @@ import { NotFoundHandler } from './components/ui/NotFoundHandler';
 import { validRoutes } from '@constants';
 
 export default function AppRoutes() {
-  const location = useLocation();
-
-  // Check valid routes
-  const isValidRoute = validRoutes.some((route) => {
-    if (route === '/') return location.pathname === '/';
-    return location.pathname.startsWith(route);
-  });
-
   return (
     <>
-      {/* HomePage only rendered for valid routes */}
-      {isValidRoute && <HomePage />}
-
-      {/* Modal Routes - render on top of HomePage or standalone for auth/404 */}
       <Routes>
-        <Route path='/' element={null} />
+        <Route path='/' element={<HomePage />} />
         <Route path='/add-site' element={
           <ProtectedRoute>
             <AddSitePage />
@@ -41,6 +29,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         } />
         <Route path='/site/:id' element={<SiteDetailPage />} />
+        <Route path='/sites/:slug' element={<SiteDetailPage />} />
         
         {/* Auth Routes - standalone pages */}
         <Route path='/activate' element={<ActivationRequest />} />

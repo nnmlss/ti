@@ -50,6 +50,7 @@ const FlyingSiteSchema = new Schema(
   {
     _id: { type: Schema.Types.Mixed },
     title: { type: LocalizedTextSchema, required: true },
+    url: { type: String, unique: true },
     windDirection: [
       {
         type: String,

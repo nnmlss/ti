@@ -132,6 +132,13 @@ export const typeDefs = gql`
     activationTokenExpiryMinutes: Int!
   }
 
+  input UpdateProfileInput {
+    email: String
+    username: String
+    password: String
+    currentPassword: String!
+  }
+
   # Root types
   type Query {
     # Site queries
@@ -160,5 +167,8 @@ export const typeDefs = gql`
     
     # Admin mutations
     createUserAccounts(emails: [String!]!): [AccountCreationResult!]!
+    
+    # Profile mutations
+    updateProfile(input: UpdateProfileInput!): User!
   }
 `;

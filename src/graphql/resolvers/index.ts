@@ -62,6 +62,15 @@ interface CreateUserAccountsArgs {
   emails: string[];
 }
 
+interface UpdateProfileArgs {
+  input: {
+    email?: string;
+    username?: string;
+    password?: string;
+    currentPassword: string;
+  };
+}
+
 // Function to delete all images associated with a site
 async function deleteSiteImages(
   galleryImages: GalleryImage[]
@@ -502,6 +511,111 @@ export const resolvers = {
       }
 
       return results;
+    },
+
+    updateProfile: async (
+      _parent: unknown,
+      { input }: UpdateProfileArgs,
+      context: GraphQLContext
+    ): Promise<UserType> => {
+      if (!context.user) {
+        throw new Error('Authentication required');
+      }
+
+      const { email, username, password, currentPassword } = input;
+
+      try {
+        // Get current user from database
+        const currentUser = await User.findById(context.user.id);
+        if (!currentUser) {
+          throw new Error('User not found');
+        }
+
+        // Verify current password
+        if (!currentUser.password) {
+          throw new Error('Current password not set');
+        }
+
+        const isCurrentPasswordValid = await bcrypt.compare(currentPassword, currentUser.password);
+        if (!isCurrentPasswordValid) {
+          throw new Error('Current password is incorrect');
+        }
+
+        // Prepare update data
+        const updateData: Partial<UserType> = {};
+        const oldData = {
+          email: currentUser.email,
+          username: currentUser.username || '',
+        };
+        const newData = {
+          email: email || currentUser.email,
+          username: username || currentUser.username || '',
+        };
+
+        // Check if email is changing and if it already exists
+        if (email && email !== currentUser.email) {
+          const existingUser = await User.findOne({ email, _id: { $ne: context.user.id } });
+          if (existingUser) {
+            throw new Error('Email already exists');
+          }
+          updateData.email = email;
+        }
+
+        // Check if username is changing and if it already exists
+        if (username && username !== currentUser.username) {
+          if (username.trim().length < 3) {
+            throw new Error('Username must be at least 3 characters long');
+          }
+          const existingUser = await User.findOne({ username, _id: { $ne: context.user.id } });
+          if (existingUser) {
+            throw new Error('Username already exists');
+          }
+          updateData.username = username.trim();
+        }
+
+        // Update password if provided
+        if (password) {
+          if (password.trim().length < 6) {
+            throw new Error('Password must be at least 6 characters long');
+          }
+          updateData.password = await bcrypt.hash(password, 15);
+        }
+
+        // Update user in database
+        const updatedUser = await User.findByIdAndUpdate(
+          context.user.id,
+          updateData,
+          { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+          throw new Error('Failed to update user');
+        }
+
+        // Send email notification if email or username changed
+        if (email !== currentUser.email || username !== currentUser.username) {
+          try {
+            await EmailService.sendProfileChangeNotification(
+              oldData,
+              newData,
+              context.user.id
+            );
+          } catch (emailError) {
+            // Log error but don't fail the profile update
+            console.error('Failed to send profile change notification:', emailError);
+          }
+        }
+
+        return {
+          _id: updatedUser._id,
+          email: updatedUser.email,
+          username: updatedUser.username || '',
+          isActive: updatedUser.isActive,
+          isSuperAdmin: updatedUser.isSuperAdmin || false,
+        } as UserType;
+      } catch (error) {
+        throw new Error(`Profile update failed: ${error}`);
+      }
     },
   },
 

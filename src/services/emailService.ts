@@ -70,6 +70,61 @@ export class EmailService {
     }
   }
 
+  //Send profile change notification to admin
+  static async sendProfileChangeNotification(
+    oldData: { email: string; username: string },
+    newData: { email: string; username: string },
+    userId: string
+  ): Promise<boolean> {
+    if (!this.transporter) {
+      console.error('Email service not initialized');
+      return false;
+    }
+
+    try {
+      const changes: string[] = [];
+      if (oldData.email !== newData.email) {
+        changes.push(`Email: ${oldData.email} → ${newData.email}`);
+      }
+      if (oldData.username !== newData.username) {
+        changes.push(`Username: ${oldData.username} → ${newData.username}`);
+      }
+
+      if (changes.length === 0) {
+        return true; // No changes to notify about
+      }
+
+      const mailOptions = {
+        from: process.env.FROM_EMAIL || 'noreply@borislav.space',
+        to: 'fly@borislav.space',
+        subject: 'Takeoff Info - User Profile Changed',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>User Profile Update Notification</h2>
+            <p>A user has updated their profile information:</p>
+            <p><strong>User ID:</strong> ${userId}</p>
+            <h3>Changes Made:</h3>
+            <ul>
+              ${changes.map(change => `<li>${change}</li>`).join('')}
+            </ul>
+            <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
+            <hr>
+            <p style="color: #666; font-size: 12px;">
+              Takeoff Info - Automated notification
+            </p>
+          </div>
+        `,
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Profile change notification sent for user ${userId}`);
+      return true;
+    } catch (error) {
+      console.error('Failed to send profile change notification:', error);
+      return false;
+    }
+  }
+
   //Test email configuration
   static async testConnection(): Promise<boolean> {
     if (!this.transporter) {

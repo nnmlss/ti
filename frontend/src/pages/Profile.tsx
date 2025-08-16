@@ -14,8 +14,8 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useAuth } from '@contexts/AuthContext';
 import { getGraphQLClient } from '@utils/graphqlClient';
-import { LOGIN } from '@utils/graphqlQueries';
-import type { LoginResponse } from '@types';
+import { LOGIN, UPDATE_PROFILE } from '@utils/graphqlQueries';
+import type { LoginResponse, UpdateProfileResponse, UpdateProfileInput } from '@types';
 
 export const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -190,18 +190,42 @@ export const Profile: React.FC = () => {
     setMessage('');
 
     try {
-      // TODO: Implement profile update GraphQL mutation
-      console.log('Profile update:', {
-        email: formData.email,
-        username: formData.username,
-        ...(formData.password && { password: formData.password }),
-        currentPassword: formData.currentPassword,
-      });
+      const client = getGraphQLClient(true);
       
+      const updateInput: UpdateProfileInput = {
+        currentPassword: formData.currentPassword,
+      };
+
+      // Only include fields that have changed
+      if (formData.email !== user?.email) {
+        updateInput.email = formData.email;
+      }
+      if (formData.username !== user?.username) {
+        updateInput.username = formData.username;
+      }
+      if (formData.password.length > 0) {
+        updateInput.password = formData.password;
+      }
+
+      const response = await client.request<UpdateProfileResponse>(UPDATE_PROFILE, {
+        input: updateInput,
+      });
+
       setMessage('Profile updated successfully');
       setFormData(prev => ({ ...prev, password: '', repeatPassword: '', currentPassword: '' }));
-    } catch (err) {
-      setError('Failed to update profile. Please try again.');
+      
+      // Reset validation states
+      setIsCurrentPasswordValid(false);
+      setHasPasswordCheckCompleted(false);
+      setHasStartedTypingCurrentPassword(false);
+      setHasPasswordsMatched(false);
+      setShowRepeatPasswordError(false);
+      setShowPasswordLengthError(false);
+      
+      console.log('Profile updated:', response.updateProfile);
+    } catch (err: any) {
+      console.error('Profile update error:', err);
+      setError(err?.response?.errors?.[0]?.message || 'Failed to update profile. Please try again.');
     } finally {
       setLoading(false);
     }

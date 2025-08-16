@@ -186,3 +186,15 @@ export const GET_CONSTANTS = gql`
     }
   }
 `;
+
+export const UPDATE_PROFILE = gql`
+  mutation UpdateProfile($input: UpdateProfileInput!) {
+    updateProfile(input: $input) {
+      id
+      email
+      username
+      isActive
+      isSuperAdmin
+    }
+  }
+`;

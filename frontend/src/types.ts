@@ -224,3 +224,14 @@ export interface UseConstantsReturn {
   loading: boolean;
   error: string | null;
 }
+
+export interface UpdateProfileInput {
+  email?: string;
+  username?: string;
+  password?: string;
+  currentPassword: string;
+}
+
+export interface UpdateProfileResponse {
+  updateProfile: AuthUser;
+}

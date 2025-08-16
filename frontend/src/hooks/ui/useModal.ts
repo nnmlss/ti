@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { navigateToHome } from '../utils/navigation';
+import { navigateToHome } from '@utils/navigation';
 
 export interface ModalState {
   isOpen: boolean;

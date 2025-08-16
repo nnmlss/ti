@@ -1,3 +1,4 @@
+import { fetchWithCsrf } from '@utils/fetchWithCsrf';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 // Generate thumbnails for an image
@@ -5,7 +6,7 @@ export const generateThumbnailsThunk = createAsyncThunk(
   'thumbnails/generateThumbnails',
   async (filename: string, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/image/generate-thumbnails/${filename}`, {
+      const response = await fetchWithCsrf(`/api/image/generate-thumbnails/${filename}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

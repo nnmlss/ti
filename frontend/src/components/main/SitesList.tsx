@@ -1,5 +1,5 @@
-import { useSites } from '../../hooks/useSites';
-import { SiteCardContainer } from '../../containers/SiteCardContainer';
+import { useSites } from '@hooks/business/useSites';
+import { SiteCardContainer } from '@containers/SiteCardContainer';
 import { CircularProgress, Alert, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
 

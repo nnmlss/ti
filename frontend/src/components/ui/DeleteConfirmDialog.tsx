@@ -1,4 +1,3 @@
-// import React from 'react';
 import {
   DialogTitle,
   DialogContent,
@@ -10,54 +9,16 @@ import {
 } from '@mui/material';
 
 import GpsOffIcon from '@mui/icons-material/GpsOff';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteSiteThunk } from '../../store/thunks/sitesThunks';
-import type { RootState, AppDispatch } from '../../store/store';
-import { dispatchThunkWithCallback } from '../../store/utils/thunkWithCallback';
 import { AccessibleDialog } from './AccessibleDialog';
-import { useImmediateAsync } from '../../hooks/useImmediateAsync';
-
-interface DeleteConfirmDialogProps {
-  open: boolean;
-  onClose: () => void;
-  siteId: number;
-  title: string;
-  onConfirm?: () => void;
-}
+import type { DeleteConfirmDialogProps } from '@types';
 
 export function DeleteConfirmDialog({
   open,
   onClose,
-  siteId,
   title,
+  isLoading,
   onConfirm,
 }: DeleteConfirmDialogProps) {
-  const dispatch = useDispatch<AppDispatch>();
-  const reduxIsDeleting = useSelector(
-    (state: RootState) => state.singleSite.delete.status === 'pending'
-  );
-
-  const deleteAction = useImmediateAsync({
-    externalLoading: reduxIsDeleting,
-    onError: (error) => {
-      console.error('Failed to delete site:', error);
-    },
-  });
-
-  const handleConfirm = () => {
-    if (onConfirm) {
-      onConfirm();
-    } else {
-      deleteAction.execute(async () => {
-        await dispatchThunkWithCallback(dispatch, {
-          thunkAction: deleteSiteThunk(siteId),
-          onSuccess: () => {
-            onClose();
-          },
-        });
-      });
-    }
-  };
 
   return (
     <AccessibleDialog
@@ -86,16 +47,16 @@ export function DeleteConfirmDialog({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant='outlined' disabled={deleteAction.isLoading}>
+        <Button onClick={onClose} variant='outlined' disabled={isLoading}>
           Не
         </Button>
         <Button
-          onClick={handleConfirm}
+          onClick={onConfirm}
           color='error'
           variant='contained'
-          disabled={deleteAction.isLoading}
+          disabled={isLoading}
         >
-          {deleteAction.isLoading ? (
+          {isLoading ? (
             <CircularProgress size={21} sx={{ color: 'white' }} disableShrink />
           ) : (
             'Изтрии'

@@ -2,24 +2,7 @@ import { useId, forwardRef, useImperativeHandle, useRef } from 'react';
 import {
   Dialog,
 } from '@mui/material';
-import type { ComponentProps } from 'react';
-
-// Simplified Accessible Dialog using MUI's built-in accessibility features
-export interface AccessibleDialogProps extends Omit<ComponentProps<typeof Dialog>, 'aria-labelledby' | 'aria-describedby'> {
-  // Accessibility props
-  title?: string;
-  description?: string;
-  
-  // ARIA overrides (optional)
-  'aria-label'?: string;
-  'aria-labelledby'?: string;
-  'aria-describedby'?: string;
-}
-
-export interface AccessibleDialogRef {
-  focus: () => void;
-  getDialogElement: () => HTMLElement | null;
-}
+import type { AccessibleDialogProps, AccessibleDialogRef } from '@types';
 
 export const AccessibleDialog = forwardRef<AccessibleDialogRef, AccessibleDialogProps>(
   (

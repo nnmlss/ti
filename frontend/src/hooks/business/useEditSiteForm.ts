@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { addSiteThunk, updateSiteThunk } from '../store/thunks/sitesThunks';
-import { uploadImageThunk, deleteImageThunk } from '../store/thunks/imageThunks';
-import type { AppDispatch } from '../store/store';
-import { selectAllSitesLoadState } from '../store/slices/allSitesSlice';
-import { toFormData, toApiData, type FormDataSite } from '../utils/formDataTransforms';
-import type { AccessOptionId, GalleryImage } from '../types';
-import { navigateToHome } from '../utils/navigation';
-import type { FlyingSite, WindDirection } from '../types';
+import { addSiteThunk, updateSiteThunk } from '@store/thunks/sitesThunks';
+import { uploadImageThunk, deleteImageThunk } from '@store/thunks/imageThunks';
+import type { AppDispatch } from '@store/store';
+import { selectAllSitesLoadState } from '@store/slices/allSitesSlice';
+import { toFormData, toApiData, type FormDataSite } from '@utils/formDataTransforms';
+import { TIMEOUTS } from '@constants';
+import type { AccessOptionId, GalleryImage } from '@types';
+import { navigateToHome } from '@utils/navigation';
+import type { FlyingSite, WindDirection } from '@types';
 
 export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -140,9 +141,12 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
       }));
 
       setValue('galleryImages', [...galleryImages, ...newImages]);
-      
+
       // Track newly uploaded images
-      const newImagePaths = new Set([...newlyUploadedImages, ...newImages.map(img => img.path)]);
+      const newImagePaths = new Set([
+        ...newlyUploadedImages,
+        ...newImages.map((img) => img.path),
+      ]);
       setNewlyUploadedImages(newImagePaths);
     } catch (error) {
       const errorMessage = typeof error === 'string' ? error : 'Failed to upload images';
@@ -176,16 +180,17 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
     // Filter out images marked for deletion
     const filteredFormData = {
       ...formData,
-      galleryImages: formData.galleryImages?.filter(img => !imagesToDelete.has(img.path)) || []
+      galleryImages:
+        formData.galleryImages?.filter((img) => !imagesToDelete.has(img.path)) || [],
     };
-    
+
     // Delete ALL files that were marked for deletion (both new and existing)
     const filesToDelete = Array.from(imagesToDelete);
-    
+
     if (filesToDelete.length > 0) {
       try {
         await Promise.all(
-          filesToDelete.map(imagePath => {
+          filesToDelete.map((imagePath) => {
             const filename = imagePath.split('/').pop() || imagePath;
             return dispatch(deleteImageThunk(filename)).unwrap();
           })
@@ -195,7 +200,7 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
         // Continue with form submission even if deletion fails
       }
     }
-    
+
     // Transform form data to API format
     const cleanedFormData = toApiData(filteredFormData, site);
 
@@ -208,7 +213,7 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
         } else {
           navigate(navigateToHome()); // Fallback for non-modal usage
         }
-      }, 3000);
+      }, TIMEOUTS.PASSWORD_VALIDATION_DELAY);
     };
 
     const handleError = (errorMessage: string) => {
@@ -225,10 +230,11 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
       handleSuccess();
     } catch (error) {
       const errorMessage = typeof error === 'string' ? error : 'An unexpected error occurred';
-      
+
       // Store the success callback globally for retry
-      (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback = handleSuccess;
-      
+      (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback =
+        handleSuccess;
+
       handleError(errorMessage);
     }
   };
@@ -268,7 +274,7 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
         }
       }, 100);
     }
-    
+
     // Error is now handled by Redux error middleware
   };
 

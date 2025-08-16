@@ -1,5 +1,5 @@
 import { GraphQLScalarType, GraphQLError } from 'graphql';
-import { Kind } from 'graphql/language/index.js';
+import { Kind } from 'graphql/language/kinds.js';
 
 // Your WindDirection enum values
 const WIND_DIRECTIONS = [

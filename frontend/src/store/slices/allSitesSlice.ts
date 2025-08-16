@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { FlyingSite } from '../../types';
+import type { FlyingSite } from '@types';
 import {
   loadSitesThunk,
   addSiteThunk,
   updateSiteThunk,
   deleteSiteThunk,
-} from '../thunks/sitesThunks';
+} from '@store/thunks/sitesThunks';
 
 // Define async state type
 type AsyncState = {

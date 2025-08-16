@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/user.js';
-import type { CustomError } from '../models/sites.js';
+import { User } from '@models/user.js';
+import type { CustomError } from '@models/sites.js';
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -22,34 +22,38 @@ export const generateToken = (user: any): string => {
     isActive: user.isActive,
     isSuperAdmin: user.isSuperAdmin,
   };
-  
+
   return jwt.sign(payload, process.env.JWT_SECRET || 'fallback-secret', {
     expiresIn: '7d',
   });
 };
 
 //Middleware to authenticate user via JWT
-export const authenticate = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authenticate = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    
+
     if (!token) {
       const error: CustomError = new Error('Access token required');
       error.status = 401;
       return next(error);
     }
-    
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
-    
+
     // Verify user still exists and is active
     const user = await User.findOne({ _id: decoded.id, isActive: true });
-    
+
     if (!user) {
       const error: CustomError = new Error('User not found or inactive');
       error.status = 401;
       return next(error);
     }
-    
+
     req.user = {
       id: user._id.toString(),
       email: user.email,
@@ -57,7 +61,7 @@ export const authenticate = async (req: AuthenticatedRequest, res: Response, nex
       isActive: user.isActive,
       isSuperAdmin: user.isSuperAdmin || false,
     };
-    
+
     next();
   } catch (error) {
     const authError: CustomError = new Error('Invalid access token');
@@ -73,7 +77,7 @@ export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: Nex
     error.status = 403;
     return next(error);
   }
-  
+
   next();
 };
 

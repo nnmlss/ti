@@ -1,20 +1,12 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '@contexts/AuthContext';
 import { Container, Paper, Typography, CircularProgress, Box } from '@mui/material';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requireSuperAdmin?: boolean;
+  state: 'loading' | 'access-denied';
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  requireSuperAdmin = false 
-}) => {
-  const { user, isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ state }) => {
+  if (state === 'loading') {
     return (
       <Container maxWidth="sm" sx={{ mt: 8 }}>
         <Paper elevation={3} sx={{ p: 4 }}>
@@ -26,11 +18,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/adm1n" replace />;
-  }
-
-  if (requireSuperAdmin && !user?.isSuperAdmin) {
+  if (state === 'access-denied') {
     return (
       <Container maxWidth="sm" sx={{ mt: 8 }}>
         <Paper elevation={3} sx={{ p: 4 }}>
@@ -45,5 +33,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  return <>{children}</>;
+  return null;
 };

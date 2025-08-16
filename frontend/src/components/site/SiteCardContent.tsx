@@ -1,28 +1,11 @@
-import {
-  CardContent,
-  Typography,
-  CardActions,
-  Button,
-  Box,
-  Divider,
-} from '@mui/material';
+import { CardContent, Typography, CardActions, Button, Box, Divider } from '@mui/material';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { FlyingSite } from '@types';
+import type { SiteCardContentProps } from '@types';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
-import { useAuth } from '@contexts/AuthContext';
-
-interface SiteCardContentProps {
-  site: FlyingSite;
-  onEdit: () => void;
-  onDelete: () => void;
-  onViewDetails: () => void;
-  onShowOnMap: () => void;
-  variant?: 'card' | 'popup';
-  compassSize?: number;
-}
+import { useSiteCardContent } from '@hooks/ui/useSiteCardContent';
 
 export function SiteCardContent({
   site,
@@ -33,7 +16,7 @@ export function SiteCardContent({
   variant = 'card',
   compassSize = 75,
 }: SiteCardContentProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSiteCardContent();
 
   return (
     <>
@@ -53,20 +36,20 @@ export function SiteCardContent({
         <Typography
           variant={variant === 'popup' ? 'body1' : 'h6'}
           component='div'
-          sx={{ 
-            mb: 1.5, 
-            textAlign: 'center', 
+          sx={{
+            mb: 1.5,
+            textAlign: 'center',
             color: 'primary.light',
-            ...(variant === 'popup' && { mb: 1 })
+            ...(variant === 'popup' && { mb: 1 }),
           }}
         >
           {site.title.bg}
-          <Typography 
-            variant={variant === 'popup' ? 'body2' : 'h6'} 
-            component='div' 
-            sx={{ 
+          <Typography
+            variant={variant === 'popup' ? 'body2' : 'h6'}
+            component='div'
+            sx={{
               textAlign: 'center',
-              ...(variant === 'popup' && { color: 'text.secondary' })
+              ...(variant === 'popup' && { color: 'text.secondary' }),
             }}
           >
             {site.title.en}
@@ -75,11 +58,11 @@ export function SiteCardContent({
 
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <WindDirectionCompass windDirections={site.windDirection} size={compassSize} />
-          <Typography 
-            variant='body2' 
-            sx={{ 
-              textAlign: 'center', 
-              mt: variant === 'popup' ? 1 : 2 
+          <Typography
+            variant='body2'
+            sx={{
+              textAlign: 'center',
+              mt: variant === 'popup' ? 1 : 2,
             }}
           >
             {site.altitude ? `${site.altitude}m` : variant === 'popup' ? 'N/A' : ''}
@@ -87,38 +70,81 @@ export function SiteCardContent({
         </Box>
 
         <AccessOptionsView accessOptions={site.accessOptions} size={36} />
+        {isAuthenticated && (
+          <Button
+            onClick={
+              variant === 'popup'
+                ? (e) => {
+                    e.stopPropagation();
+                    onShowOnMap();
+                  }
+                : onShowOnMap
+            }
+            size={isAuthenticated ? 'small' : 'medium'}
+          >
+            Отвори в
+            <LocationPinIcon sx={{ mr: isAuthenticated ? 0 : 0 }} />
+            Google Maps
+          </Button>
+        )}
       </CardContent>
 
       <Divider />
-      <CardActions sx={{ 
-        display: 'flex', 
-        justifyContent: isAuthenticated ? 'space-between' : 'center',
-        ...(variant === 'popup' && { px: 2, py: 1 })
-      }}>
+      <CardActions
+        sx={{
+          display: 'flex',
+          justifyContent: isAuthenticated ? 'space-between' : 'center',
+          ...(variant === 'popup' && { px: 2, py: 1 }),
+        }}
+      >
         {isAuthenticated && (
-          <Button 
-            onClick={variant === 'popup' ? (e) => { e.stopPropagation(); onEdit(); } : onEdit} 
-            size='small'
-          >
-            <EditIcon />
-          </Button>
+          <>
+            <Button
+              onClick={
+                variant === 'popup'
+                  ? (e) => {
+                      e.stopPropagation();
+                      onEdit();
+                    }
+                  : onEdit
+              }
+              size='small'
+            >
+              <EditIcon />
+            </Button>
+
+            <Button
+              onClick={
+                variant === 'popup'
+                  ? (e) => {
+                      e.stopPropagation();
+                      onDelete();
+                    }
+                  : onDelete
+              }
+              color='error'
+              size='small'
+            >
+              <DeleteIcon />
+            </Button>
+          </>
         )}
 
-        <Button 
-          onClick={variant === 'popup' ? (e) => { e.stopPropagation(); onShowOnMap(); } : onShowOnMap} 
-          size={isAuthenticated ? 'small' : 'medium'}
-        >
-          <LocationPinIcon sx={{ mr: isAuthenticated ? 0 : 0 }} />
-          {!isAuthenticated && 'Отвори в Google Maps'}
-        </Button>
-
-        {isAuthenticated && (
-          <Button 
-            onClick={variant === 'popup' ? (e) => { e.stopPropagation(); onDelete(); } : onDelete} 
-            color='error' 
-            size='small'
+        {!isAuthenticated && (
+          <Button
+            onClick={
+              variant === 'popup'
+                ? (e) => {
+                    e.stopPropagation();
+                    onShowOnMap();
+                  }
+                : onShowOnMap
+            }
+            size={isAuthenticated ? 'small' : 'medium'}
           >
-            <DeleteIcon />
+            Отвори в
+            <LocationPinIcon sx={{ mr: isAuthenticated ? 0 : 0 }} />
+            Google Maps
           </Button>
         )}
       </CardActions>

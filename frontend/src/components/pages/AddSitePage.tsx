@@ -1,17 +1,17 @@
 import { DialogTitle, DialogContent, IconButton, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import { useModal } from '../hooks/useModal';
-import { AccessibleDialog } from '../components/ui/AccessibleDialog';
-import EditSite from '../components/site/EditSite';
+import { useAddSitePage } from '@hooks/pages/useAddSitePage';
+import { AccessibleDialog } from '@components/ui/AccessibleDialog';
+import EditSite from '@components/site/EditSite';
 
 export function AddSitePage() {
-  const { handleClose } = useModal(true);
+  const { onClose } = useAddSitePage();
 
   return (
     <AccessibleDialog
       open={true}
-      onClose={handleClose}
+      onClose={onClose}
       maxWidth='md'
       fullWidth
       scroll='paper'
@@ -31,12 +31,12 @@ export function AddSitePage() {
           <GpsFixedIcon sx={{ mr: 1 }} />
           Добавяне на място за летене
         </Box>
-        <IconButton onClick={handleClose} size='small' aria-label='Затвори диалога'>
+        <IconButton onClick={onClose} size='small' aria-label='Затвори диалога'>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
       <DialogContent sx={{ p: 0, mb: 3 }}>
-        <EditSite onClose={handleClose} />
+        <EditSite onClose={onClose} />
       </DialogContent>
     </AccessibleDialog>
   );

@@ -1,6 +1,6 @@
 import { Site } from '@models/sites.js';
 import { User } from '@models/user.js';
-import { customScalars } from '@gql-app/scalars/index.js';
+import { customScalars } from '../scalars/index.js';
 import type { GraphQLContext } from '@gql-app/types/context.js';
 import type { CreateSiteData, FlyingSite, GalleryImage } from '@models/sites.js';
 import type { User as UserType } from '@models/user.js';

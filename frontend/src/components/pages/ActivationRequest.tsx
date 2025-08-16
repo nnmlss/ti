@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Container, 
   Paper, 
@@ -9,22 +9,18 @@ import {
   Box,
   CircularProgress 
 } from '@mui/material';
-import { useActivationRequest } from '@hooks/useActivationRequest';
-import { useConstants } from '@hooks/useConstants';
+import { useActivationRequestPage } from '@hooks/pages/useActivationRequestPage';
 
 export const ActivationRequest: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const { loading, message, error, submitActivationRequest, clearMessages } = useActivationRequest();
-  const { expiryMinutes } = useConstants();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await submitActivationRequest(email);
-    // Clear form after successful submission (checked inside hook)
-    if (message && !error) {
-      setEmail('');
-    }
-  };
+  const {
+    email,
+    loading,
+    message,
+    error,
+    expiryMinutes,
+    onSubmit,
+    onEmailChange,
+  } = useActivationRequestPage();
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
@@ -37,16 +33,13 @@ export const ActivationRequest: React.FC = () => {
           Enter your email address to receive an activation link if your account has been created.
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+        <Box component="form" onSubmit={onSubmit} sx={{ mt: 2 }}>
           <TextField
             fullWidth
             label="Email Address"
             type="email"
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (error || message) clearMessages();
-            }}
+            onChange={onEmailChange}
             margin="normal"
             required
             disabled={loading}

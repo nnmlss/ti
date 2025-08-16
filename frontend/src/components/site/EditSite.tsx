@@ -16,17 +16,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Controller } from 'react-hook-form';
 
-import type { FlyingSite } from '../../types';
-import { useEditSiteForm } from '../../hooks/useEditSiteForm';
-import { accessOptions } from '../../constants/accessOptions';
-import { windDirections } from '../../constants/windDirections';
-import { GalleryImageUpload } from '../gallery/GalleryImageUpload';
-import { GalleryImageList } from '../gallery/GalleryImageList';
-
-interface EditSiteProps {
-  site?: FlyingSite;
-  onClose?: () => void;
-}
+import type { EditSiteProps } from '@types';
+import { useEditSiteForm } from '@hooks/business/useEditSiteForm';
+import { accessOptions } from '@constants';
+import { windDirections } from '@constants';
+import { GalleryImageUpload } from '@components/gallery/GalleryImageUpload';
+import { GalleryImageList } from '@components/gallery/GalleryImageList';
 
 function EditSite({ site, onClose }: EditSiteProps) {
   const {

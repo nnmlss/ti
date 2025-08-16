@@ -1,21 +1,21 @@
 import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../store/store';
+import type { RootState, AppDispatch } from '@store/store';
 import {
   addSiteLocally,
   updateSiteLocally,
   deleteSiteLocally,
   resetLoadState as resetAllSitesLoadState,
-} from '../store/slices/allSitesSlice';
+} from '@store/slices/allSitesSlice';
 import {
   setCurrentSite,
   clearCurrentSite,
   resetLoadState as resetSiteLoadState,
   resetEditState,
   resetDeleteState,
-} from '../store/slices/singleSiteSlice';
-import { setHomeView } from '../store/slices/homeViewSlice';
-import { setWindDirectionFilter, clearFilters } from '../store/slices/filterSlice';
-import type { FlyingSite, WindDirection } from '../types';
+} from '@store/slices/singleSiteSlice';
+import { setHomeView } from '@store/slices/homeViewSlice';
+import { setWindDirectionFilter, clearFilters } from '@store/slices/filterSlice';
+import type { FlyingSite, WindDirection } from '@types';
 
 export const useSites = () => {
   const dispatch = useDispatch<AppDispatch>();

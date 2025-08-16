@@ -1,4 +1,4 @@
-import type { AppDispatch } from '../store';
+import type { AppDispatch } from '@store';
 
 interface ThunkWithCallbackOptions {
   thunkAction: unknown; // RTK thunk
@@ -14,7 +14,7 @@ export const dispatchThunkWithCallback = async (
   options: ThunkWithCallbackOptions
 ) => {
   const { thunkAction, onSuccess, onError } = options;
-  
+
   try {
     await dispatch(thunkAction).unwrap();
     // Success - execute callback

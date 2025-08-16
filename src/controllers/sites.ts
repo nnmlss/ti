@@ -2,8 +2,8 @@ import type { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import path from 'path';
 import fs from 'fs/promises';
-import { Site } from '../models/sites.js';
-import type { FlyingSite, CustomError, GalleryImage } from '../models/sites.js';
+import { Site } from '@models/sites.js';
+import type { FlyingSite, CustomError, GalleryImage } from '@models/sites.js';
 
 // Function to get the next numeric ID
 async function getNextId(): Promise<number> {

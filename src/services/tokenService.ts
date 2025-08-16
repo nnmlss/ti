@@ -1,6 +1,6 @@
 import crypto from 'crypto';
-import { User } from '../models/user.js';
-import { ACTIVATION_TOKEN_EXPIRY_MS } from '../config/constants.js';
+import { User } from '@models/user.js';
+import { ACTIVATION_TOKEN_EXPIRY_MS } from '@config/constants.js';
 
 export class TokenService {
   //Generate a secure random token

@@ -8,8 +8,8 @@ import {
   getSiteById,
   updateSite,
   deleteSite,
-} from '../controllers/sites.js';
-import { uploadImage, deleteImage, generateThumbnails } from '../controllers/image.js';
+} from '@controllers/sites.js';
+import { uploadImage, deleteImage, generateThumbnails } from '@controllers/image.js';
 import authRoutes from './auth.js';
 
 const router = Router();

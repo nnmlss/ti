@@ -1,34 +1,26 @@
-import { SitesMap } from '../components/main/SitesMap';
-import { SitesList } from '../components/main/SitesList';
-import { WindDirectionFilter } from '../components/main/WindDirectionFilter';
+import { SitesMapContainer as SitesMap } from '@containers/SitesMapContainer';
+import { SitesList } from '@components/main/SitesList';
+import { WindDirectionFilterContainer as WindDirectionFilter } from '@containers/WindDirectionFilterContainer';
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PublicIcon from '@mui/icons-material/Public';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
-import { useAuth } from '../contexts/AuthContext';
-import { UserIconGroup } from '../components/auth/UserIconGroup';
+import { UserIconGroupContainer as UserIconGroup } from '@containers/UserIconGroupContainer';
+import { useHomePage } from '@hooks/pages/useHomePage';
 
-interface HomePageProps {
-  homeView: 'map' | 'list';
-  filter: { windDirection: string | null };
-  showWindFilter: boolean;
-  onViewToggle: (view: 'map' | 'list') => void;
-  onWindFilterToggle: () => void;
-  onWindFilterClose: () => void;
-}
-
-export function HomePage({
-  homeView,
-  filter,
-  showWindFilter,
-  onViewToggle,
-  onWindFilterToggle,
-  onWindFilterClose,
-}: HomePageProps) {
+export function HomePage() {
+  const {
+    homeView,
+    filter,
+    showWindFilter,
+    isAuthenticated,
+    onViewToggle,
+    onWindFilterToggle,
+    onWindFilterClose,
+  } = useHomePage();
   const isListView = homeView === 'list';
-  const { isAuthenticated } = useAuth();
 
   return (
     <Box sx={{ position: 'relative', height: '100vh', width: '100vw', overflowX: 'hidden' }}>
@@ -56,7 +48,11 @@ export function HomePage({
           <Typography
             variant='h5'
             component='h1'
-            sx={{ color: 'primary.main', fontSize: '1rem', display: { xs: 'none', sm: 'block' } }}
+            sx={{
+              color: 'primary.main',
+              fontSize: '1rem',
+              display: { xs: 'none', sm: 'block' },
+            }}
           >
             Места за летене
           </Typography>

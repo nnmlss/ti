@@ -1,19 +1,8 @@
-import { useSites } from '../../hooks/useSites';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, LayersControl } from 'react-leaflet';
-import {
-  CircularProgress,
-  Alert,
-  Box,
-  Card,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { SiteCardContent } from '../site/SiteCardContent';
-import { DeleteConfirmDialog } from '../ui/DeleteConfirmDialog';
-import { useConfirmDialog } from '../../hooks/useConfirmDialog';
-import { useDispatch } from 'react-redux';
-import { deleteSiteThunk } from '../../store/thunks/sitesThunks';
-import { dispatchThunkWithCallback } from '../../store/utils/thunkWithCallback';
-import type { AppDispatch } from '../../store/store';
+import { CircularProgress, Alert, Box, Card } from '@mui/material';
+import { SiteCardContent } from '@components/site/SiteCardContent';
+import { DeleteConfirmDialogContainer as DeleteConfirmDialog } from '@containers/DeleteConfirmDialogContainer';
+import type { SitesMapProps } from '@types';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -27,22 +16,16 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-export function SitesMap() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const { isOpen, targetId, confirm, handleConfirm, handleCancel } = useConfirmDialog();
-  const { sites, allSitesLoadState } = useSites();
-  const loading = allSitesLoadState.status;
-  const error = allSitesLoadState.error;
-
-  const handleDelete = async (siteId: number) => {
-    await dispatchThunkWithCallback(dispatch, {
-      thunkAction: deleteSiteThunk(siteId),
-      onSuccess: () => {
-        handleCancel(); // Close the confirmation dialog
-      },
-    });
-  };
+export function SitesMap({
+  sites,
+  loading,
+  error,
+  onEdit,
+  onDelete,
+  onViewDetails,
+  onShowOnMap,
+  deleteDialog,
+}: SitesMapProps) {
 
   if (loading === 'pending' && sites.length === 0) {
     return (
@@ -146,14 +129,11 @@ export function SitesMap() {
                 <Card sx={{ width: '100%', boxShadow: 'none', border: 'none', p: 0, m: 0 }}>
                   <SiteCardContent
                     site={site}
-                    onEdit={() => navigate(`/edit-site/${site._id}`)}
-                    onDelete={() => confirm(site._id, () => handleDelete(site._id))}
-                    onViewDetails={() => navigate(`/site/${site._id}`)}
-                    onShowOnMap={() => {
-                      const [lng, lat] = site.location.coordinates;
-                      window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
-                    }}
-                    variant="popup"
+                    onEdit={() => onEdit(site._id)}
+                    onDelete={() => onDelete(site._id)}
+                    onViewDetails={() => onViewDetails(site._id)}
+                    onShowOnMap={() => onShowOnMap(site.location.coordinates)}
+                    variant='popup'
                     compassSize={60}
                   />
                 </Card>
@@ -163,13 +143,13 @@ export function SitesMap() {
         })}
       </MapContainer>
 
-      {isOpen && targetId && (
+      {deleteDialog.isOpen && deleteDialog.targetId && (
         <DeleteConfirmDialog
-          open={isOpen}
-          onClose={handleCancel}
-          siteId={targetId}
-          title={sites?.find((s) => s._id === targetId)?.title.bg || 'this site'}
-          onConfirm={handleConfirm}
+          open={deleteDialog.isOpen}
+          onClose={deleteDialog.onClose}
+          siteId={deleteDialog.targetId}
+          title={deleteDialog.targetTitle}
+          onConfirm={deleteDialog.onConfirm}
         />
       )}
     </>

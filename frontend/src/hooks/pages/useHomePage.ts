@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { loadSitesThunk } from '../store/thunks/sitesThunks';
-import type { AppDispatch } from '../store/store';
-import { useSites } from '../hooks/useSites';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { HomePage } from '../pages/HomePage';
+import { loadSitesThunk } from '@store/thunks/sitesThunks';
+import type { AppDispatch } from '@store/store';
+import { useSites } from '@hooks/business/useSites';
+import { useLocalStorage } from '@hooks/utils/useLocalStorage';
+import { useAuth } from "@hooks/auth/useAuth";
 
-export function HomePageContainer() {
+export function useHomePage() {
   const dispatch = useDispatch<AppDispatch>();
   const [showWindFilter, setShowWindFilter] = useState(false);
-  
+  const { isAuthenticated } = useAuth();
+
   // Persist homeView preference
-  const { value: storedHomeView, setValue: setStoredHomeView } = useLocalStorage<'map' | 'list'>(
-    'homeView', 
-    'map'
-  );
+  const { value: storedHomeView, setValue: setStoredHomeView } = useLocalStorage<
+    'map' | 'list'
+  >('homeView', 'map');
 
   const { homeView, setHomeView, filter } = useSites();
-  
+
   // Load sites on app start
   useEffect(() => {
     dispatch(loadSitesThunk());
@@ -43,14 +43,13 @@ export function HomePageContainer() {
     setShowWindFilter(false);
   };
 
-  return (
-    <HomePage
-      homeView={homeView}
-      filter={filter}
-      showWindFilter={showWindFilter}
-      onViewToggle={handleViewToggle}
-      onWindFilterToggle={handleWindFilterToggle}
-      onWindFilterClose={handleWindFilterClose}
-    />
-  );
+  return {
+    homeView,
+    filter,
+    showWindFilter,
+    isAuthenticated,
+    onViewToggle: handleViewToggle,
+    onWindFilterToggle: handleWindFilterToggle,
+    onWindFilterClose: handleWindFilterClose,
+  };
 }

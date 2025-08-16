@@ -1,11 +1,11 @@
 import type { Request, Response, NextFunction } from 'express';
-import { createError } from '../utils/errorUtils.js';
-import { validateFilename } from '../utils/fileUtils.js';
-import { 
-  processImage, 
-  generateThumbnailsForImage, 
-  deleteImageFiles 
-} from '../services/imageService.js';
+import { createError } from '@utils/errorUtils.js';
+import { validateFilename } from '@utils/fileUtils.js';
+import {
+  processImage,
+  generateThumbnailsForImage,
+  deleteImageFiles,
+} from '@services/imageService.js';
 
 // POST /api/image/upload - Upload single image
 export const uploadImage = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,9 +26,9 @@ export const uploadImage = async (req: Request, res: Response, next: NextFunctio
       width: processedImage.original.width,
       height: processedImage.original.height,
       format: processedImage.original.format,
-      thumbnail: processedImage.versions.find(v => v.size === 'thmb')?.path,
-      small: processedImage.versions.find(v => v.size === 'small')?.path,
-      large: processedImage.versions.find(v => v.size === 'large')?.path
+      thumbnail: processedImage.versions.find((v) => v.size === 'thmb')?.path,
+      small: processedImage.versions.find((v) => v.size === 'small')?.path,
+      large: processedImage.versions.find((v) => v.size === 'large')?.path,
     };
 
     res.status(201).json({
@@ -60,7 +60,7 @@ export const deleteImage = async (req: Request, res: Response, next: NextFunctio
       message: 'Image deleted successfully',
       filename: decodedFilename,
       deletedFiles,
-      errors: errors.length > 0 ? errors : undefined
+      errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error) {
     next(error);
@@ -77,17 +77,20 @@ export const generateThumbnails = async (req: Request, res: Response, next: Next
     }
 
     const decodedFilename = validateFilename(filename);
-    
+
     try {
       const generatedVersions = await generateThumbnailsForImage(decodedFilename);
-      
+
       res.status(200).json({
         message: 'Thumbnails processed successfully',
         filename: decodedFilename,
-        versions: generatedVersions
+        versions: generatedVersions,
       });
     } catch (serviceError: unknown) {
-      if (serviceError instanceof Error && serviceError.message === 'Original image file not found') {
+      if (
+        serviceError instanceof Error &&
+        serviceError.message === 'Original image file not found'
+      ) {
         return next(createError('Original image file not found', 404));
       }
       throw serviceError;

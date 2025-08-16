@@ -1,22 +1,22 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { HomePageContainer } from './containers/HomePageContainer';
-import { AddSitePage } from './pages/AddSitePage';
-import { EditSitePage } from './pages/EditSitePage';
-import { SiteDetailPage } from './pages/SiteDetailPage';
-import { ActivationRequest } from './pages/ActivationRequest';
-import { CompleteActivation } from './pages/CompleteActivation';
-import { AdminCreateAccounts } from './pages/AdminCreateAccounts';
-import { Login } from './pages/Login';
-import { Profile } from './pages/Profile';
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
-import { GlobalErrorNotification } from './components/ui/GlobalErrorNotification';
+import { HomePage } from './components/pages/HomePage';
+import { AddSitePage } from './components/pages/AddSitePage';
+import { EditSitePage } from './components/pages/EditSitePage';
+import { SiteDetailPage } from './components/pages/SiteDetailPage';
+import { ActivationRequest } from './components/pages/ActivationRequest';
+import { CompleteActivation } from './components/pages/CompleteActivation';
+import { AdminCreateAccounts } from './components/pages/AdminCreateAccounts';
+import { Login } from './components/pages/Login';
+import { Profile } from './components/pages/Profile';
+import { ProtectedRouteContainer as ProtectedRoute } from './containers/ProtectedRouteContainer';
+import { GlobalErrorNotificationContainer as GlobalErrorNotification } from './containers/GlobalErrorNotificationContainer';
 import { NotFoundHandler } from './components/ui/NotFoundHandler';
+import { validRoutes } from '@constants';
 
 export default function AppRoutes() {
   const location = useLocation();
 
-  // Define valid routes
-  const validRoutes = ['/', '/add-site', '/edit-site', '/site'];
+  // Check valid routes
   const isValidRoute = validRoutes.some((route) => {
     if (route === '/') return location.pathname === '/';
     return location.pathname.startsWith(route);
@@ -25,7 +25,7 @@ export default function AppRoutes() {
   return (
     <>
       {/* HomePage only rendered for valid routes */}
-      {isValidRoute && <HomePageContainer />}
+      {isValidRoute && <HomePage />}
 
       {/* Modal Routes - render on top of HomePage or standalone for auth/404 */}
       <Routes>

@@ -1,35 +1,22 @@
 import React from 'react';
 import { Box, IconButton } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { useAuth } from '@contexts/AuthContext';
+import type { UserIconGroupProps } from '@types';
 
-export const UserIconGroup: React.FC = () => {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  const handleProfileClick = () => {
-    navigate('/edit-profile');
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
-  const handleAddUser = () => {
-    navigate('/admin/add-account');
-  };
-
-  if (!user) return null;
+export const UserIconGroup: React.FC<UserIconGroupProps> = ({
+  user,
+  onProfileClick,
+  onLogout,
+  onAddUser,
+}) => {
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
       {/* Profile Icon */}
       <IconButton
-        onClick={handleProfileClick}
+        onClick={onProfileClick}
         sx={{
           color: 'inherit',
           '&:hover': {
@@ -46,7 +33,7 @@ export const UserIconGroup: React.FC = () => {
       {/* Add User Icon (Super Admin only) */}
       {user.isSuperAdmin && (
         <IconButton
-          onClick={handleAddUser}
+          onClick={onAddUser}
           sx={{
             color: 'inherit',
             '&:hover': {
@@ -63,7 +50,7 @@ export const UserIconGroup: React.FC = () => {
 
       {/* Logout Icon */}
       <IconButton
-        onClick={handleLogout}
+        onClick={onLogout}
         sx={{
           color: 'error.main',
           '&:hover': {

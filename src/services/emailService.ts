@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { ACTIVATION_TOKEN_EXPIRY_MINUTES } from '../config/constants.js';
+import { ACTIVATION_TOKEN_EXPIRY_MINUTES } from '@config/constants.js';
 
 export class EmailService {
   private static transporter: nodemailer.Transporter | null = null;
@@ -105,7 +105,7 @@ export class EmailService {
             <p><strong>User ID:</strong> ${userId}</p>
             <h3>Changes Made:</h3>
             <ul>
-              ${changes.map(change => `<li>${change}</li>`).join('')}
+              ${changes.map((change) => `<li>${change}</li>`).join('')}
             </ul>
             <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
             <hr>

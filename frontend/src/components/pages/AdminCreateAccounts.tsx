@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Container,
   Paper,
@@ -15,92 +15,20 @@ import {
   Chip,
 } from '@mui/material';
 import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
-import { getGraphQLClient } from '@utils/graphqlClient';
-import { CREATE_USER_ACCOUNTS } from '@utils/graphqlQueries';
-import type { CreateUserAccountsResponse, AccountCreationResult } from '@types';
+import { useAdminCreateAccountsPage } from '@hooks/pages/useAdminCreateAccountsPage';
 
 export const AdminCreateAccounts: React.FC = () => {
-  const [emails, setEmails] = useState<string[]>(['']);
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<AccountCreationResult[]>([]);
-  const [error, setError] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>('');
-
-  const addEmailField = () => {
-    setEmails([...emails, '']);
-  };
-
-  const removeEmailField = (index: number) => {
-    if (emails.length > 1) {
-      const newEmails = emails.filter((_, i) => i !== index);
-      setEmails(newEmails);
-    }
-  };
-
-  const updateEmail = (index: number, value: string) => {
-    const newEmails = [...emails];
-    newEmails[index] = value;
-    setEmails(newEmails);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Filter out empty emails and validate
-    const validEmails = emails.map((email) => email.trim()).filter((email) => email.length > 0);
-
-    if (validEmails.length === 0) {
-      setError('At least one email is required');
-      return;
-    }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const invalidEmails = validEmails.filter((email) => !emailRegex.test(email));
-
-    if (invalidEmails.length > 0) {
-      setError(`Invalid email format: ${invalidEmails.join(', ')}`);
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    setResults([]);
-    setSuccessMessage('');
-
-    try {
-      const client = getGraphQLClient(true); // Requires CSRF and auth
-      const data = await client.request<CreateUserAccountsResponse>(CREATE_USER_ACCOUNTS, {
-        emails: validEmails,
-      });
-
-      setResults(data.createUserAccounts);
-      setSuccessMessage('Account creation process completed');
-
-      // Reset form with successful emails removed
-      const failedEmails = data.createUserAccounts
-        .filter((result) => !result.success)
-        .map((result) => result.email);
-
-      setEmails(failedEmails.length > 0 ? failedEmails : ['']);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_err) {
-      setError('Failed to create accounts. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getToken = (): string | null => {
-    return localStorage.getItem('authToken');
-  };
-
-  // Check if user is authenticated
-  React.useEffect(() => {
-    if (!getToken()) {
-      setError('не си с профил');
-    }
-  }, []);
+  const {
+    emails,
+    loading,
+    results,
+    error,
+    successMessage,
+    addEmailField,
+    removeEmailField,
+    updateEmail,
+    onSubmit,
+  } = useAdminCreateAccountsPage();
 
   return (
     <Container maxWidth='md' sx={{ mt: 4 }}>
@@ -116,7 +44,7 @@ export const AdminCreateAccounts: React.FC = () => {
           Users will need to use the activation page to set their credentials.
         </Typography>
 
-        <Box component='form' onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component='form' onSubmit={onSubmit} sx={{ mt: 3 }}>
           <Typography variant='h6' gutterBottom>
             Email Addresses
           </Typography>

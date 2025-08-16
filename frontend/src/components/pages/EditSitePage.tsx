@@ -1,12 +1,6 @@
-import { useParams } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
-import type { RootState, AppDispatch } from '../store/store';
-import { loadSingleSiteThunk } from '../store/thunks/sitesThunks';
-import { clearCurrentSite } from '../store/slices/singleSiteSlice';
-import { useModal } from '../hooks/useModal';
-import EditSite from '../components/site/EditSite';
-import { AccessibleDialog } from '../components/ui/AccessibleDialog';
+import { useEditSitePage } from '@hooks/pages/useEditSitePage';
+import EditSite from '@components/site/EditSite';
+import { AccessibleDialog } from '@components/ui/AccessibleDialog';
 import {
   DialogTitle,
   DialogContent,
@@ -21,29 +15,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 
 export function EditSitePage() {
-  const { id } = useParams<{ id: string }>();
-  const dispatch = useDispatch<AppDispatch>();
-  const { handleClose } = useModal(true);
-
-  // Get site from current site state (loaded individually)
-  const site = useSelector((state: RootState) => state.singleSite.data);
-  const loadState = useSelector((state: RootState) => state.singleSite.load);
-  const loading = loadState.status;
-
-  // Load individual site data on mount
-  useEffect(() => {
-    if (id) {
-      const numId = Number(id);
-      if (!Number.isNaN(numId)) {
-        dispatch(loadSingleSiteThunk(numId));
-      }
-    }
-
-    // Cleanup: clear current site when component unmounts
-    return () => {
-      dispatch(clearCurrentSite());
-    };
-  }, [dispatch, id]);
+  const { site, loading, siteId, onClose } = useEditSitePage();
 
   const renderContent = () => {
     // Show loading while fetching individual site data
@@ -56,10 +28,10 @@ export function EditSitePage() {
     }
 
     return site ? (
-      <EditSite site={site} onClose={handleClose} />
+      <EditSite site={site} onClose={onClose} />
     ) : (
       <Alert severity='error'>
-        Ифромацията за място с ID:{id} не е намерена. Или не съществува, или има проблем с
+        Ифромацията за място с ID:{siteId} не е намерена. Или не съществува, или има проблем с
         интернет връзката към сървъра.
       </Alert>
     );
@@ -68,7 +40,7 @@ export function EditSitePage() {
   return (
     <AccessibleDialog
       open={true}
-      onClose={handleClose}
+      onClose={onClose}
       maxWidth={site ? 'md' : 'sm'}
       fullWidth
       scroll='paper'
@@ -90,7 +62,7 @@ export function EditSitePage() {
           <GpsFixedIcon sx={{ mr: 1 }} />
           Редакция на място за летене
         </Box>
-        <IconButton onClick={handleClose} size='small' aria-label='Затвори диалога'>
+        <IconButton onClick={onClose} size='small' aria-label='Затвори диалога'>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

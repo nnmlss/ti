@@ -1,4 +1,3 @@
-import { useSelector, useDispatch } from 'react-redux';
 import {
   Dialog,
   DialogContent,
@@ -10,106 +9,24 @@ import {
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HomeIcon from '@mui/icons-material/Home';
-import { useNavigate } from 'react-router-dom';
-import type { RootState, AppDispatch } from '../../store/store';
-import { hideErrorNotification, setRetrying } from '../../store/slices/errorNotificationSlice';
-import {
-  loadSitesThunk,
-  loadSingleSiteThunk,
-  addSiteThunk,
-  updateSiteThunk,
-  deleteSiteThunk,
-} from '../../store/thunks/sitesThunks';
+import type { GlobalErrorNotificationProps } from '@types';
 
-export function GlobalErrorNotification() {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-  const { open, message, title, retryAction, isRetrying } = useSelector(
-    (state: RootState) => state.errorNotification
-  );
-
-  // Show retry button if we have a retry action available
-  const showRetryButton = !!retryAction;
-
-  // Show home button for 404 errors
-  const showHomeButton = title?.includes('не е намерена') || message.includes('не съществува');
-
-  const handleClose = () => {
-    dispatch(hideErrorNotification());
-  };
-
-  const handleRetry = async () => {
-    if (retryAction) {
-      // Set retry loading state
-      dispatch(setRetrying(true));
-
-      // Map retry action types to actual thunk functions
-      const { type, payload, onSuccess } = retryAction;
-
-      try {
-        switch (type) {
-          case 'sites/loadSites':
-            await dispatch(loadSitesThunk()).unwrap();
-            break;
-          case 'sites/loadSingleSite':
-            if (payload) {
-              await dispatch(loadSingleSiteThunk(payload as number)).unwrap();
-            }
-            break;
-          case 'sites/addSite':
-            if (payload) {
-              await dispatch(addSiteThunk(payload)).unwrap();
-            }
-            break;
-          case 'sites/updateSite':
-            if (payload) {
-              await dispatch(updateSiteThunk(payload)).unwrap();
-            }
-            break;
-          case 'sites/deleteSite':
-            if (payload) {
-              await dispatch(deleteSiteThunk(payload as number)).unwrap();
-            }
-            break;
-          default:
-            console.warn('Unknown retry action type:', type);
-            dispatch(setRetrying(false));
-            return;
-        }
-        // Execute success callback if provided
-        if (onSuccess) {
-          onSuccess();
-        } else if (
-          (window as unknown as { __retrySuccessCallback?: () => void }).__retrySuccessCallback
-        ) {
-          (window as unknown as { __retrySuccessCallback?: () => void })
-            .__retrySuccessCallback!();
-          (
-            window as unknown as { __retrySuccessCallback?: () => void }
-          ).__retrySuccessCallback = undefined; // Clean up
-        }
-        // Close modal on successful retry
-        dispatch(hideErrorNotification());
-      } catch {
-        // Reset retry state on failure
-        dispatch(setRetrying(false));
-        // If retry fails, the error middleware will show a new error notification
-        // Don't close the current modal so user can see the original error is still there
-      }
-    }
-  };
-
-  const handleGoHome = () => {
-    navigate('/');
-    handleClose();
-  };
-
-  // No auto-close for any errors - user must manually close
+export function GlobalErrorNotification({
+  open,
+  title,
+  message,
+  isRetrying,
+  showRetryButton,
+  showHomeButton,
+  onClose,
+  onRetry,
+  onGoHome,
+}: GlobalErrorNotificationProps) {
 
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={onClose}
       aria-labelledby='error-notification-title'
       maxWidth='sm'
       fullWidth
@@ -123,7 +40,7 @@ export function GlobalErrorNotification() {
       <DialogActions>
         {showRetryButton && (
           <Button
-            onClick={handleRetry}
+            onClick={onRetry}
             color='primary'
             variant='outlined'
             disabled={isRetrying}
@@ -134,7 +51,7 @@ export function GlobalErrorNotification() {
         )}
         {showHomeButton && (
           <Button
-            onClick={handleGoHome}
+            onClick={onGoHome}
             color='primary'
             variant='outlined'
             startIcon={<HomeIcon />}
@@ -142,7 +59,7 @@ export function GlobalErrorNotification() {
             Към началната страница
           </Button>
         )}
-        <Button onClick={handleClose} color='primary' variant='contained'>
+        <Button onClick={onClose} color='primary' variant='contained'>
           OK
         </Button>
       </DialogActions>

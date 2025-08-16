@@ -20,11 +20,19 @@
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
-      "@pages/*": ["src/pages/*"],
+      "@containers/*": ["src/containers/*"],
       "@store/*": ["src/store/*"],
       "@utils/*": ["src/utils/*"],
       "@hooks/*": ["src/hooks/*"],
-      "@types": ["src/types.ts"]
+      "@hooks/pages/*": ["src/hooks/pages/*"],
+      "@hooks/ui/*": ["src/hooks/ui/*"],
+      "@hooks/business/*": ["src/hooks/business/*"],
+      "@hooks/utils/*": ["src/hooks/utils/*"],
+      "@hooks/auth/*": ["src/hooks/auth/*"],
+      "@contexts/*": ["src/contexts/*"],
+      "@constants": ["src/constants.ts"],
+      "@assets/*": ["src/assets/*"],
+      "@types": ["src/types"]
     },
 
     /* Linting */

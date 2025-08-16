@@ -3,11 +3,7 @@ import Grid from '@mui/material/Grid';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
-import type { FlyingSite } from '../../types';
-
-interface SiteDetailViewProps {
-  site: FlyingSite;
-}
+import type { SiteDetailViewProps } from '@types';
 
 export function SiteDetailView({ site }: SiteDetailViewProps) {
   const renderLocalizedText = (

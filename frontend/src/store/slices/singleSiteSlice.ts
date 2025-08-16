@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { FlyingSite } from '../../types';
+import type { FlyingSite } from '@types';
 import {
   loadSingleSiteThunk,
   addSiteThunk,
   updateSiteThunk,
   deleteSiteThunk,
-} from '../thunks/sitesThunks';
+} from '@store/thunks/sitesThunks';
 
 // Define async state type
 type AsyncState = {
@@ -73,12 +73,12 @@ const singleSiteSlice = createSlice({
         state.load = { status: 'success', error: null };
       })
       .addCase(loadSingleSiteThunk.rejected, (state, action) => {
-        state.load = { 
-          status: 'error', 
-          error: action.error.message || 'Failed to load site' 
+        state.load = {
+          status: 'error',
+          error: action.error.message || 'Failed to load site',
         };
       })
-      
+
       // Add site (create new)
       .addCase(addSiteThunk.pending, (state) => {
         state.edit = { status: 'pending', error: null };
@@ -88,12 +88,12 @@ const singleSiteSlice = createSlice({
         state.edit = { status: 'success', error: null };
       })
       .addCase(addSiteThunk.rejected, (state, action) => {
-        state.edit = { 
-          status: 'error', 
-          error: action.error.message || 'Failed to create site' 
+        state.edit = {
+          status: 'error',
+          error: action.error.message || 'Failed to create site',
         };
       })
-      
+
       // Update site
       .addCase(updateSiteThunk.pending, (state) => {
         state.edit = { status: 'pending', error: null };
@@ -103,12 +103,12 @@ const singleSiteSlice = createSlice({
         state.edit = { status: 'success', error: null };
       })
       .addCase(updateSiteThunk.rejected, (state, action) => {
-        state.edit = { 
-          status: 'error', 
-          error: action.error.message || 'Failed to update site' 
+        state.edit = {
+          status: 'error',
+          error: action.error.message || 'Failed to update site',
         };
       })
-      
+
       // Delete site
       .addCase(deleteSiteThunk.pending, (state) => {
         state.delete = { status: 'pending', error: null };
@@ -118,9 +118,9 @@ const singleSiteSlice = createSlice({
         state.delete = { status: 'success', error: null };
       })
       .addCase(deleteSiteThunk.rejected, (state, action) => {
-        state.delete = { 
-          status: 'error', 
-          error: action.error.message || 'Failed to delete site' 
+        state.delete = {
+          status: 'error',
+          error: action.error.message || 'Failed to delete site',
         };
       });
   },
@@ -138,7 +138,11 @@ export const {
 export const singleSiteReducer = singleSiteSlice.reducer;
 
 // Selectors for easy access
-export const selectCurrentSite = (state: { singleSite: SingleSiteState }) => state.singleSite.data;
-export const selectSiteLoadState = (state: { singleSite: SingleSiteState }) => state.singleSite.load;
-export const selectSiteEditState = (state: { singleSite: SingleSiteState }) => state.singleSite.edit;
-export const selectSiteDeleteState = (state: { singleSite: SingleSiteState }) => state.singleSite.delete;
+export const selectCurrentSite = (state: { singleSite: SingleSiteState }) =>
+  state.singleSite.data;
+export const selectSiteLoadState = (state: { singleSite: SingleSiteState }) =>
+  state.singleSite.load;
+export const selectSiteEditState = (state: { singleSite: SingleSiteState }) =>
+  state.singleSite.edit;
+export const selectSiteDeleteState = (state: { singleSite: SingleSiteState }) =>
+  state.singleSite.delete;

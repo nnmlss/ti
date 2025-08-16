@@ -1,22 +1,7 @@
 import { Card } from '@mui/material';
-import type { FlyingSite } from '../../types';
-import { SiteCardContent } from './SiteCardContent';
-import { DeleteConfirmDialog } from '../ui/DeleteConfirmDialog';
-
-interface DeleteDialogState {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
-
-interface SiteCardProps {
-  site: FlyingSite;
-  onEdit: () => void;
-  onDelete: () => void;
-  onViewDetails: () => void;
-  onShowOnMap: () => void;
-  deleteDialog: DeleteDialogState;
-}
+import type { SiteCardProps } from '@types';
+import { SiteCardContent } from '@components/site/SiteCardContent';
+import { DeleteConfirmDialogContainer as DeleteConfirmDialog } from '@containers/DeleteConfirmDialogContainer';
 
 export function SiteCard({
   site,
@@ -43,7 +28,7 @@ export function SiteCard({
           onDelete={onDelete}
           onViewDetails={onViewDetails}
           onShowOnMap={onShowOnMap}
-          variant="card"
+          variant='card'
         />
       </Card>
       <DeleteConfirmDialog

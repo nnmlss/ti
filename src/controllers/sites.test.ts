@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response, NextFunction } from 'express';
 import type { ValidationError, Result } from 'express-validator';
-import type { FlyingSite } from '../models/sites.js';
+import type { FlyingSite } from '@models/sites.js';
 
 // Mock express-validator
 vi.mock('express-validator', () => ({
@@ -9,7 +9,7 @@ vi.mock('express-validator', () => ({
 }));
 
 // Mock the Site model before importing controller
-vi.mock('../models/sites.js', () => ({
+vi.mock('@models/sites.js', () => ({
   Site: {
     find: vi.fn(),
     findOne: vi.fn(),
@@ -21,21 +21,16 @@ vi.mock('../models/sites.js', () => ({
   },
 }));
 
-import {
-  getAllSites,
-  createSite,
-  getSiteById,
-  updateSite,
-  deleteSite,
-} from './sites.js';
-import { Site } from '../models/sites.js';
+import { getAllSites, createSite, getSiteById, updateSite, deleteSite } from './sites.js';
+import { Site } from '@models/sites.js';
 import { validationResult } from 'express-validator';
 
 // Helper to create mock request/response objects
-const createMockReq = (params = {}, body = {}) => ({
-  params,
-  body,
-}) as Request;
+const createMockReq = (params = {}, body = {}) =>
+  ({
+    params,
+    body,
+  } as Request);
 
 const createMockRes = () => {
   const res = {} as Response;
@@ -94,9 +89,7 @@ describe('Site Controller', () => {
 
   describe('createSite', () => {
     it('should handle validation errors via global error handler', async () => {
-      const validationErrors: Partial<ValidationError>[] = [
-        { msg: 'Title is required' }
-      ];
+      const validationErrors: Partial<ValidationError>[] = [{ msg: 'Title is required' }];
       vi.mocked(validationResult).mockReturnValue({
         isEmpty: () => false,
         array: () => validationErrors as ValidationError[],
@@ -123,11 +116,11 @@ describe('Site Controller', () => {
         isEmpty: () => true,
         array: () => [],
       } as unknown as Result<ValidationError>);
-      
+
       const dbError = new Error('Database error');
       // Mock the findOne().sort() chain for getNextId()
       vi.mocked(Site.findOne).mockReturnValue({
-        sort: vi.fn().mockRejectedValue(dbError)
+        sort: vi.fn().mockRejectedValue(dbError),
       } as unknown as ReturnType<typeof Site.findOne>);
 
       const req = createMockReq({}, {});
@@ -324,7 +317,7 @@ describe('Site Controller', () => {
       const siteToDelete = {
         _id: 1,
         title: { en: 'Site to Delete', bg: 'Място за изтриване' },
-        galleryImages: []
+        galleryImages: [],
       };
       const deletedSite = {
         _id: 1,
@@ -345,7 +338,7 @@ describe('Site Controller', () => {
       expect(res.json).toHaveBeenCalledWith({
         message: 'Site deleted successfully',
         deletedImages: 0,
-        imageErrors: undefined
+        imageErrors: undefined,
       });
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -357,8 +350,8 @@ describe('Site Controller', () => {
         title: { en: 'Site with Images', bg: 'Място с изображения' },
         galleryImages: [
           { path: 'test1.jpg', author: 'Test Author 1' },
-          { path: 'test2.jpg', author: 'Test Author 2' }
-        ]
+          { path: 'test2.jpg', author: 'Test Author 2' },
+        ],
       };
       const deletedSite = {
         _id: 1,
@@ -379,7 +372,7 @@ describe('Site Controller', () => {
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
           message: 'Site deleted successfully',
-          deletedImages: expect.any(Number)
+          deletedImages: expect.any(Number),
         })
       );
       expect(mockNext).not.toHaveBeenCalled();

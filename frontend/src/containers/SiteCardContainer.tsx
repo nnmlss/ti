@@ -1,15 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useConfirmDialog } from '../hooks/useConfirmDialog';
-import { deleteSiteThunk } from '../store/thunks/sitesThunks';
-import { SiteCard } from '../components/site/SiteCard';
-import type { FlyingSite } from '../types';
-import type { AppDispatch } from '../store/store';
-import { dispatchThunkWithCallback } from '../store/utils/thunkWithCallback';
-
-interface SiteCardContainerProps {
-  site: FlyingSite;
-}
+import { useConfirmDialog } from '@hooks/ui/useConfirmDialog';
+import { deleteSiteThunk } from '@store/thunks/sitesThunks';
+import { SiteCard } from '@components/site/SiteCard';
+import type { SiteCardContainerProps } from '@types';
+import type { AppDispatch } from '@store/store';
+import { dispatchThunkWithCallback } from '@store/utils/thunkWithCallback';
 
 export function SiteCardContainer({ site }: SiteCardContainerProps) {
   const navigate = useNavigate();

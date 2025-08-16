@@ -4,7 +4,8 @@ import type {
   LandingFieldInfo,
   GalleryImage,
   AccessOptionId,
-} from '../types';
+} from '@types';
+import { FORM_DEFAULTS } from '@constants';
 
 // Form data type with empty strings instead of null/undefined for UI editing
 export interface FormDataSite
@@ -21,7 +22,7 @@ export interface FormDataSite
     | 'landingFields'
   > {
   location: {
-    type: 'Point';
+    type: FORM_DEFAULTS.POINT_TYPE;
     coordinates: [string, string]; // String for form inputs
   };
   altitude: string;
@@ -51,7 +52,7 @@ export interface FormLandingField {
     en: string;
   };
   location: {
-    type: 'Point';
+    type: FORM_DEFAULTS.POINT_TYPE;
     coordinates: [string, string];
   };
 }
@@ -67,21 +68,21 @@ export type UpdatePayload = Partial<FlyingSite> & MongoUpdateOperators;
 const initialFormState: FormDataSite = {
   title: { bg: '', en: '' },
   windDirection: [],
-  location: { type: 'Point', coordinates: ['', ''] },
+  location: { type: FORM_DEFAULTS.POINT_TYPE, coordinates: FORM_DEFAULTS.EMPTY_COORDINATES },
   altitude: '',
   accessOptions: [] as AccessOptionId[],
   galleryImages: [],
-  accomodations: { bg: [''], en: [''] },
-  alternatives: { bg: [''], en: [''] },
+  accomodations: { bg: FORM_DEFAULTS.EMPTY_STRING_ARRAY, en: FORM_DEFAULTS.EMPTY_STRING_ARRAY },
+  alternatives: { bg: FORM_DEFAULTS.EMPTY_STRING_ARRAY, en: FORM_DEFAULTS.EMPTY_STRING_ARRAY },
   access: { bg: '', en: '' },
   landingFields: [
     {
       description: { bg: '', en: '' },
-      location: { type: 'Point', coordinates: ['', ''] },
+      location: { type: FORM_DEFAULTS.POINT_TYPE, coordinates: FORM_DEFAULTS.EMPTY_COORDINATES },
     },
   ],
-  tracklogs: [''],
-  localPilotsClubs: { bg: [''], en: [''] },
+  tracklogs: FORM_DEFAULTS.EMPTY_STRING_ARRAY,
+  localPilotsClubs: { bg: FORM_DEFAULTS.EMPTY_STRING_ARRAY, en: FORM_DEFAULTS.EMPTY_STRING_ARRAY },
 };
 
 /**
@@ -102,8 +103,8 @@ export function toFormData(site?: FlyingSite): FormDataSite {
     bg?: string[];
     en?: string[];
   }): { bg: string[]; en: string[] } => ({
-    bg: data?.bg?.length ? data.bg : [''],
-    en: data?.en?.length ? data.en : [''],
+    bg: data?.bg?.length ? data.bg : FORM_DEFAULTS.EMPTY_STRING_ARRAY,
+    en: data?.en?.length ? data.en : FORM_DEFAULTS.EMPTY_STRING_ARRAY,
   });
 
   const transformLandingFields = (fields?: LandingFieldInfo[]): FormLandingField[] => {
@@ -111,7 +112,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
       return [
         {
           description: { bg: '', en: '' },
-          location: { type: 'Point', coordinates: ['', ''] },
+          location: { type: FORM_DEFAULTS.POINT_TYPE, coordinates: FORM_DEFAULTS.EMPTY_COORDINATES },
         },
       ];
     }
@@ -119,7 +120,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
     return fields.map((field) => ({
       description: transformLocalizedText(field.description),
       location: {
-        type: 'Point' as const,
+        type: FORM_DEFAULTS.POINT_TYPE as const,
         coordinates: [
           field.location?.coordinates[0]?.toString() || '',
           field.location?.coordinates[1]?.toString() || '',
@@ -132,7 +133,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
     title: transformLocalizedText(site.title),
     windDirection: site.windDirection ? [...site.windDirection] : [],
     location: {
-      type: 'Point' as const,
+      type: FORM_DEFAULTS.POINT_TYPE as const,
       coordinates: [
         site.location.coordinates[0]?.toString() || '',
         site.location.coordinates[1]?.toString() || '',
@@ -145,7 +146,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
     alternatives: transformBilingualArray(site.alternatives),
     access: transformLocalizedText(site.access),
     landingFields: transformLandingFields(site.landingFields),
-    tracklogs: site.tracklogs?.length ? [...site.tracklogs] : [''],
+    tracklogs: site.tracklogs?.length ? [...site.tracklogs] : FORM_DEFAULTS.EMPTY_STRING_ARRAY,
     localPilotsClubs: transformBilingualArray(site.localPilotsClubs),
   };
 }
@@ -158,7 +159,7 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
   const cleanedFormData: UpdatePayload = {
     title: formData.title,
     location: {
-      type: 'Point',
+      type: FORM_DEFAULTS.POINT_TYPE,
       coordinates: [
         formData.location.coordinates[0] ? parseFloat(formData.location.coordinates[0]) : 0,
         formData.location.coordinates[1] ? parseFloat(formData.location.coordinates[1]) : 0,
@@ -283,7 +284,7 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
 
     if (lng !== null && lat !== null && !isNaN(lng) && !isNaN(lat)) {
       cleaned.location = {
-        type: 'Point',
+        type: FORM_DEFAULTS.POINT_TYPE,
         coordinates: [lng, lat],
       };
     } else if (existingField?.location) {

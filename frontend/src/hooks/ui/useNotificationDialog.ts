@@ -1,12 +1,5 @@
 import { useState } from 'react';
-
-export interface NotificationState {
-  open: boolean;
-  message: string;
-  severity: 'success' | 'error' | 'info' | 'warning';
-  title?: string;
-  onAutoClose?: () => void;
-}
+import type { NotificationState } from '@types';
 
 export const useNotificationDialog = () => {
   const [notification, setNotification] = useState<NotificationState>({

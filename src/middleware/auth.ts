@@ -1,17 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '@models/user.js';
-import type { CustomError } from '@models/sites.js';
-
-interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    username: string;
-    isActive: boolean;
-    isSuperAdmin?: boolean;
-  };
-}
+import type { CustomError, AuthenticatedRequest } from '@types'
 
 //Generate JWT token for authenticated user
 export const generateToken = (user: any): string => {

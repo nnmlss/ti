@@ -1,19 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-
-export interface User {
-  _id: string;
-  email: string;
-  password?: string;
-  username?: string;
-  invitationToken?: string;
-  tokenExpiry?: Date;
-  isActive: boolean;
-  isSuperAdmin?: boolean;
-}
-
-export interface UserDocument extends Omit<User, '_id'>, Document {
-  _id: string;
-}
+import mongoose, { Schema } from 'mongoose';
+import type { UserDocument } from '@types'
 
 const userSchema = new Schema(
   {

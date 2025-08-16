@@ -11,7 +11,7 @@ import { connectDB } from './config/database.js';
 import { EmailService } from './services/emailService.js';
 import { setupGraphQLBeforeRoutes } from './graphql/server.js';
 import path from 'path';
-import type { CustomError } from './models/sites.js';
+import type { CustomError } from '@types'
 
 const app = express();
 

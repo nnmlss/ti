@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response, NextFunction } from 'express';
 import type { ValidationError, Result } from 'express-validator';
-import type { FlyingSite } from '@models/sites.js';
+import type { FlyingSite } from '@types'
 
 // Mock express-validator
 vi.mock('express-validator', () => ({
@@ -22,7 +22,7 @@ vi.mock('@models/sites.js', () => ({
 }));
 
 import { getAllSites, createSite, getSiteById, updateSite, deleteSite } from './sites.js';
-import { Site } from '@models/sites.js';
+import { Site } from '@types'
 import { validationResult } from 'express-validator';
 
 // Helper to create mock request/response objects

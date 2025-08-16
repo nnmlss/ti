@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { createError } from '@utils/errorUtils.js';
 import { User } from '@models/user.js';
-import type { CustomError } from '@models/sites.js';
+import type { CustomError } from '@types'
 import bcrypt from 'bcryptjs';
 import { TokenService } from '@services/tokenService.js';
 import { EmailService } from '@services/emailService.js';

@@ -1,9 +1,6 @@
 import { Site } from '@models/sites.js';
 import { User } from '@models/user.js';
 import { customScalars } from '../scalars/index.js';
-import type { GraphQLContext } from '@gql-app/types/context.js';
-import type { CreateSiteData, FlyingSite, GalleryImage } from '@models/sites.js';
-import type { User as UserType } from '@models/user.js';
 import { TokenService } from '@services/tokenService.js';
 import { EmailService } from '@services/emailService.js';
 import { generateToken } from '@middleware/auth.js';
@@ -11,65 +8,25 @@ import { ACTIVATION_TOKEN_EXPIRY_MINUTES } from '@config/constants.js';
 import bcrypt from 'bcryptjs';
 import path from 'path';
 import fs from 'fs/promises';
-
-// Resolver argument types
-interface SiteByIdArgs {
-  id: string;
-}
-
-interface SitesByWindDirectionArgs {
-  directions: string[];
-}
-
-interface CreateSiteArgs {
-  input: CreateSiteData;
-}
-
-interface UpdateSiteArgs {
-  id: string;
-  input: Partial<CreateSiteData>;
-}
-
-interface DeleteSiteArgs {
-  id: string;
-}
-
-interface UnsetSiteFieldsArgs {
-  id: string;
-  fields: string[];
-}
-
-interface LoginArgs {
-  username: string;
-  password: string;
-}
-
-interface RequestActivationArgs {
-  email: string;
-}
-
-interface ActivateAccountArgs {
-  token: string;
-  username: string;
-  password: string;
-}
-
-interface ValidateTokenArgs {
-  token: string;
-}
-
-interface CreateUserAccountsArgs {
-  emails: string[];
-}
-
-interface UpdateProfileArgs {
-  input: {
-    email?: string;
-    username?: string;
-    password?: string;
-    currentPassword: string;
-  };
-}
+import type {
+  GraphQLContext,
+  CreateSiteData,
+  FlyingSite,
+  GalleryImage,
+  User as UserType,
+  SiteByIdArgs,
+  SitesByWindDirectionArgs,
+  CreateSiteArgs,
+  UpdateSiteArgs,
+  DeleteSiteArgs,
+  UnsetSiteFieldsArgs,
+  LoginArgs,
+  RequestActivationArgs,
+  ActivateAccountArgs,
+  ValidateTokenArgs,
+  CreateUserAccountsArgs,
+  UpdateProfileArgs,
+} from '@types'
 
 // Function to delete all images associated with a site
 async function deleteSiteImages(

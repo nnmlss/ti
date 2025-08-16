@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 import { typeDefs } from '@gql-app/types/typeDefs.js';
 import { resolvers } from '@gql-app/resolvers/index.js';
-import type { GraphQLContext } from '@gql-app/types/context.js';
+import type { GraphQLContext } from '@types'
 import { User } from '@models/user.js';
 
 // Create the executable schema
@@ -20,7 +20,7 @@ export async function createGraphQLContext({ req }: { req: any }): Promise<Graph
   const token = authHeader?.replace('Bearer ', '');
 
   if (!token) {
-    return { user: null };
+    return { user: null, isSuperAdmin: false };
   }
 
   try {
@@ -31,21 +31,24 @@ export async function createGraphQLContext({ req }: { req: any }): Promise<Graph
     const user = await User.findOne({ _id: decoded.id, isActive: true });
 
     if (!user) {
-      return { user: null };
+      return { user: null, isSuperAdmin: false };
     }
 
+    const isSuperAdmin = user.isSuperAdmin || false;
+    
     return {
       user: {
         id: user._id.toString(),
         email: user.email,
         username: user.username || '',
         isActive: user.isActive,
-        isSuperAdmin: user.isSuperAdmin || false,
+        isSuperAdmin,
       },
+      isSuperAdmin,
     };
   } catch (error) {
     // Invalid token
-    return { user: null };
+    return { user: null, isSuperAdmin: false };
   }
 }
 

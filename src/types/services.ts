@@ -1,3 +1,4 @@
+// ===== IMAGE SERVICE TYPES =====
 export interface ImageSize {
   width: number;
   folder: string;

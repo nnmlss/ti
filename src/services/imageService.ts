@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import sharp from 'sharp';
 import { getGalleryPath } from '@utils/fileUtils.js';
-import type { ImageSize, ImagePaths, ProcessedImage } from '@models/image.js';
+import type { ImageSize, ImagePaths, ProcessedImage } from '@types'
 
 export const IMAGE_SIZES: ImageSize[] = [
   { width: 300, folder: 'thmb' },

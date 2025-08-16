@@ -14,6 +14,7 @@
       "@config/*": ["config/*"],
       "@utils/*": ["utils/*"],
       "@gql-app/*": ["graphql/*"],
+      "@types": ["types/index.ts"],
       "@types/*": ["types/*"]
     },
 

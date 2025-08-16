@@ -3,20 +3,11 @@ import { MapContainer, TileLayer, Marker, Popup, Tooltip, LayersControl } from '
 import {
   CircularProgress,
   Alert,
-  Typography,
-  Button,
   Box,
   Card,
-  CardContent,
-  CardActions,
-  Divider,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import LocationPinIcon from '@mui/icons-material/LocationPin';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { WindDirectionCompass } from '../site/WindDirectionCompass';
-import { AccessOptionsView } from '../site/AccessOptionsView';
+import { SiteCardContent } from '../site/SiteCardContent';
 import { DeleteConfirmDialog } from '../ui/DeleteConfirmDialog';
 import { useConfirmDialog } from '../../hooks/useConfirmDialog';
 import { useDispatch } from 'react-redux';
@@ -153,88 +144,18 @@ export function SitesMap() {
               </Tooltip>
               <Popup maxWidth={280} minWidth={260}>
                 <Card sx={{ width: '100%', boxShadow: 'none', border: 'none', p: 0, m: 0 }}>
-                  <CardContent
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      py: 2,
-                      px: 1,
-                      cursor: 'pointer',
+                  <SiteCardContent
+                    site={site}
+                    onEdit={() => navigate(`/edit-site/${site._id}`)}
+                    onDelete={() => confirm(site._id, () => handleDelete(site._id))}
+                    onViewDetails={() => navigate(`/site/${site._id}`)}
+                    onShowOnMap={() => {
+                      const [lng, lat] = site.location.coordinates;
+                      window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
                     }}
-                    onClick={() => navigate(`/site/${site._id}`)}
-                  >
-                    <Typography
-                      variant='h6'
-                      component='div'
-                      sx={{ mb: 1, textAlign: 'center', color: 'primary.light' }}
-                    >
-                      {site.title.bg}
-                      <Typography
-                        variant='body1'
-                        component='div'
-                        sx={{ textAlign: 'center', color: 'text.secondary' }}
-                      >
-                        {site.title.en}
-                      </Typography>
-                    </Typography>
-
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        mb: 2,
-                      }}
-                    >
-                      <WindDirectionCompass windDirections={site.windDirection} size={60} />
-                      <Typography variant='body2' sx={{ textAlign: 'center', mt: 1 }}>
-                        {site.altitude ? `${site.altitude}m` : 'N/A'}
-                      </Typography>
-                    </Box>
-
-                    <AccessOptionsView accessOptions={site.accessOptions} size={36} />
-
-                    <Button
-                      size='small'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const [lng, lat] = site.location.coordinates;
-                        window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
-                      }}
-                      sx={{ mt: 1 }}
-                    >
-                      <LocationPinIcon sx={{ mr: 0.5 }} />
-                      Отвори в Google Maps
-                    </Button>
-                  </CardContent>
-
-                  <Divider />
-
-                  <CardActions
-                    sx={{ display: 'flex', justifyContent: 'space-between', px: 2, py: 1 }}
-                  >
-                    <Button
-                      size='small'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/edit-site/${site._id}`);
-                      }}
-                    >
-                      <EditIcon />
-                    </Button>
-
-                    <Button
-                      color='error'
-                      size='small'
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        confirm(site._id, () => handleDelete(site._id));
-                      }}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                  </CardActions>
+                    variant="popup"
+                    compassSize={60}
+                  />
                 </Card>
               </Popup>
             </Marker>

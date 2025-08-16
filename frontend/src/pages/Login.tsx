@@ -13,9 +13,11 @@ import {
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { LOGIN } from '@utils/graphqlQueries';
 import type { LoginResponse } from '@types';
+import { useAuth } from '@contexts/AuthContext';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,8 +42,8 @@ export const Login: React.FC = () => {
       });
 
       if (data.login.token) {
-        // Store token in localStorage
-        localStorage.setItem('authToken', data.login.token);
+        // Update AuthContext state
+        login(data.login.token, data.login.user);
 
         // Immediate redirect and clear history to prevent password exposure
         window.location.replace('/');

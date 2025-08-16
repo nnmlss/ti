@@ -7,6 +7,8 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PublicIcon from '@mui/icons-material/Public';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
+import { useAuth } from '../contexts/AuthContext';
+import { UserIconGroup } from '../components/auth/UserIconGroup';
 
 interface HomePageProps {
   homeView: 'map' | 'list';
@@ -26,6 +28,7 @@ export function HomePage({
   onWindFilterClose,
 }: HomePageProps) {
   const isListView = homeView === 'list';
+  const { isAuthenticated } = useAuth();
 
   return (
     <Box sx={{ position: 'relative', height: '100vh', width: '100vw', overflowX: 'hidden' }}>
@@ -47,13 +50,17 @@ export function HomePage({
           boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
         }}
       >
-        <Typography
-          variant='h5'
-          component='h1'
-          sx={{ color: 'primary.main', fontSize: '1rem', display: { xs: 'none', sm: 'block' } }}
-        >
-          Места за летене
-        </Typography>
+        {isAuthenticated ? (
+          <UserIconGroup />
+        ) : (
+          <Typography
+            variant='h5'
+            component='h1'
+            sx={{ color: 'primary.main', fontSize: '1rem', display: { xs: 'none', sm: 'block' } }}
+          >
+            Места за летене
+          </Typography>
+        )}
         <Box>
           <Button
             onClick={onWindFilterToggle}
@@ -82,16 +89,18 @@ export function HomePage({
             <FormatListBulletedIcon />
           </IconButton>
         </Box>
-        <Box>
-          <Button
-            component={Link}
-            to='/add-site'
-            variant='contained'
-            startIcon={<AddCircleOutlineIcon />}
-          >
-            добави старт
-          </Button>
-        </Box>
+        {isAuthenticated && (
+          <Box>
+            <Button
+              component={Link}
+              to='/add-site'
+              variant='contained'
+              startIcon={<AddCircleOutlineIcon />}
+            >
+              добави старт
+            </Button>
+          </Box>
+        )}
       </Box>
 
       {/* Wind Direction Filter */}

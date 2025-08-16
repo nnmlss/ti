@@ -7,6 +7,8 @@ import { ActivationRequest } from './pages/ActivationRequest';
 import { CompleteActivation } from './pages/CompleteActivation';
 import { AdminCreateAccounts } from './pages/AdminCreateAccounts';
 import { Login } from './pages/Login';
+import { Profile } from './pages/Profile';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { GlobalErrorNotification } from './components/ui/GlobalErrorNotification';
 import { NotFoundHandler } from './components/ui/NotFoundHandler';
 
@@ -28,15 +30,32 @@ export default function AppRoutes() {
       {/* Modal Routes - render on top of HomePage or standalone for auth/404 */}
       <Routes>
         <Route path='/' element={null} />
-        <Route path='/add-site' element={<AddSitePage />} />
-        <Route path='/edit-site/:id' element={<EditSitePage />} />
+        <Route path='/add-site' element={
+          <ProtectedRoute>
+            <AddSitePage />
+          </ProtectedRoute>
+        } />
+        <Route path='/edit-site/:id' element={
+          <ProtectedRoute>
+            <EditSitePage />
+          </ProtectedRoute>
+        } />
         <Route path='/site/:id' element={<SiteDetailPage />} />
         
         {/* Auth Routes - standalone pages */}
         <Route path='/activate' element={<ActivationRequest />} />
         <Route path='/activate/:token' element={<CompleteActivation />} />
         <Route path='/adm1n' element={<Login />} />
-        <Route path='/admin/create-accounts' element={<AdminCreateAccounts />} />
+        <Route path='/edit-profile' element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
+        <Route path='/admin/add-account' element={
+          <ProtectedRoute requireSuperAdmin>
+            <AdminCreateAccounts />
+          </ProtectedRoute>
+        } />
         
         <Route path='*' element={<NotFoundHandler />} />
       </Routes>

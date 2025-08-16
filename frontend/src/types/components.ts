@@ -140,3 +140,9 @@ export interface ProtectedRouteProps {
   children: ReactNode;
   requireSuperAdmin?: boolean;
 }
+
+// ===== PAGE HEADER PROPS =====
+export interface PageHeaderProps {
+  title: string;
+  onBackClick: () => void;
+}

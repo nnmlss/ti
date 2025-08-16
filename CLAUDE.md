@@ -304,10 +304,48 @@ NODE_ENV=production|development
 ### Overview
 Migrate from REST API to GraphQL for better performance, type safety, and developer experience while maintaining all existing functionality.
 
-### Current Status: ~70% Complete ✅
-- **COMPLETED**: GraphQL foundation, core site CRUD operations, frontend integration
-- **IN PROGRESS**: Auth system migration (schema ready, resolvers need implementation)  
-- **REMAINING**: Auth mutations implementation, REST cleanup
+### Current Status: 95% Complete ⚠️ - Cleanup Pending
+- **COMPLETED**: GraphQL foundation, core site CRUD operations, frontend integration, auth system migration
+- **COMPLETED**: All GraphQL auth resolvers implemented, auth queries/mutations defined
+- **COMPLETED**: All frontend hooks migrated to GraphQL, REST auth endpoints removed
+- **REMAINING**: Legacy REST sites endpoints cleanup in backend routes
+
+### Detailed Implementation Status
+
+#### ✅ FULLY IMPLEMENTED (Backend)
+- **GraphQL Schema**: All auth mutations (`login`, `requestActivation`, `activateAccount`, `createUserAccounts`) and queries (`validateToken`)
+- **GraphQL Resolvers**: Complete auth resolver implementations in `src/graphql/resolvers/index.ts:277-471`
+- **Authentication Context**: JWT extraction and user context injection working
+- **Type Definitions**: All auth types (`AuthPayload`, `ActivationResponse`, etc.) defined
+- **Validation & Security**: Input validation, error handling, super admin checks implemented
+
+#### ✅ MOSTLY IMPLEMENTED (Frontend)  
+- **GraphQL Queries**: All auth mutations/queries defined in `frontend/src/utils/graphqlQueries.ts:122-200`
+- **Login**: Already using GraphQL (`useLoginPage.ts` updated)
+- **GraphQL Client**: Configured with auth headers and CSRF handling
+
+#### ✅ FULLY COMPLETED
+- **`useActivationRequest.ts`**: ✅ Using GraphQL `REQUEST_ACTIVATION` mutation
+- **`useCompleteActivationPage.ts`**: ✅ Using GraphQL `ACTIVATE_ACCOUNT` mutation  
+- **`useAdminCreateAccountsPage.ts`**: ✅ Using GraphQL `CREATE_USER_ACCOUNTS` mutation
+- **REST auth routes**: ✅ Removed from `src/routes/auth.ts` (only test-email endpoint remains)
+- **Auth controllers**: ✅ Removed unused controller file
+
+### ⚠️ GraphQL Migration Status: 95% Complete
+
+**Completed steps:**
+1. ✅ All frontend hooks migrated to GraphQL
+2. ✅ REST auth routes removed from backend
+3. ✅ Unused auth controllers removed
+4. ✅ TypeScript compilation and linting successful
+
+**Remaining cleanup tasks:**
+5. 🔲 Remove legacy REST sites endpoints from `src/routes/api.ts`
+6. 🔲 Remove unused sites controllers
+7. 🔲 Final verification and testing
+8. 🔲 Update status to 100% complete
+
+**Current Result:** Frontend fully using GraphQL, backend auth migrated, sites endpoints cleanup pending.
 
 ### Phase 1: GraphQL Foundation ✓
 1. **Install GraphQL Dependencies** ✓
@@ -343,21 +381,21 @@ Migrate from REST API to GraphQL for better performance, type safety, and develo
    - Inject user context into resolvers ✓
    - Replace Express middleware auth with context-based auth ✓
 
-### Phase 3: Auth System Migration
-7. **Auth Resolvers**
-   - `login(username: String!, password: String!): AuthPayload`
-   - `requestActivation(email: String!): ActivationResponse`
-   - `validateToken(token: String!): TokenValidation`
-   - `activateAccount(token: String!, username: String!, password: String!): AuthPayload`
+### Phase 3: Auth System Migration ✓
+7. **Auth Resolvers** ✓
+   - `login(username: String!, password: String!): AuthPayload` ✓
+   - `requestActivation(email: String!): ActivationResponse` ✓
+   - `validateToken(token: String!): TokenValidation` ✓
+   - `activateAccount(token: String!, username: String!, password: String!): AuthPayload` ✓
 
-8. **Admin Resolvers**
-   - `createUserAccounts(emails: [String!]!): [AccountCreationResult!]`
-   - Require `isSuperAdmin` context check
+8. **Admin Resolvers** ✓
+   - `createUserAccounts(emails: [String!]!): [AccountCreationResult!]` ✓
+   - Require `isSuperAdmin` context check ✓
 
-9. **Error Handling**
-   - Custom error classes for GraphQL
-   - Structured error responses
-   - Input validation using GraphQL schema
+9. **Error Handling** ✓
+   - Custom error classes for GraphQL ✓
+   - Structured error responses ✓
+   - Input validation using GraphQL schema ✓
 
 ### Phase 4: Frontend Migration ✓
 10. **GraphQL Client Setup** ✓
@@ -370,10 +408,10 @@ Migrate from REST API to GraphQL for better performance, type safety, and develo
     - Maintain existing Redux state management patterns ✓
     - Keep existing loading and error states ✓
 
-12. **Authentication Flow**
-    - Update login to use GraphQL mutations
-    - Modify JWT token handling for GraphQL context
-    - Update admin account creation forms
+12. **Authentication Flow** ✓ (Partial)
+    - Update login to use GraphQL mutations ✓
+    - Modify JWT token handling for GraphQL context ✓
+    - Update admin account creation forms (3 hooks remaining)
 
 ### Phase 5: Security & Optimization
 13. **Security Migration** ✓ (Partial)
@@ -401,6 +439,22 @@ Migrate from REST API to GraphQL for better performance, type safety, and develo
     - GraphQL schema documentation
     - API endpoint documentation
     - Frontend query examples
+
+### Phase 7: Final REST Cleanup ⚠️ (In Progress)
+18. **Remove Legacy REST Sites Endpoints** 
+    - Remove unused sites endpoints from `src/routes/api.ts` (lines 45-70)
+    - Remove sites controller imports and dependencies  
+    - Keep image upload endpoints (multipart handling required)
+    - Keep test-email endpoint (development utility)
+
+19. **Remove Unused Sites Controllers**
+    - Delete `src/controllers/sites.ts` if no longer needed
+    - Clean up any remaining controller imports
+
+20. **Final Verification**
+    - Run typecheck and lint to ensure no broken imports
+    - Test GraphQL endpoints still work
+    - Update status to 100% complete
 
 ### What Stays the Same
 - **Models** - Mongoose schemas unchanged

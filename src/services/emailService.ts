@@ -125,6 +125,61 @@ export class EmailService {
     }
   }
 
+  //Send account activation success email
+  static async sendActivationSuccessEmail(email: string, username: string): Promise<boolean> {
+    if (!this.transporter) {
+      console.error('Email service not initialized');
+      return false;
+    }
+
+    try {
+      const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/adm1n`;
+
+      const mailOptions = {
+        from: process.env.FROM_EMAIL || 'noreply@borislav.space',
+        to: email,
+        subject: 'Welcome to Takeoff Info - Account Activated!',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Welcome to Takeoff Info, ${username}!</h2>
+            <p>Your account has been successfully activated and you're now ready to explore and contribute to our paragliding sites database.</p>
+            
+            <h3>What you can do now:</h3>
+            <ul>
+              <li>Browse all paragliding sites in Bulgaria</li>
+              <li>Add new flying sites</li>
+              <li>Edit existing site information</li>
+              <li>Upload photos and track logs</li>
+            </ul>
+
+            <p>You can log in anytime using your username and password:</p>
+            <p>
+              <a href="${loginUrl}" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                Login to Takeoff Info
+              </a>
+            </p>
+            
+            <p><strong>Login URL:</strong> ${loginUrl}</p>
+            <p><strong>Your username:</strong> ${username}</p>
+            
+            <p>Happy flying and safe landings!</p>
+            <hr>
+            <p style="color: #666; font-size: 12px;">
+              Takeoff Info - Paragliding Sites in Bulgaria
+            </p>
+          </div>
+        `,
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Activation success email sent to ${email}`);
+      return true;
+    } catch (error) {
+      console.error('Failed to send activation success email:', error);
+      return false;
+    }
+  }
+
   //Test email configuration
   static async testConnection(): Promise<boolean> {
     if (!this.transporter) {

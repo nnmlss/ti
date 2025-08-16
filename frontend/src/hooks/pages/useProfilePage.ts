@@ -6,7 +6,7 @@ import { TIMEOUTS } from '@constants';
 import type { LoginResponse, UpdateProfileResponse, UpdateProfileInput } from '@types';
 
 export function useProfilePage() {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const [formData, setFormData] = useState({
     email: user?.email || '',
     username: user?.username || '',
@@ -199,8 +199,23 @@ export function useProfilePage() {
         input: updateInput,
       });
 
+      // Update AuthContext with new user data
+      const currentToken = localStorage.getItem('authToken');
+      if (currentToken && response.updateProfile) {
+        login(currentToken, response.updateProfile);
+      }
+
+      // Update form data with new values
+      setFormData(prev => ({
+        ...prev,
+        email: response.updateProfile.email,
+        username: response.updateProfile.username,
+        password: '',
+        repeatPassword: '',
+        currentPassword: '',
+      }));
+
       setMessage('Profile updated successfully');
-      setFormData(prev => ({ ...prev, password: '', repeatPassword: '', currentPassword: '' }));
       
       // Reset validation states
       setIsCurrentPasswordValid(false);
@@ -209,8 +224,6 @@ export function useProfilePage() {
       setHasPasswordsMatched(false);
       setShowRepeatPasswordError(false);
       setShowPasswordLengthError(false);
-      
-      console.log('Profile updated:', response.updateProfile);
     } catch (err: unknown) {
       console.error('Profile update error:', err);
       const errorMessage = 'Failed to update profile. Please try again.';

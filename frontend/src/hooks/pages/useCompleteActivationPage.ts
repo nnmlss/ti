@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { VALIDATE_TOKEN, ACTIVATE_ACCOUNT } from '@utils/graphqlQueries';
 import type { ValidateTokenResponse, ActivateAccountResponse } from '@types';
+import { useAuth } from '@hooks/auth/useAuth';
 
 export function useCompleteActivationPage() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
+  const { login } = useAuth();
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -90,9 +92,9 @@ export function useCompleteActivationPage() {
         password,
       });
 
-      if (data.activateAccount.token) {
-        // Store token for immediate login
-        localStorage.setItem('authToken', data.activateAccount.token);
+      if (data.activateAccount.token && data.activateAccount.user) {
+        // Use AuthContext login method to store both token and user data
+        login(data.activateAccount.token, data.activateAccount.user);
         
         // Immediate redirect and clear history to prevent password exposure
         window.location.replace('/');

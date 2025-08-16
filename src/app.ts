@@ -56,16 +56,8 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 7,
-  message: 'Too many authentication attempts, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
 app.use(limiter);
-app.use('/api/auth', authLimiter);
 
 // Session middleware for CSRF
 app.use(
@@ -89,8 +81,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Custom header CSRF protection middleware
 const customHeaderProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // Skip for GET requests, auth endpoints (they use JWT), GraphQL and GraphiQL
-  if (req.method === 'GET' || req.path.startsWith('/api/auth/') || req.path.startsWith('/graphql') || req.path.startsWith('/graphiql')) {
+  // Skip for GET requests, GraphQL and GraphiQL
+  if (req.method === 'GET' || req.path.startsWith('/graphql') || req.path.startsWith('/graphiql')) {
     return next();
   }
 
@@ -103,7 +95,14 @@ const customHeaderProtection = (req: express.Request, res: express.Response, nex
   next();
 };
 
-// Mount auth routes first (no CSRF protection)
+// Apply CSRF protection to /api routes (except auth test endpoint)
+app.use('/api/auth', (req, res, next) => {
+  // Skip CSRF for test-email endpoint
+  if (req.path === '/test-email') {
+    return next();
+  }
+  customHeaderProtection(req, res, next);
+});
 app.use('/api/auth', authRouter);
 
 // Then apply CSRF protection to remaining /api routes

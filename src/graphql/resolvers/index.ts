@@ -386,6 +386,14 @@ export const resolvers = {
           isSuperAdmin: user.isSuperAdmin || false,
         });
         
+        // Send activation success email
+        try {
+          await EmailService.sendActivationSuccessEmail(user.email, username.trim());
+        } catch (emailError) {
+          // Log error but don't fail the activation
+          console.error('Failed to send activation success email:', emailError);
+        }
+
         const response = {
           token: jwtToken,
           user: {

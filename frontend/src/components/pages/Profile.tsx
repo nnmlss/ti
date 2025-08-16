@@ -10,11 +10,22 @@ import {
   CircularProgress,
   IconButton,
   InputAdornment,
+  Fade,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useProfilePage } from '@hooks/pages/useProfilePage';
+import { useNavigate } from 'react-router-dom';
+import { PageHeader } from '@components/common/PageHeader';
 
 export const Profile: React.FC = () => {
+  const navigate = useNavigate();
+  const [fadeIn, setFadeIn] = React.useState(true);
+
+  const handleBackClick = () => {
+    setFadeIn(false);
+    setTimeout(() => navigate('/'), 300);
+  };
+
   const {
     user,
     formData,
@@ -35,16 +46,14 @@ export const Profile: React.FC = () => {
     onSubmit,
   } = useProfilePage();
 
-
-
   if (!user) {
     return (
-      <Container maxWidth="sm" sx={{ mt: 8 }}>
+      <Container maxWidth='sm' sx={{ mt: 8 }}>
         <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h5" align="center" color="error">
+          <Typography variant='h5' align='center' color='error'>
             Access Denied
           </Typography>
-          <Typography variant="body1" align="center" color="textSecondary">
+          <Typography variant='body1' align='center' color='textSecondary'>
             You must be logged in to view this page.
           </Typography>
         </Paper>
@@ -53,165 +62,188 @@ export const Profile: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
-          Профил
-        </Typography>
+    <Container maxWidth='sm' sx={{ mt: 8 }}>
+      <Fade in={fadeIn} timeout={300}>
+        <Paper elevation={3} sx={{ p: 4 }}>
+        <PageHeader title="Профил" onBackClick={handleBackClick} />
 
-        <Box component="form" onSubmit={onSubmit} sx={{ mt: 3 }}>
+        <Box component='form' onSubmit={onSubmit} sx={{ mt: 3 }}>
           <TextField
             fullWidth
-            label="Email"
-            type="email"
+            label='Email'
+            type='email'
             value={formData.email}
             onChange={handleInputChange('email')}
-            margin="normal"
+            margin='normal'
             required
             disabled={loading}
-            color={formData.email !== user?.email ? "primary" : undefined}
-            InputProps={{
-              endAdornment: formData.email !== user?.email && (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => resetField('email')} size="small">
-                    <RefreshIcon sx={{ transform: 'scaleX(-1)' }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
+            color={formData.email !== user?.email ? 'primary' : undefined}
+            slotProps={{
+              input: {
+                endAdornment: formData.email !== user?.email && (
+                  <InputAdornment position='end'>
+                    <IconButton onClick={() => resetField('email')} size='small'>
+                      <RefreshIcon sx={{ transform: 'scaleX(-1)' }} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
 
           <TextField
             fullWidth
-            label="Username"
+            label='Username'
             value={formData.username}
             onChange={handleInputChange('username')}
-            margin="normal"
+            margin='normal'
             required
             disabled={loading}
-            helperText="Minimum 3 characters"
-            color={formData.username !== user?.username ? "primary" : undefined}
-            InputProps={{
-              endAdornment: formData.username !== user?.username && (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => resetField('username')} size="small">
-                    <RefreshIcon sx={{ transform: 'scaleX(-1)' }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
+            helperText='Minimum 3 characters'
+            color={formData.username !== user?.username ? 'primary' : undefined}
+            slotProps={{
+              input: {
+                endAdornment: formData.username !== user?.username && (
+                  <InputAdornment position='end'>
+                    <IconButton onClick={() => resetField('username')} size='small'>
+                      <RefreshIcon sx={{ transform: 'scaleX(-1)' }} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
 
           <TextField
             fullWidth
-            label="New Password"
-            type="password"
+            label='New Password'
+            type='password'
             value={formData.password}
             onChange={handleInputChange('password')}
-            margin="normal"
+            margin='normal'
             disabled={loading}
-            helperText="Leave empty to keep current password. Minimum 6 characters if changing."
+            helperText='Leave empty to keep current password. Minimum 6 characters if changing.'
             error={showPasswordLengthError}
-            color={doPasswordsMatch && formData.password.length >= 6 ? "success" : "primary"}
+            color={doPasswordsMatch && formData.password.length >= 6 ? 'success' : 'primary'}
             sx={{
               '& .MuiOutlinedInput-root': {
                 '&.Mui-focused fieldset': {
-                  borderColor: doPasswordsMatch && formData.password.length >= 6 ? 'success.main' : 
-                               showPasswordLengthError ? 'error.main' : 
-                               'primary.main'
+                  borderColor:
+                    doPasswordsMatch && formData.password.length >= 6
+                      ? 'success.main'
+                      : showPasswordLengthError
+                      ? 'error.main'
+                      : 'primary.main',
                 },
                 '& fieldset': {
-                  borderColor: doPasswordsMatch && formData.password.length >= 6 ? 'success.main' : 
-                               showPasswordLengthError ? 'error.main' : 
-                               'grey.300'
-                }
-              }
+                  borderColor:
+                    doPasswordsMatch && formData.password.length >= 6
+                      ? 'success.main'
+                      : showPasswordLengthError
+                      ? 'error.main'
+                      : 'grey.300',
+                },
+              },
             }}
           />
 
           {formData.password.length >= 6 && (
             <TextField
               fullWidth
-              label="Repeat New Password"
-              type="password"
+              label='Repeat New Password'
+              type='password'
               value={formData.repeatPassword}
               onChange={handleInputChange('repeatPassword')}
-              margin="normal"
+              margin='normal'
               required
               disabled={loading}
               error={showRepeatPasswordError}
-              color={doPasswordsMatch ? "success" : "primary"}
-              helperText={showRepeatPasswordError ? "Passwords don't match" : ""}
+              color={doPasswordsMatch ? 'success' : 'primary'}
+              helperText={showRepeatPasswordError ? "Passwords don't match" : ''}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '&.Mui-focused fieldset': {
-                    borderColor: doPasswordsMatch ? 'success.main' : 
-                                 showRepeatPasswordError ? 'error.main' : 
-                                 'primary.main'
+                    borderColor: doPasswordsMatch
+                      ? 'success.main'
+                      : showRepeatPasswordError
+                      ? 'error.main'
+                      : 'primary.main',
                   },
                   '& fieldset': {
-                    borderColor: doPasswordsMatch ? 'success.main' : 
-                                 showRepeatPasswordError ? 'error.main' : 
-                                 'grey.300'
-                  }
-                }
+                    borderColor: doPasswordsMatch
+                      ? 'success.main'
+                      : showRepeatPasswordError
+                      ? 'error.main'
+                      : 'grey.300',
+                  },
+                },
               }}
             />
           )}
 
           {needsCurrentPassword && (
             <>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  mt: 3, 
+              <Typography
+                variant='h6'
+                sx={{
+                  mt: 3,
                   mb: 1,
                   opacity: formData.currentPassword.length > 0 ? 0.3 : 1,
-                  color: formData.currentPassword.length === 0 && hasStartedTypingCurrentPassword ? 'error.main' : 'inherit',
-                  transition: 'opacity 0.2s ease'
+                  color:
+                    formData.currentPassword.length === 0 && hasStartedTypingCurrentPassword
+                      ? 'error.main'
+                      : 'inherit',
+                  transition: 'opacity 0.2s ease',
                 }}
               >
                 Enter your current password to confirm changes
               </Typography>
-              
+
               <TextField
                 fullWidth
-                label="Current Password"
-                type="password"
+                label='Current Password'
+                type='password'
                 value={formData.currentPassword}
                 onChange={handleInputChange('currentPassword')}
                 required
                 disabled={loading}
                 error={hasPasswordCheckCompleted && !isCurrentPasswordValid}
-                color={isCurrentPasswordValid ? "success" : "primary"}
+                color={isCurrentPasswordValid ? 'success' : 'primary'}
                 helperText={
-                  passwordCheckLoading ? 'Checking password...' :
-                  isCurrentPasswordValid ? 'Password verified' :
-                  hasPasswordCheckCompleted && !isCurrentPasswordValid ? 'Incorrect password' :
-                  'Add password'
+                  passwordCheckLoading
+                    ? 'Checking password...'
+                    : isCurrentPasswordValid
+                    ? 'Password verified'
+                    : hasPasswordCheckCompleted && !isCurrentPasswordValid
+                    ? 'Incorrect password'
+                    : 'Add password'
                 }
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     '&.Mui-focused fieldset': {
-                      borderColor: isCurrentPasswordValid ? 'success.main' : 
-                                   (hasPasswordCheckCompleted && !isCurrentPasswordValid) ? 'error.main' : 
-                                   'primary.main'
+                      borderColor: isCurrentPasswordValid
+                        ? 'success.main'
+                        : hasPasswordCheckCompleted && !isCurrentPasswordValid
+                        ? 'error.main'
+                        : 'primary.main',
                     },
                     '& fieldset': {
-                      borderColor: isCurrentPasswordValid ? 'success.main' : 
-                                   (hasPasswordCheckCompleted && !isCurrentPasswordValid) ? 'error.main' : 
-                                   'grey.300'
-                    }
-                  }
+                      borderColor: isCurrentPasswordValid
+                        ? 'success.main'
+                        : hasPasswordCheckCompleted && !isCurrentPasswordValid
+                        ? 'error.main'
+                        : 'grey.300',
+                    },
+                  },
                 }}
               />
 
               <Button
-                type="submit"
+                type='submit'
                 fullWidth
-                variant="contained"
+                variant='contained'
                 disabled={!isFormValid || loading}
-                color={isFormValid ? "success" : "primary"}
+                color={isFormValid ? 'success' : 'primary'}
                 sx={{ mt: 3, mb: 2 }}
               >
                 {loading ? <CircularProgress size={24} /> : 'Потвърждавам промените'}
@@ -220,18 +252,19 @@ export const Profile: React.FC = () => {
           )}
 
           {message && (
-            <Alert severity="success" sx={{ mt: 2 }}>
+            <Alert severity='success' sx={{ mt: 2 }}>
               {message}
             </Alert>
           )}
 
           {error && (
-            <Alert severity="error" sx={{ mt: 2 }}>
+            <Alert severity='error' sx={{ mt: 2 }}>
               {error}
             </Alert>
           )}
         </Box>
-      </Paper>
+        </Paper>
+      </Fade>
     </Container>
   );
 };

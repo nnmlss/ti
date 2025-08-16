@@ -50,6 +50,7 @@ export type {
   DeleteConfirmDialogProps,
   GlobalErrorNotificationProps,
   ProtectedRouteProps,
+  PageHeaderProps,
 } from './components';
 
 // ===== GRAPHQL TYPES =====

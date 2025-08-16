@@ -1,7 +1,7 @@
 import { SitesMapContainer as SitesMap } from '@containers/SitesMapContainer';
 import { SitesList } from '@components/main/SitesList';
 import { WindDirectionFilterContainer as WindDirectionFilter } from '@containers/WindDirectionFilterContainer';
-import { Box, Button, IconButton, Typography } from '@mui/material';
+import { Box, Button, IconButton, Typography, Fade } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PublicIcon from '@mui/icons-material/Public';
@@ -11,6 +11,8 @@ import { UserIconGroupContainer as UserIconGroup } from '@containers/UserIconGro
 import { useHomePage } from '@hooks/pages/useHomePage';
 
 export function HomePage() {
+  const fadeIn = true;
+  
   const {
     homeView,
     filter,
@@ -22,8 +24,10 @@ export function HomePage() {
   } = useHomePage();
   const isListView = homeView === 'list';
 
+
   return (
-    <Box sx={{ position: 'relative', height: '100vh', width: '100vw', overflowX: 'hidden' }}>
+    <Fade in={fadeIn} timeout={300}>
+      <Box sx={{ position: 'relative', height: '100vh', width: '100vw', overflowX: 'hidden' }}>
       <Box
         sx={{
           position: 'fixed',
@@ -97,6 +101,22 @@ export function HomePage() {
             </Button>
           </Box>
         )}
+        {!isAuthenticated && (
+          <Typography
+            variant='h5'
+            component='h1'
+            sx={{
+              color: 'primary.main',
+              fontSize: '1rem',
+              display: { xs: 'none', sm: 'block' },
+            }}
+          >
+            copyright
+            <Button component={Link} variant='text' to='https://borislav.space'>
+              borislav.space
+            </Button>
+          </Typography>
+        )}
       </Box>
 
       {/* Wind Direction Filter */}
@@ -104,6 +124,7 @@ export function HomePage() {
 
       {/* Conditional content */}
       {isListView ? <SitesList /> : <SitesMap />}
-    </Box>
+      </Box>
+    </Fade>
   );
 }

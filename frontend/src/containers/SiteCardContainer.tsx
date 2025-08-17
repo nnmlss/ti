@@ -1,56 +1,53 @@
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useConfirmDialog } from '@hooks/ui/useConfirmDialog';
-import { deleteSiteThunk } from '@store/thunks/sitesThunks';
 import { SiteCard } from '@components/site/SiteCard';
-import type { SiteCardContainerProps } from '@types';
-import type { AppDispatch } from '@store/store';
-import { dispatchThunkWithCallback } from '@store/utils/thunkWithCallback';
-import { getSiteUrl } from '@utils/slugUtils';
+import type { SiteCardContainerProps, DeleteDialogState } from '@app-types/components';
 
-export function SiteCardContainer({ site }: SiteCardContainerProps) {
+export const SiteCardContainer: React.FC<SiteCardContainerProps> = ({ site }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const { isOpen, targetId, confirm, handleConfirm, handleCancel } = useConfirmDialog();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const handleDelete = async () => {
-    await dispatchThunkWithCallback(dispatch, {
-      thunkAction: deleteSiteThunk(site._id),
-      onSuccess: () => {
-        handleCancel(); // Close the confirmation dialog
-      },
-    });
-  };
-
+  // Event handlers
   const handleEdit = () => {
     navigate(`/edit-site/${site._id}`);
   };
 
+  const handleDelete = () => {
+    setDeleteDialogOpen(true);
+  };
+
   const handleViewDetails = () => {
-    navigate(getSiteUrl(site));
+    navigate(`/sites/${site.url}`);
   };
 
   const handleShowOnMap = () => {
-    const [lng, lat] = site.location.coordinates;
-    window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
+    if (site.location?.coordinates) {
+      const [lng, lat] = site.location.coordinates;
+      const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+      window.open(googleMapsUrl, '_blank');
+    }
   };
 
-  const handleDeleteClick = () => {
-    confirm(site._id, handleDelete);
+  const handleDeleteConfirm = () => {
+    // TODO: Implement actual delete logic here
+    console.log('Delete site:', site._id);
+    setDeleteDialogOpen(false);
+  };
+
+  const deleteDialog: DeleteDialogState = {
+    isOpen: deleteDialogOpen,
+    onClose: () => setDeleteDialogOpen(false),
+    onConfirm: handleDeleteConfirm,
   };
 
   return (
     <SiteCard
       site={site}
       onEdit={handleEdit}
-      onDelete={handleDeleteClick}
+      onDelete={handleDelete}
       onViewDetails={handleViewDetails}
       onShowOnMap={handleShowOnMap}
-      deleteDialog={{
-        isOpen: isOpen && targetId === site._id,
-        onClose: handleCancel,
-        onConfirm: handleConfirm,
-      }}
+      deleteDialog={deleteDialog}
     />
   );
-}
+};

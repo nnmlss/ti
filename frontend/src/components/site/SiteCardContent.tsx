@@ -2,10 +2,9 @@ import { CardContent, Typography, CardActions, Button, Box, Divider } from '@mui
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { SiteCardContentProps } from '@types';
+import type { SiteCardContentProps } from '@app-types/components';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
-import { useSiteCardContent } from '@hooks/ui/useSiteCardContent';
 
 export function SiteCardContent({
   site,
@@ -13,45 +12,54 @@ export function SiteCardContent({
   onDelete,
   onViewDetails,
   onShowOnMap,
-  variant = 'card',
   compassSize = 75,
+  isAuthenticated,
+  isPopup,
 }: SiteCardContentProps) {
-  const { isAuthenticated } = useSiteCardContent();
+  // Styles - Centralized and reusable
+  const cardContentStyles = {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    cursor: 'pointer',
+    py: isPopup ? 2 : 1,
+    px: isPopup ? 1 : 2,
+  };
+
+  const titleStyles = {
+    mb: isPopup ? 1 : 1.5,
+    textAlign: 'center',
+    color: 'primary.light',
+  };
+
+  const subtitleStyles = {
+    textAlign: 'center',
+    ...(isPopup && { color: 'text.secondary' }),
+  };
+
+  const actionsStyles = {
+    display: 'flex',
+    justifyContent: isAuthenticated ? 'space-between' : 'center',
+    ...(isPopup && { px: 2, py: 1 }),
+  };
+
+  // Reusable Google Maps Button Component
+  const GoogleMapsButton = ({ showInActions = false }) => (
+    <Button onClick={onShowOnMap} size={showInActions && isAuthenticated ? 'small' : 'medium'}>
+      Отвори в
+      <LocationPinIcon sx={{ mr: 0 }} />
+      Google Maps
+    </Button>
+  );
 
   return (
     <>
-      <CardContent
-        sx={{
-          flexGrow: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-evenly',
-          alignItems: 'center',
-          cursor: variant === 'card' ? 'pointer' : 'default',
-          py: variant === 'popup' ? 2 : undefined,
-          px: variant === 'popup' ? 1 : undefined,
-        }}
-        onClick={variant === 'card' ? onViewDetails : undefined}
-      >
-        <Typography
-          variant={variant === 'popup' ? 'body1' : 'h6'}
-          component='div'
-          sx={{
-            mb: 1.5,
-            textAlign: 'center',
-            color: 'primary.light',
-            ...(variant === 'popup' && { mb: 1 }),
-          }}
-        >
+      <CardContent sx={cardContentStyles} onClick={onViewDetails}>
+        <Typography variant={isPopup ? 'body1' : 'h6'} component='div' sx={titleStyles}>
           {site.title.bg}
-          <Typography
-            variant={variant === 'popup' ? 'body2' : 'h6'}
-            component='div'
-            sx={{
-              textAlign: 'center',
-              ...(variant === 'popup' && { color: 'text.secondary' }),
-            }}
-          >
+          <Typography variant={isPopup ? 'body2' : 'h6'} component='div' sx={subtitleStyles}>
             {site.title.en}
           </Typography>
         </Typography>
@@ -62,90 +70,32 @@ export function SiteCardContent({
             variant='body2'
             sx={{
               textAlign: 'center',
-              mt: variant === 'popup' ? 1 : 2,
+              mt: isPopup ? 1 : 2,
             }}
           >
-            {site.altitude ? `${site.altitude}m` : variant === 'popup' ? 'N/A' : ''}
+            {site.altitude ? `${site.altitude}m` : isPopup ? 'N/A' : ''}
           </Typography>
         </Box>
 
         <AccessOptionsView accessOptions={site.accessOptions} size={36} />
-        {isAuthenticated && (
-          <Button
-            onClick={
-              variant === 'popup'
-                ? (e) => {
-                    e.stopPropagation();
-                    onShowOnMap();
-                  }
-                : onShowOnMap
-            }
-            size={isAuthenticated ? 'small' : 'medium'}
-          >
-            Отвори в
-            <LocationPinIcon sx={{ mr: isAuthenticated ? 0 : 0 }} />
-            Google Maps
-          </Button>
-        )}
+
+        {isAuthenticated && <GoogleMapsButton />}
       </CardContent>
 
       <Divider />
-      <CardActions
-        sx={{
-          display: 'flex',
-          justifyContent: isAuthenticated ? 'space-between' : 'center',
-          ...(variant === 'popup' && { px: 2, py: 1 }),
-        }}
-      >
-        {isAuthenticated && (
+      <CardActions sx={actionsStyles}>
+        {isAuthenticated ? (
           <>
-            <Button
-              onClick={
-                variant === 'popup'
-                  ? (e) => {
-                      e.stopPropagation();
-                      onEdit();
-                    }
-                  : onEdit
-              }
-              size='small'
-            >
+            <Button onClick={onEdit} size='small'>
               <EditIcon />
             </Button>
 
-            <Button
-              onClick={
-                variant === 'popup'
-                  ? (e) => {
-                      e.stopPropagation();
-                      onDelete();
-                    }
-                  : onDelete
-              }
-              color='error'
-              size='small'
-            >
+            <Button onClick={onDelete} color='error' size='small'>
               <DeleteIcon />
             </Button>
           </>
-        )}
-
-        {!isAuthenticated && (
-          <Button
-            onClick={
-              variant === 'popup'
-                ? (e) => {
-                    e.stopPropagation();
-                    onShowOnMap();
-                  }
-                : onShowOnMap
-            }
-            size={isAuthenticated ? 'small' : 'medium'}
-          >
-            Отвори в
-            <LocationPinIcon sx={{ mr: isAuthenticated ? 0 : 0 }} />
-            Google Maps
-          </Button>
+        ) : (
+          <GoogleMapsButton showInActions />
         )}
       </CardActions>
     </>

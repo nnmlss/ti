@@ -10,7 +10,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
       '@containers': path.resolve(__dirname, './src/containers'),
-      '@store': path.resolve(__dirname, './src/store'),
+      '@store': path.resolve(__dirname, './src/store/store.ts'),
       '@utils': path.resolve(__dirname, './src/utils'),
       '@hooks': path.resolve(__dirname, './src/hooks'),
       '@hooks/pages': path.resolve(__dirname, './src/hooks/pages'),

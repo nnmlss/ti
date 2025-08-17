@@ -21,6 +21,7 @@
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@containers/*": ["src/containers/*"],
+      "@store": ["src/store/store.ts"],
       "@store/*": ["src/store/*"],
       "@utils/*": ["src/utils/*"],
       "@hooks/*": ["src/hooks/*"],

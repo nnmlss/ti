@@ -47,8 +47,8 @@ export const AUTH_CONSTANTS = {
 
 // Form Defaults
 export const FORM_DEFAULTS = {
-  EMPTY_STRING_ARRAY: [''] as const,
-  EMPTY_COORDINATES: ['', ''] as const,
-  EMPTY_BILINGUAL_ARRAY: { bg: [''], en: [''] } as const,
+  EMPTY_STRING_ARRAY: [''],
+  EMPTY_COORDINATES: ['', ''] as [string, string],
+  EMPTY_BILINGUAL_ARRAY: { bg: [''], en: [''] },
   POINT_TYPE: 'Point' as const,
-} as const;
+};

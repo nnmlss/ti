@@ -19,9 +19,8 @@ export const getImageQuality = (folder: string): number => (folder === 'thmb' ? 
 
 export const generateFilename = (originalname: string): string => {
   const timestamp = Date.now();
-  const ext = path.extname(originalname);
-  const basename = path.basename(originalname, ext);
-  return `${timestamp}-${basename}`;
+  const basename = path.basename(originalname, path.extname(originalname));
+  return `${timestamp}-${basename}.jpg`; // Always .jpg extension
 };
 
 export const getImagePaths = (filename: string): ImagePaths => {
@@ -40,13 +39,16 @@ export const processImage = async (
   buffer: Buffer,
   originalFilename: string
 ): Promise<ProcessedImage> => {
-  const filename = generateFilename(originalFilename);
-  const originalExt = path.extname(originalFilename).toLowerCase();
+  const timestampedFilename = generateFilename(originalFilename); // Already includes .jpg
 
   const metadata = await sharp(buffer).metadata();
 
-  const paths = getImagePaths(`${filename}${originalExt}`);
-  await fs.writeFile(paths.original, buffer);
+  const paths = getImagePaths(timestampedFilename);
+  
+  // Convert original to JPG format
+  await sharp(buffer)
+    .jpeg({ quality: 96 })
+    .toFile(paths.original);
 
   const processedVersions = [];
 
@@ -64,10 +66,10 @@ export const processImage = async (
 
   return {
     original: {
-      path: `${filename}${originalExt}`,
+      path: timestampedFilename,
       width: metadata.width,
       height: metadata.height,
-      format: metadata.format,
+      format: 'jpeg', // Always JPG format
     },
     versions: processedVersions,
   };

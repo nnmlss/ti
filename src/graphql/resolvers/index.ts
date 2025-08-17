@@ -48,6 +48,9 @@ async function deleteSiteImages(
     return { deletedFiles: 0, errors: [] };
   }
 
+  console.log(`🗂️ Current working directory: ${process.cwd()}`);
+  console.log(`🖼️ Deleting ${galleryImages.length} images from site`);
+
   let deletedFiles = 0;
   const errors: string[] = [];
 
@@ -67,20 +70,26 @@ async function deleteSiteImages(
 
       for (const filePath of filesToDelete) {
         try {
+          console.log(`🗑️ Attempting to delete: ${filePath}`);
           await fs.access(filePath);
+          console.log(`✅ File exists, deleting: ${filePath}`);
           await fs.unlink(filePath);
           deletedFiles++;
+          console.log(`✅ Successfully deleted: ${filePath}`);
         } catch (fileError: unknown) {
           if (
             fileError instanceof Error &&
             'code' in fileError &&
             fileError.code !== 'ENOENT'
           ) {
+            console.log(`❌ Error deleting ${filePath}:`, fileError.message);
             errors.push(
               `Failed to delete ${path.basename(filePath)}: ${
                 fileError instanceof Error ? fileError.message : String(fileError)
               }`
             );
+          } else {
+            console.log(`⚠️ File not found (expected): ${filePath}`);
           }
         }
       }

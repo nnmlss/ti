@@ -91,21 +91,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Total font size: ~1.3MB across all formats
 - No font preloading or optimization
 
-#### 2. Image Management Fix
-**Task:** Fix delete image files functionality
-**Description:**
-- Debug and fix image deletion functionality
-- Ensure proper cleanup of orphaned image files
-- Implement proper error handling for image operations
-- Add validation for image file operations
-- Test upload, delete, and thumbnail generation workflows
-
-**Requirements:**
-- Images should be properly deleted from filesystem
-- Database references should be cleaned up
-- Error handling for failed deletions
-- Prevent orphaned files
-
 ### MEDIUM PRIORITY 🟡
 
 #### 3. Site Detail View Improvements
@@ -502,6 +487,16 @@ Implementing admin-controlled user registration with two-step activation process
   - `POST /api/image/upload` - Upload images
   - `DELETE /api/image/:filename` - Delete images
   - `POST /api/image/generate-thumbnails/:filename` - Generate thumbnails
+
+**Image Storage System:**
+- **Format standardization**: All uploads converted to `.jpg` format regardless of input (.png, .JPG, .jpeg, etc.)
+- **Naming**: Timestamp prefix + original name + `.jpg` (e.g., `1755472200000-MyPhoto.jpg`)
+- **Generated sizes**: 3 versions created automatically with same filename:
+  - `/gallery/thmb/filename.jpg` (thumbnail - 300px width, 92% quality)
+  - `/gallery/small/filename.jpg` (small - 960px width, 96% quality)  
+  - `/gallery/large/filename.jpg` (large - 1960px width, 96% quality)
+- **Deletion**: When image/site deleted, all 4 files (original + 3 sizes) removed from filesystem
+- **Benefits**: Prevents duplicates, consistent format, predictable paths, simplified deletion
 - **Development Utilities**:
   - `GET /api/auth/test-email` - Test email service
 
@@ -547,50 +542,59 @@ SMTP_PASS=<production-email-password>
 
 **Deployment Checklist:**
 
-1. **Server Setup:**
-   - ✅ Node.js 18.20.8 LTS confirmed compatible
-   - ✅ MongoDB instance running on target server
-   - ✅ Production environment variables configured
-   - ✅ HTTPS/SSL certificate for subdomain
-   - ✅ Process manager (PM2/systemd) for Node.js app
+1. **Pre-deployment (Local):**
+   - ✅ Production build tested and working
+   - ✅ Update SMTP_PASS in .env for new mail account  
+   - ✅ Set NODE_ENV=production in .env
+   - ✅ All files ready for upload
 
-2. **Build Process:**
+2. **Files to Upload to Server:**
+   ```
+   /app-root/                 # Web root directory
+   ├── dist/                  # ✅ Compiled backend (Node.js)
+   ├── frontend/dist/         # ✅ Built frontend (static files)
+   ├── gallery/               # ✅ Create empty directory for uploads
+   ├── package.json           # ✅ Dependencies list
+   ├── package-lock.json      # ✅ Version locks
+   └── .env                   # ✅ Environment variables (with MongoDB connection)
+   ```
+
+3. **Server Setup Commands:**
    ```bash
-   # On production server
+   # Install only production dependencies
    npm install --production
-   npm run build              # Builds both backend and frontend
+   
+   # Create gallery directory if not exists
+   mkdir -p gallery
+   chmod 755 gallery
+   
+   # Start the application
+   node dist/app.js
    ```
 
-3. **File Structure on Server:**
-   ```
-   /path/to/app/
-   ├── dist/                  # Compiled backend (Node.js)
-   ├── frontend/dist/         # Built frontend (static files)
-   ├── gallery/               # Image uploads directory
-   ├── package.json
-   └── .env                   # Production environment variables
-   ```
-
-4. **Web Server Configuration (Nginx/Apache):**
-   - Serve frontend static files from `frontend/dist/`
-   - Proxy API requests (`/api`, `/graphql`, `/gallery`) to Node.js (port 3000)
-   - Configure HTTPS redirect and security headers
+4. **Web Server Configuration:**
+   - **Document root**: `/app-root/frontend/dist/` (serve static frontend)
+   - **API proxy**: `/api`, `/graphql`, `/gallery` → `http://localhost:3000`
+   - **HTTPS**: Required for production
+   - **File uploads**: Max 10MB (configured in app)
 
 5. **Process Management:**
    ```bash
-   # Start production server
+   # Simple start
    NODE_ENV=production node dist/app.js
    
-   # Or with PM2
+   # With PM2 (recommended)
    pm2 start dist/app.js --name "paragliding-app"
+   pm2 startup  # Auto-start on server reboot
+   pm2 save     # Save current process list
    ```
 
-6. **Security Verification:**
-   - ✅ CORS configured for `*.borislav.space`
-   - ✅ CSRF protection enabled
-   - ✅ Rate limiting configured
-   - ✅ Helmet security headers
-   - ✅ Session configuration for production
+6. **Verification Steps:**
+   - ✅ Frontend loads at https://subdomain.borislav.space
+   - ✅ GraphQL endpoint responds at /graphql
+   - ✅ Image uploads work (/gallery accessible)
+   - ✅ Database connection established
+   - ✅ Email service working with new SMTP account
 
 ### Frontend Security Integration
 

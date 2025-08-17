@@ -1,5 +1,4 @@
 import { SiteDetailViewContainer as SiteDetailView } from '@containers/SiteDetailViewContainer';
-import { PageHeader } from '@components/common/PageHeader';
 import {
   Container,
   CircularProgress,
@@ -21,7 +20,7 @@ export function SiteDetailPage({ site, loading, siteId, onClose }: SiteDetailPag
     }
 
     return site ? (
-      <SiteDetailView site={site} />
+      <SiteDetailView site={site} onClose={onClose} />
     ) : (
       <Alert severity='warning'>
         Не е намерена информация за място с <strong>ID: {siteId}</strong>. Или не съществува, или
@@ -41,10 +40,6 @@ export function SiteDetailPage({ site, loading, siteId, onClose }: SiteDetailPag
       }} site={site || undefined} />
       
       <Container maxWidth={false} sx={{ py: 2, minHeight: '100vh', pb: 10 }}>
-        <PageHeader 
-          title={site ? (site.title.bg || site.title.en || 'Без име') : 'Зареждане...'} 
-          onBackClick={onClose} 
-        />
         {renderContent()}
       </Container>
       

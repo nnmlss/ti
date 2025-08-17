@@ -1,5 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, LayersControl } from 'react-leaflet';
-import { CircularProgress, Alert, Box, Card } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import { SiteCardContent } from '@components/site/SiteCardContent';
 import { DeleteConfirmDialogContainer as DeleteConfirmDialog } from '@containers/DeleteConfirmDialogContainer';
 import type { SitesMapProps } from '@app-types';

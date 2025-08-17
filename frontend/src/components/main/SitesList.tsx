@@ -1,5 +1,7 @@
 import { SiteCardContainer } from '@containers/SiteCardContainer';
-import { CircularProgress, Alert, Box } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import type { SitesListProps } from '@app-types';
 

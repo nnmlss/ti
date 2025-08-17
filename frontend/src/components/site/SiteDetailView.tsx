@@ -1,11 +1,24 @@
-import { Card, CardContent, Typography, Box, Button, Divider, Paper } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import type { SiteDetailViewProps } from '@app-types';
 
-export function SiteDetailView({ site, onOpenLocation, onOpenTracklog }: SiteDetailViewProps) {
+export function SiteDetailView({
+  site,
+  onOpenLocation,
+  onOpenTracklog,
+  onClose,
+}: SiteDetailViewProps) {
   const renderLocalizedText = (
     text: { bg?: string; en?: string } | undefined,
     label: string
@@ -174,16 +187,29 @@ export function SiteDetailView({ site, onOpenLocation, onOpenTracklog }: SiteDet
   return (
     <Card sx={{ maxWidth: '98vw', mx: 'auto' }}>
       <CardContent sx={{ p: 4 }}>
-        {/* Title Section */}
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant='h4' component='h1' gutterBottom color='primary.main'>
-            {site.title.bg}
-          </Typography>
-          {site.title.en && (
-            <Typography variant='h5' color='text.secondary' gutterBottom>
-              {site.title.en}
-            </Typography>
-          )}
+        {/* Back Button and Title Section */}
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'space-arround', gap: 2, mb: 2 }}>
+            <Button onClick={onClose} sx={{ mt: 0.5 }} aria-label='Go back' variant='outlined'>
+              <ArrowBackIcon />
+            </Button>
+            <Box sx={{ flex: 1 }}>
+              <Typography
+                variant='h4'
+                component='h1'
+                gutterBottom
+                color='primary.main'
+                sx={{ mb: 1 }}
+              >
+                {site.title.bg}
+              </Typography>
+              {site.title.en && (
+                <Typography variant='h5' component='h2' color='text.secondary'>
+                  {site.title.en}
+                </Typography>
+              )}
+            </Box>
+          </Box>
         </Box>
 
         {/* Basic Information */}

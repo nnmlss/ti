@@ -5,6 +5,18 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate MUI into its own chunk for better caching
+          mui: ['@mui/material', '@mui/icons-material'],
+          // Separate Leaflet into its own chunk
+          leaflet: ['leaflet', 'react-leaflet'],
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

@@ -6,7 +6,7 @@ import { deleteSiteThunk } from '@store/thunks/sitesThunks';
 import { dispatchThunkWithCallback } from '@store/utils/thunkWithCallback';
 import type { AppDispatch } from '@store/store';
 import type { FlyingSite } from '@app-types';
-import { SitesMap } from '@components/main/SitesMap';
+import { LazyMap as SitesMap } from '@components/main/LazyMap';
 import { getSiteUrl } from '@utils/slugUtils';
 
 export function SitesMapContainer() {

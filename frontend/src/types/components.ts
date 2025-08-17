@@ -186,12 +186,14 @@ export interface SiteCardProps {
 
 export interface SiteDetailViewContainerProps {
   site: FlyingSite;
+  onClose: () => void;
 }
 
 export interface SiteDetailViewProps {
   site: FlyingSite;
   onOpenLocation: (coordinates: [number, number]) => void;
   onOpenTracklog: (url: string) => void;
+  onClose: () => void;
 }
 
 export interface EditSiteContainerProps {

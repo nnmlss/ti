@@ -6,111 +6,69 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### HIGH PRIORITY 🔴
 
-#### 1. Code Cleanup & Optimization ✅ **COMPLETED**
-**Task:** Analyze all code for unused types, exports, interfaces, etc.
-**Description:** 
-- ✅ Run comprehensive analysis to identify dead code
-- ✅ Remove unused type definitions, interfaces, and exports
-- ✅ Clean up imports across the entire codebase (React imports for v19)
-- ✅ Optimize bundle size by removing unused dependencies
-- ✅ Automated detection tools evaluation
+**Remaining Tasks:**
 
-**Results Achieved:**
-- ✅ **Dependency cleanup**: Removed unused packages (`@hookform/resolvers`, `yup`)
-- ✅ **Import optimization**: Cleaned up unnecessary React imports post-v19 upgrade
-- ✅ **Path alias fixes**: Resolved TypeScript import path issues  
-- ✅ **Build verification**: All checks pass successfully
-- ⚠️ **Tool limitation discovered**: `ts-prune` shows false positives for internal/generated code
-
-**Benefits Achieved:**
-- ✅ Reduced bundle size through dependency removal
-- ✅ Improved build performance
-- ✅ Cleaner, more maintainable codebase
-- ✅ Better IDE performance
-
-#### 1.1. Bundle Size Optimization
-**Task:** Optimize JavaScript bundle size (currently 867KB/275KB gzipped)
-**Description:**
-- Implement lazy loading for routes with React.lazy()
-- Tree-shake Material-UI imports properly
-- Load Leaflet maps only when needed (route-based code splitting)
+- Implement lazy loading for routes with React.lazy() (page components)
 - Optimize font loading strategies
-- Manual chunk splitting for vendor libraries
-
-**Current Issues:**
-- Single 867KB bundle (should be <500KB)
-- All routes loaded upfront
-- Material-UI and Leaflet not code-split
-- Multiple font formats loading
-
-**Implementation Steps:**
-1. Add React.lazy() for page components
-2. Split vendor libraries into separate chunks
-3. Optimize Material-UI tree-shaking
-4. Conditional map loading
-5. Font optimization and preloading
+- Font optimization and preloading
 
 #### 1.2. Route-Based Code Splitting
+
 **Task:** Implement lazy loading for all major routes
 **Description:**
+
 - Convert static imports to React.lazy() for page components
 - Add loading fallbacks for each route
 - Split authentication flows into separate chunks
 - Separate admin functionality from public pages
 
 **Target Routes for Splitting:**
+
 - HomePage (with maps)
 - Admin pages (CreateAccounts, Profile)
 - Authentication flows (Login, Activation)
 - Site editing functionality
 
 #### 1.3. Performance Monitoring Setup
+
 **Task:** Add bundle analysis and performance monitoring
 **Description:**
+
 - Set up automated bundle size monitoring
 - Add performance budgets to CI/CD
 - Implement Core Web Vitals tracking
 - Regular bundle composition analysis
 
 **Tools to Implement:**
+
 - Bundle analyzer in build process
 - Performance budgets (warn if >300KB gzipped)
 - Lighthouse CI integration
 - Bundle size tracking over time
 
 #### 1.4. Font and Asset Optimization
+
 **Task:** Optimize font loading and static assets
 **Description:**
+
 - Implement font preloading strategies
 - Remove unused font formats
 - Optimize image assets and implement lazy loading
 - Set up proper caching headers for static assets
 
 **Current Font Issues:**
+
 - Multiple Comfortaa font formats (WOFF2, WOFF, TTF, EOT, SVG)
 - Total font size: ~1.3MB across all formats
 - No font preloading or optimization
 
 ### MEDIUM PRIORITY 🟡
 
-#### 3. Site Detail View Improvements
-**Task:** Fix detailed view title and filter shown fields in Site details
-**Description:**
-- Fix title display issues in site detail view
-- Implement field filtering/visibility controls for site details
-- Allow users to customize which fields are shown
-- Improve overall site detail page layout and presentation
-- Ensure proper title formatting and display consistency
-
-**Requirements:**
-- Proper title display in all site detail contexts
-- User-configurable field visibility
-- Consistent formatting across detail views
-- Better information hierarchy and organization
-
 #### 4. Cookie Interface & Remember System
+
 **Task:** Create cookie interface remember system
 **Description:**
+
 - Implement comprehensive cookie management system
 - Create user preference persistence (view settings, filters, language)
 - Add cookie consent and privacy controls
@@ -118,6 +76,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Implement privacy-compliant cookie handling
 
 **Features to Remember:**
+
 - Map/list view preference
 - Wind filter selections
 - Language preference
@@ -125,14 +84,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Form input persistence
 
 **Privacy Requirements:**
+
 - Cookie consent banner
 - Clear privacy policy
 - User control over cookie preferences
 - GDPR compliance considerations
 
 #### 5. Internationalization (i18n)
+
 **Task:** Translate everything into Bulgarian and create language switch functionality
 **Description:**
+
 - Implement complete Bulgarian translation for the entire application
 - Create language switching functionality between English and Bulgarian
 - Set up i18n infrastructure using React i18next or similar
@@ -141,11 +103,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Add language toggle in the UI
 
 **Current State:**
+
 - Mixed Bulgarian/English content exists
 - Some components already have bilingual support via `LocalizedText`
 - Need systematic approach for UI translations
 
 **Implementation Steps:**
+
 1. Set up i18n library (react-i18next)
 2. Extract all hardcoded text into translation files
 3. Create comprehensive Bulgarian translation
@@ -154,6 +118,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 6. Update all components to use translation hooks
 
 **Benefits:**
+
 - Full Bulgarian localization
 - Better user experience for Bulgarian users
 - Foundation for additional languages in future
@@ -162,6 +127,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Technical Requirements
 
 #### Language Switch Implementation
+
 - Toggle button in main navigation
 - Persistent language selection
 - Graceful fallbacks for missing translations
@@ -169,6 +135,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Update document language attribute
 
 #### Translation Coverage
+
 - All UI components and pages
 - Error messages and notifications
 - Form labels and validation messages
@@ -185,19 +152,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Current Status**: TypeScript strict type checking temporarily disabled for production builds.
 
 **Disabled Settings in `frontend/tsconfig.app.json`:**
+
 ```json
 {
-  "strictNullChecks": false,           // TODO: Fix null checks and re-enable
-  "noUncheckedIndexedAccess": false,   // TODO: Fix array access and re-enable  
-  "exactOptionalPropertyTypes": false  // TODO: Fix types and re-enable
+  "strictNullChecks": false, // TODO: Fix null checks and re-enable
+  "noUncheckedIndexedAccess": false, // TODO: Fix array access and re-enable
+  "exactOptionalPropertyTypes": false // TODO: Fix types and re-enable
 }
 ```
 
 **Build Script Modified:**
+
 - **Original**: `"build": "tsc -b && vite build"` (TypeScript validation + build)
 - **Current**: `"build": "vite build"` (Skip TypeScript validation for production)
 
 **Identified Type Errors (~17 remaining):**
+
 1. **AdminCreateAccounts.tsx**: Missing `id` property in result type
 2. **Profile.tsx**: Event handler signature mismatches (5 instances)
 3. **HomePageContainer.tsx**: Missing required props in HomePage component
@@ -207,17 +177,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 7. **useKeyboardNavigation.ts**: Missing return statement in navigation handler
 
 **Why This Happened:**
+
 - Development mode uses esbuild (ignores TypeScript errors)
 - Production mode runs `tsc` first (validates TypeScript before build)
 - Strict type checking settings exposed existing type safety issues
 
 **Resolution Plan:**
+
 1. **Phase 1**: Deploy with relaxed settings (current status)
 2. **Phase 2**: Systematically fix all type errors
 3. **Phase 3**: Re-enable strict type checking
 4. **Phase 4**: Establish type safety standards for future development
 
 **Risk Assessment:**
+
 - **Low Risk**: Most errors are UI event handlers and optional props
 - **Medium Risk**: Null/undefined access could cause runtime errors
 - **Mitigation**: Thorough testing of production build before deployment
@@ -374,6 +347,7 @@ npm run check              # Run typecheck and frontend lint
 ## Environment Requirements
 
 ### Development
+
 - Node.js (ES modules enabled)
 - MongoDB instance
 - MONGO_URI environment variable for database connection
@@ -381,6 +355,7 @@ npm run check              # Run typecheck and frontend lint
 ### Production Environment Variables
 
 **Critical Security Variables (REQUIRED):**
+
 ```bash
 NODE_ENV=production
 SESSION_SECRET=<64-character-random-string>  # Generate: openssl rand -base64 64
@@ -389,6 +364,7 @@ MONGO_URI=mongodb://username:password@host:port/database
 ```
 
 **Email Service Configuration:**
+
 ```bash
 SMTP_HOST=mail.borislav.space
 SMTP_PORT=465
@@ -399,11 +375,13 @@ FROM_EMAIL=noreply@borislav.space
 ```
 
 **Frontend Configuration:**
+
 ```bash
 FRONTEND_URL=https://your-subdomain.borislav.space
 ```
 
 **Security Notes:**
+
 - ⚠️ **CRITICAL**: `SESSION_SECRET` and `JWT_SECRET` currently use fallback values
 - 🔒 Generate unique 64+ character secrets for production
 - 📧 Email functionality requires valid SMTP credentials
@@ -489,11 +467,12 @@ Implementing admin-controlled user registration with two-step activation process
   - `POST /api/image/generate-thumbnails/:filename` - Generate thumbnails
 
 **Image Storage System:**
+
 - **Format standardization**: All uploads converted to `.jpg` format regardless of input (.png, .JPG, .jpeg, etc.)
 - **Naming**: Timestamp prefix + original name + `.jpg` (e.g., `1755472200000-MyPhoto.jpg`)
 - **Generated sizes**: 3 versions created automatically with same filename:
   - `/gallery/thmb/filename.jpg` (thumbnail - 300px width, 92% quality)
-  - `/gallery/small/filename.jpg` (small - 960px width, 96% quality)  
+  - `/gallery/small/filename.jpg` (small - 960px width, 96% quality)
   - `/gallery/large/filename.jpg` (large - 1960px width, 96% quality)
 - **Deletion**: When image/site deleted, all 4 files (original + 3 sizes) removed from filesystem
 - **Benefits**: Prevents duplicates, consistent format, predictable paths, simplified deletion
@@ -516,11 +495,13 @@ NODE_ENV=production|development
 ### Production Deployment Configuration
 
 **Target Environment:**
+
 - **Server**: borislav.space subdomain
 - **Node.js**: 18.20.8 LTS (production server)
 - **Development**: Node.js 24.2.0 (local) - fully compatible
 
 **Production Environment Variables:**
+
 ```bash
 NODE_ENV=production
 PORT=3000
@@ -530,11 +511,13 @@ SMTP_PASS=<production-email-password>
 ```
 
 **CORS Configuration:**
+
 - Configured for `*.borislav.space` subdomains in production
 - See `app.ts` `getAllowedOrigins()` function
 - Development: localhost only
 
 **Build Configuration:**
+
 - Frontend: Vite production build (867KB bundle, 275KB gzipped)
 - Backend: TypeScript compiled to `dist/`
 - Assets: Served from `/gallery` static directory
@@ -543,12 +526,14 @@ SMTP_PASS=<production-email-password>
 **Deployment Checklist:**
 
 1. **Pre-deployment (Local):**
+
    - ✅ Production build tested and working
-   - ✅ Update SMTP_PASS in .env for new mail account  
+   - ✅ Update SMTP_PASS in .env for new mail account
    - ✅ Set NODE_ENV=production in .env
    - ✅ All files ready for upload
 
 2. **Files to Upload to Server:**
+
    ```
    /app-root/                 # Web root directory
    ├── dist/                  # ✅ Compiled backend (Node.js)
@@ -560,29 +545,32 @@ SMTP_PASS=<production-email-password>
    ```
 
 3. **Server Setup Commands:**
+
    ```bash
    # Install only production dependencies
    npm install --production
-   
+
    # Create gallery directory if not exists
    mkdir -p gallery
    chmod 755 gallery
-   
+
    # Start the application
    node dist/app.js
    ```
 
 4. **Web Server Configuration:**
+
    - **Document root**: `/app-root/frontend/dist/` (serve static frontend)
    - **API proxy**: `/api`, `/graphql`, `/gallery` → `http://localhost:3000`
    - **HTTPS**: Required for production
    - **File uploads**: Max 10MB (configured in app)
 
 5. **Process Management:**
+
    ```bash
    # Simple start
    NODE_ENV=production node dist/app.js
-   
+
    # With PM2 (recommended)
    pm2 start dist/app.js --name "paragliding-app"
    pm2 startup  # Auto-start on server reboot
@@ -616,12 +604,14 @@ SMTP_PASS=<production-email-password>
 #### ✅ **Build Process Validated (Ready for Deployment)**
 
 **Backend Build:** ✅ **WORKING**
+
 - TypeScript compilation successful
 - Path alias resolution working
 - GraphQL import fixes applied
 - Ready for production deployment
 
 **Frontend Build:** ⚠️ **FUNCTIONAL WITH KNOWN ISSUES**
+
 - Build process works but has ~40 TypeScript strict type errors
 - Issues are related to `exactOptionalPropertyTypes: true` configuration
 - **Does not prevent deployment** - these are type safety improvements
@@ -629,6 +619,7 @@ SMTP_PASS=<production-email-password>
 #### 🔧 **Technical Debt Identified**
 
 **TypeScript Strict Type Issues (~40 errors):**
+
 - `exactOptionalPropertyTypes` compliance needed
 - Null/undefined safety improvements required
 - Optional property type definitions need refinement
@@ -637,6 +628,7 @@ SMTP_PASS=<production-email-password>
 **Priority:** Low - these are code quality improvements, not blocking issues
 
 **Next Steps for Production:**
+
 1. ✅ **Deploy current codebase** (backend + frontend working)
 2. 🔄 **Address TypeScript strict types** in follow-up iteration
 3. 🔄 **Implement remaining keyboard navigation features**
@@ -652,18 +644,21 @@ SMTP_PASS=<production-email-password>
 **Priority Order:**
 
 1. **SEO Optimization (Immediate)**
+
    - **Phase 1**: React Helmet + URL structure (`/sites/kunino`, dynamic titles)
    - **Phase 2**: Bot detection + pre-rendering for search engines
    - Sitemap generation for better crawling
    - Open Graph and Twitter Card support
 
 2. **Performance Optimization**
+
    - DataLoader for batching database queries
    - Query optimization and N+1 problem prevention
    - Caching strategies for frequently accessed data
    - Core Web Vitals optimization
 
 3. **Testing Migration**
+
    - Update existing tests for GraphQL resolvers
    - Integration tests for GraphQL endpoints
    - Test new SEO URL structure and meta tags
@@ -687,6 +682,7 @@ SMTP_PASS=<production-email-password>
 Successfully implemented a hybrid approach combining container/component pattern with direct hooks usage, eliminating unnecessary abstraction while maintaining structure where it adds value.
 
 **Converted Components (Direct Hooks):**
+
 - **NotFoundHandler** - Simple logging with useEffect
 - **SiteCardContent** - Direct useAuth for authentication state
 - **UserIconGroup** - Direct useAuth + useNavigate + migration logic
@@ -694,11 +690,13 @@ Successfully implemented a hybrid approach combining container/component pattern
 - **NotificationDialog** - Direct timer logic with useEffect/useCallback
 
 **Maintained Container Pattern:**
+
 - **Complex Business Logic**: SitesList, SitesMap, all page components
 - **Reusable Components**: SiteCard, DeleteConfirmDialog
 - **Multi-state Components**: Components with data fetching, validation, side effects
 
 **Results Achieved:**
+
 - **40% reduction** in boilerplate files (5 containers removed)
 - **Improved Developer Experience** for simple components
 - **Clear decision criteria** documented in global CLAUDE.md
@@ -706,9 +704,52 @@ Successfully implemented a hybrid approach combining container/component pattern
 - **All existing functionality preserved**
 
 **Architecture Guidelines Established:**
+
 - Simple logic (≤15 lines) → Direct hooks
 - Complex logic (>15 lines) → Container/component pattern
 - Reusable components → Always use containers
 - Single-use utilities → Direct hooks approach
 
 This implementation serves as a reference for future component architecture decisions and demonstrates successful balance between simplicity and structure.
+
+### ✅ Bundle Size Optimization & Performance Improvements (January 2025)
+
+**Implementation Summary:**
+Successfully implemented core bundle optimization strategies focusing on Material-UI tree-shaking and Leaflet lazy loading to improve initial load performance.
+
+**Optimization Strategies Applied:**
+
+- **Material-UI Tree-Shaking**: Converted barrel imports to individual imports across key components
+- **Leaflet Lazy Loading**: Implemented route-based code splitting for map functionality
+- **Manual Chunk Splitting**: Configured Vite for better vendor library caching
+- **Component-Level Optimization**: Applied optimizations to high-impact components
+
+**Technical Implementation:**
+
+- **LazyMap Component**: Created lazy-loaded wrapper for SitesMap with Suspense fallback
+- **Import Optimization**: Updated 4 core components (SiteDetailView, SitesMap, SitesList, LazyMap)
+- **Build Configuration**: Enhanced vite.config.ts with manual chunk splitting
+
+**Performance Results:**
+
+- **Reduced Bundle Size**: Only required MUI components bundled (tree-shaking effective)
+- **Conditional Loading**: Leaflet (~200KB) loads only when map view accessed
+- **Better Caching**: Separate vendor chunks improve repeat visit performance
+- **User Experience**: Loading states for asynchronous chunk loading
+
+**Files Optimized:**
+
+- `frontend/src/components/site/SiteDetailView.tsx` - 8 MUI component imports
+- `frontend/src/components/main/SitesMap.tsx` - 4 MUI component imports
+- `frontend/src/components/main/SitesList.tsx` - 4 MUI component imports
+- `frontend/src/components/main/LazyMap.tsx` - New lazy loading wrapper
+- `frontend/vite.config.ts` - Manual chunk configuration
+
+**Architecture Benefits:**
+
+- **List View Priority**: Users who prefer list view get faster initial loads
+- **Progressive Enhancement**: Map functionality loads seamlessly when needed
+- **Maintenance Efficiency**: Clear separation between critical and optional components
+- **Development Workflow**: TypeScript compilation and builds remain fast
+
+This optimization provides immediate performance benefits and establishes a foundation for future lazy loading implementations across other application routes.

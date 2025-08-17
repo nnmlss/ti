@@ -9,7 +9,6 @@
     "@routes/*": ["./routes/*"],
     "@config/*": ["./config/*"],
     "@utils/*": ["./utils/*"],
-    "@gql-app/*": ["./graphql/*"],
-    "@types/*": ["./types/*"]
+    "@gql-app/*": ["./graphql/*"]
   }
 }

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "@hooks/auth/useAuth";
+import { useAuth } from '@hooks/auth/useAuth';
 import { UserIconGroup } from '@components/auth/UserIconGroup';
 import { MigrationResultDialog } from '@components/dialogs/MigrationResultDialog';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { gql } from 'graphql-request';
-import type { MigrationResult } from '@types';
+import type { MigrationResult } from '@app-types/components';
 
 const MIGRATE_URLS_MUTATION = gql`
   mutation MigrateUrls {
@@ -41,18 +41,18 @@ export const UserIconGroupContainer: React.FC = () => {
 
   const handleMigrateUrls = async () => {
     if (!user?.isSuperAdmin || isMigrating) return;
-    
+
     // Reset previous state and open dialog
     setMigrationResult(null);
     setMigrationError(null);
     setDialogOpen(true);
     setIsMigrating(true);
-    
+
     try {
       const client = getGraphQLClient(true); // Authenticated request
-      const result = await client.request(MIGRATE_URLS_MUTATION);
+      const result = await client.request<{ migrateAddUrls: MigrationResult }>(MIGRATE_URLS_MUTATION);
       setMigrationResult(result.migrateAddUrls);
-      
+
       if (result.migrateAddUrls.errors.length > 0) {
         console.error('Migration errors:', result.migrateAddUrls.errors);
       }
@@ -81,7 +81,7 @@ export const UserIconGroupContainer: React.FC = () => {
         onAddUser={handleAddUser}
         onMigrateUrls={handleMigrateUrls}
       />
-      
+
       <MigrationResultDialog
         open={dialogOpen}
         onClose={handleDialogClose}

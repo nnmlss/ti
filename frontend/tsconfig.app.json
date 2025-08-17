@@ -32,7 +32,7 @@
       "@contexts/*": ["src/contexts/*"],
       "@constants": ["src/constants.ts"],
       "@assets/*": ["src/assets/*"],
-      "@types": ["src/types"]
+      "@app-types/*": ["src/types/*"]
     },
 
     /* Linting */

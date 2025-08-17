@@ -163,3 +163,12 @@ export interface PageHeaderProps {
   title: string;
   onBackClick: () => void;
 }
+
+// ===== NAVIGATION PROPS =====
+export interface BottomNavigationBarProps {
+  // Home page specific props (only used when on home page)
+  homeView?: 'map' | 'list';
+  filter?: { windDirection: string | null };
+  onViewToggle?: (view: 'map' | 'list') => void;
+  onWindFilterToggle?: () => void;
+}

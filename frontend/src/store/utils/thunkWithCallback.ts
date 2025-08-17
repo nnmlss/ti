@@ -1,4 +1,4 @@
-import type { AppDispatch } from '@store';
+import type { AppDispatch } from '@store/store';
 
 interface ThunkWithCallbackOptions {
   thunkAction: unknown; // RTK thunk

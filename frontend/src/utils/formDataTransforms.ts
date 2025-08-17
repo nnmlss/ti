@@ -68,26 +68,26 @@ export type UpdatePayload = Partial<FlyingSite> & MongoUpdateOperators;
 const initialFormState: FormDataSite = {
   title: { bg: '', en: '' },
   windDirection: [],
-  location: { type: FORM_DEFAULTS.POINT_TYPE, coordinates: FORM_DEFAULTS.EMPTY_COORDINATES },
+  location: { type: FORM_DEFAULTS.POINT_TYPE, coordinates: [...FORM_DEFAULTS.EMPTY_COORDINATES] },
   altitude: '',
   accessOptions: [] as AccessOptionId[],
   galleryImages: [],
-  accomodations: { bg: FORM_DEFAULTS.EMPTY_STRING_ARRAY, en: FORM_DEFAULTS.EMPTY_STRING_ARRAY },
-  alternatives: { bg: FORM_DEFAULTS.EMPTY_STRING_ARRAY, en: FORM_DEFAULTS.EMPTY_STRING_ARRAY },
+  accomodations: { bg: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY], en: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY] },
+  alternatives: { bg: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY], en: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY] },
   access: { bg: '', en: '' },
   landingFields: [
     {
       description: { bg: '', en: '' },
       location: {
         type: FORM_DEFAULTS.POINT_TYPE,
-        coordinates: FORM_DEFAULTS.EMPTY_COORDINATES,
+        coordinates: [...FORM_DEFAULTS.EMPTY_COORDINATES],
       },
     },
   ],
-  tracklogs: FORM_DEFAULTS.EMPTY_STRING_ARRAY,
+  tracklogs: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY],
   localPilotsClubs: {
-    bg: FORM_DEFAULTS.EMPTY_STRING_ARRAY,
-    en: FORM_DEFAULTS.EMPTY_STRING_ARRAY,
+    bg: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY],
+    en: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY],
   },
 };
 
@@ -120,7 +120,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
           description: { bg: '', en: '' },
           location: {
             type: FORM_DEFAULTS.POINT_TYPE,
-            coordinates: FORM_DEFAULTS.EMPTY_COORDINATES,
+            coordinates: [...FORM_DEFAULTS.EMPTY_COORDINATES],
           },
         },
       ];

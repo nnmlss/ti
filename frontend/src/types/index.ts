@@ -62,7 +62,6 @@ export type {
   WindDirectionCompassProps,
   AccessOptionsViewProps,
   SitesMapProps,
-  HomePageProps,
   SiteDetailPageProps,
   DeleteDialogState,
   DeleteConfirmDialogProps,
@@ -70,6 +69,9 @@ export type {
   ProtectedRouteContainerProps,
   ProtectedRouteProps,
   PageHeaderProps,
+  MigrationResult,
+  MigrationResultDialogProps,
+  BottomNavigationBarProps,
 } from './components';
 
 // ===== GRAPHQL TYPES =====

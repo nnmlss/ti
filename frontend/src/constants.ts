@@ -29,8 +29,6 @@ export const windDirections: WindDirection[] = [
   'NNW',
 ];
 
-// Routes
-export const validRoutes = ['/', '/add-site', '/edit-site', '/site', '/sites'];
 
 // Timeouts (in milliseconds)
 export const TIMEOUTS = {

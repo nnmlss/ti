@@ -2,7 +2,7 @@ import { CardContent, Typography, CardActions, Button, Box, Divider } from '@mui
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { SiteCardContentProps } from '@app-types/components';
+import type { SiteCardContentProps } from '@app-types';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 

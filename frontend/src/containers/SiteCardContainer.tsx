@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SiteCard } from '@components/site/SiteCard';
-import type { SiteCardContainerProps, DeleteDialogState } from '@app-types/components';
+import type { SiteCardContainerProps, DeleteDialogState } from '@app-types';
 
 export const SiteCardContainer: React.FC<SiteCardContainerProps> = ({ site }) => {
   const navigate = useNavigate();

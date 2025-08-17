@@ -20,6 +20,7 @@ export function NotificationDialog({ notification, onClose }: NotificationDialog
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [open, handleClose]);
 
   return (

@@ -32,6 +32,7 @@
       "@contexts/*": ["src/contexts/*"],
       "@constants": ["src/constants.ts"],
       "@assets/*": ["src/assets/*"],
+      "@app-types": ["src/types/index.ts"],
       "@app-types/*": ["src/types/*"]
     },
 

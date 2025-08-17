@@ -5,7 +5,7 @@ import { UserIconGroup } from '@components/auth/UserIconGroup';
 import { MigrationResultDialog } from '@components/dialogs/MigrationResultDialog';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { gql } from 'graphql-request';
-import type { MigrationResult } from '@app-types/components';
+import type { MigrationResult } from '@app-types';
 
 const MIGRATE_URLS_MUTATION = gql`
   mutation MigrateUrls {
@@ -50,7 +50,9 @@ export const UserIconGroupContainer: React.FC = () => {
 
     try {
       const client = getGraphQLClient(true); // Authenticated request
-      const result = await client.request<{ migrateAddUrls: MigrationResult }>(MIGRATE_URLS_MUTATION);
+      const result = await client.request<{ migrateAddUrls: MigrationResult }>(
+        MIGRATE_URLS_MUTATION
+      );
       setMigrationResult(result.migrateAddUrls);
 
       if (result.migrateAddUrls.errors.length > 0) {

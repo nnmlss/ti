@@ -1,7 +1,7 @@
 import React from 'react';
 import { SiteCardContent } from '@components/site/SiteCardContent';
 import { useSiteCardContent } from '@hooks/ui/useSiteCardContent';
-import type { SiteCardContentProps } from '@app-types/components';
+import type { SiteCardContentProps } from '@app-types';
 
 type SiteCardContentContainerProps = Omit<SiteCardContentProps, 'isAuthenticated' | 'isPopup'>;
 
@@ -15,10 +15,10 @@ export const SiteCardContentContainer: React.FC<SiteCardContentContainerProps> =
   compassSize = 75,
 }) => {
   const { isAuthenticated } = useSiteCardContent();
-  
+
   // Derived state
   const isPopup = variant === 'popup';
-  
+
   // Event handlers with business logic
   const handleShowOnMap = (e?: React.MouseEvent) => {
     if (isPopup && e) {
@@ -26,14 +26,14 @@ export const SiteCardContentContainer: React.FC<SiteCardContentContainerProps> =
     }
     onShowOnMap();
   };
-  
+
   const handleEdit = (e?: React.MouseEvent) => {
     if (isPopup && e) {
       e.stopPropagation();
     }
     onEdit();
   };
-  
+
   const handleDelete = (e?: React.MouseEvent) => {
     if (isPopup && e) {
       e.stopPropagation();

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { FlyingSite, WindDirection, AccessOptionId } from './sites';
 import type { AuthUser as AuthUserType } from './auth';
+import type { SEOConfig } from './ui';
 
 // ===== CONTAINER PROPS =====
 export interface SiteCardContainerProps {

@@ -1,7 +1,7 @@
 import type { AppDispatch } from '@store/store';
 
 interface ThunkWithCallbackOptions {
-  thunkAction: unknown; // RTK thunk
+  thunkAction: any; // RTK thunk - using any to avoid dispatch issues
   onSuccess?: () => void;
   onError?: (error: string) => void;
 }

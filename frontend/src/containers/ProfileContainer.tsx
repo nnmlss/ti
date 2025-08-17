@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Profile } from '@components/pages/Profile';
 import { useProfilePage } from '@hooks/pages/useProfilePage';

@@ -22,7 +22,7 @@ export interface FormDataSite
     | 'landingFields'
   > {
   location: {
-    type: FORM_DEFAULTS.POINT_TYPE;
+    type: typeof FORM_DEFAULTS.POINT_TYPE;
     coordinates: [string, string]; // String for form inputs
   };
   altitude: string;
@@ -52,7 +52,7 @@ export interface FormLandingField {
     en: string;
   };
   location: {
-    type: FORM_DEFAULTS.POINT_TYPE;
+    type: typeof FORM_DEFAULTS.POINT_TYPE;
     coordinates: [string, string];
   };
 }
@@ -129,7 +129,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
     return fields.map((field) => ({
       description: transformLocalizedText(field.description),
       location: {
-        type: FORM_DEFAULTS.POINT_TYPE as const,
+        type: FORM_DEFAULTS.POINT_TYPE,
         coordinates: [
           field.location?.coordinates[0]?.toString() || '',
           field.location?.coordinates[1]?.toString() || '',
@@ -142,7 +142,7 @@ export function toFormData(site?: FlyingSite): FormDataSite {
     title: transformLocalizedText(site.title),
     windDirection: site.windDirection ? [...site.windDirection] : [],
     location: {
-      type: FORM_DEFAULTS.POINT_TYPE as const,
+      type: FORM_DEFAULTS.POINT_TYPE,
       coordinates: [
         site.location.coordinates[0]?.toString() || '',
         site.location.coordinates[1]?.toString() || '',

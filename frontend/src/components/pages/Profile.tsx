@@ -13,38 +13,30 @@ import {
   Fade,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { useProfilePage } from '@hooks/pages/useProfilePage';
-import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@components/common/PageHeader';
+import type { ProfileProps } from '@app-types';
 
-export const Profile: React.FC = () => {
-  const navigate = useNavigate();
-  const [fadeIn, setFadeIn] = React.useState(true);
-
-  const handleBackClick = () => {
-    setFadeIn(false);
-    setTimeout(() => navigate('/'), 300);
-  };
-
-  const {
-    user,
-    formData,
-    loading,
-    message,
-    error,
-    isCurrentPasswordValid,
-    passwordCheckLoading,
-    hasPasswordCheckCompleted,
-    showRepeatPasswordError,
-    showPasswordLengthError,
-    hasStartedTypingCurrentPassword,
-    doPasswordsMatch,
-    needsCurrentPassword,
-    isFormValid,
-    resetField,
-    handleInputChange,
-    onSubmit,
-  } = useProfilePage();
+export function Profile({
+  fadeIn,
+  onBackClick,
+  user,
+  formData,
+  loading,
+  message,
+  error,
+  isCurrentPasswordValid,
+  passwordCheckLoading,
+  hasPasswordCheckCompleted,
+  showRepeatPasswordError,
+  showPasswordLengthError,
+  hasStartedTypingCurrentPassword,
+  doPasswordsMatch,
+  needsCurrentPassword,
+  isFormValid,
+  resetField,
+  handleInputChange,
+  onSubmit,
+}: ProfileProps) {
 
   if (!user) {
     return (
@@ -65,7 +57,7 @@ export const Profile: React.FC = () => {
     <Container maxWidth='sm' sx={{ mt: 8 }}>
       <Fade in={fadeIn} timeout={300}>
         <Paper elevation={3} sx={{ p: 4 }}>
-        <PageHeader title="Профил" onBackClick={handleBackClick} />
+        <PageHeader title="Профил" onBackClick={onBackClick} />
 
         <Box component='form' onSubmit={onSubmit} sx={{ mt: 3 }}>
           <TextField

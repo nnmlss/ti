@@ -2,9 +2,20 @@ import { CardContent, Typography, CardActions, Button, Box, Divider } from '@mui
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { SiteCardContentProps } from '@app-types';
+import { useAuth } from '@hooks/auth/useAuth';
+import type { FlyingSite } from '@app-types';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
+
+interface SiteCardContentProps {
+  site: FlyingSite;
+  onEdit: () => void;
+  onDelete: () => void;
+  onViewDetails: () => void;
+  onShowOnMap: () => void;
+  compassSize?: number;
+  variant?: 'card' | 'popup';
+}
 
 export function SiteCardContent({
   site,
@@ -13,9 +24,10 @@ export function SiteCardContent({
   onViewDetails,
   onShowOnMap,
   compassSize = 75,
-  isAuthenticated,
-  isPopup,
+  variant = 'card',
 }: SiteCardContentProps) {
+  const { isAuthenticated } = useAuth();
+  const isPopup = variant === 'popup';
   // Styles - Centralized and reusable
   const cardContentStyles = {
     flexGrow: 1,

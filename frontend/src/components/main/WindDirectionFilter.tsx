@@ -1,13 +1,27 @@
 import { Box, Button, Paper, Typography } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
 import AirIcon from '@mui/icons-material/Air';
 import { windDirections } from '@constants';
-import type { WindDirectionFilterProps } from '@app-types';
+import type { RootState } from '@store/store';
+import { setWindDirectionFilter, clearFilters } from '@store/slices/filterSlice';
 
-export function WindDirectionFilter({
-  selectedFilter,
-  onFilterSelect,
-  onClearFilter,
-}: WindDirectionFilterProps) {
+interface WindDirectionFilterProps {
+  onClose: () => void;
+}
+
+export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
+  const dispatch = useDispatch();
+  const selectedFilter = useSelector((state: RootState) => state.filter.windDirection);
+
+  const handleFilterSelect = (direction: string) => {
+    dispatch(setWindDirectionFilter(direction));
+    onClose();
+  };
+
+  const handleClearFilter = () => {
+    dispatch(clearFilters());
+    onClose();
+  };
   return (
     <Paper
       sx={{
@@ -26,7 +40,7 @@ export function WindDirectionFilter({
 
       {/* Reset button */}
       <Button
-        onClick={onClearFilter}
+        onClick={handleClearFilter}
         variant={!selectedFilter ? 'contained' : 'outlined'}
         size='small'
         sx={{ mb: 2, width: '100%' }}
@@ -45,7 +59,7 @@ export function WindDirectionFilter({
         {windDirections.map((direction) => (
           <Button
             key={direction}
-            onClick={() => onFilterSelect(direction)}
+            onClick={() => handleFilterSelect(direction)}
             variant={selectedFilter === direction ? 'contained' : 'outlined'}
             size='small'
             sx={{

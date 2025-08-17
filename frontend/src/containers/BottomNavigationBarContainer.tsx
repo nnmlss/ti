@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { BottomNavigationBar } from '@/components/main/BottomNavigationBar';
-import { WindDirectionFilterContainer as WindDirectionFilter } from '@containers/WindDirectionFilterContainer';
+import { WindDirectionFilter } from '@components/main/WindDirectionFilter';
 import { setHomeView } from '@store/slices/homeViewSlice';
 import { useAuth } from '@hooks/auth/useAuth';
 import type { RootState } from '@store/store';

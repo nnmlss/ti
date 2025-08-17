@@ -1,4 +1,4 @@
-import { SiteDetailView } from '@components/site/SiteDetailView';
+import { SiteDetailViewContainer as SiteDetailView } from '@containers/SiteDetailViewContainer';
 import { PageHeader } from '@components/common/PageHeader';
 import {
   Container,
@@ -6,11 +6,10 @@ import {
   Alert,
   Box,
 } from '@mui/material';
-import { useSiteDetailPage } from '@hooks/pages/useSiteDetailPage';
 import { SEOHead } from '@components/seo/SEOHead';
+import type { SiteDetailPageProps } from '@app-types';
 
-export function SiteDetailPage() {
-  const { site, loading, siteId, onClose } = useSiteDetailPage();
+export function SiteDetailPage({ site, loading, siteId, onClose }: SiteDetailPageProps) {
   const renderContent = () => {
     // Show loading while fetching individual site data
     if (loading === 'pending') {
@@ -35,8 +34,10 @@ export function SiteDetailPage() {
     <>
       <SEOHead config={{
         title: site ? `${site.title.bg || site.title.en}` : 'Зареждане...',
-        description: site ? `Подробна информация за място за летене ${site.title.bg || site.title.en}` : undefined,
-        canonical: site?.url ? `/sites/${site.url}` : undefined
+        ...(site && {
+          description: `Подробна информация за място за летене ${site.title.bg || site.title.en}`,
+          ...(site.url && { canonical: `/sites/${site.url}` })
+        })
       }} site={site || undefined} />
       
       <Container maxWidth={false} sx={{ py: 2, minHeight: '100vh', pb: 10 }}>

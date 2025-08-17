@@ -1,12 +1,9 @@
-import { useSites } from '@hooks/business/useSites';
 import { SiteCardContainer } from '@containers/SiteCardContainer';
 import { CircularProgress, Alert, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import type { SitesListProps } from '@app-types';
 
-export function SitesList() {
-  const { sites, allSitesLoadState } = useSites();
-  const loading = allSitesLoadState.status;
-  const error = allSitesLoadState.error;
+export function SitesList({ sites, loading, error }: SitesListProps) {
 
   if (loading === 'pending' && sites.length === 0) {
     return (

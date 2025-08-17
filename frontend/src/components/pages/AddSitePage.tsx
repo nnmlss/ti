@@ -1,12 +1,11 @@
 import { DialogTitle, DialogContent, IconButton, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import { useAddSitePage } from '@hooks/pages/useAddSitePage';
 import { AccessibleDialog } from '@components/ui/AccessibleDialog';
 import EditSite from '@components/site/EditSite';
+import type { AddSitePageProps } from '@app-types';
 
-export function AddSitePage() {
-  const { onClose } = useAddSitePage();
+export function AddSitePage({ onClose }: AddSitePageProps) {
 
   return (
     <AccessibleDialog

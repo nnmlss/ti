@@ -5,7 +5,7 @@ import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import type { SiteDetailViewProps } from '@app-types';
 
-export function SiteDetailView({ site }: SiteDetailViewProps) {
+export function SiteDetailView({ site, onOpenLocation, onOpenTracklog }: SiteDetailViewProps) {
   const renderLocalizedText = (
     text: { bg?: string; en?: string } | undefined,
     label: string
@@ -133,10 +133,7 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
                     <Button
                       size='small'
                       startIcon={<LocationOnIcon />}
-                      onClick={() => {
-                        const [lng, lat] = field.location!.coordinates;
-                        window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
-                      }}
+                      onClick={() => onOpenLocation(field.location!.coordinates)}
                     >
                       Отвори в Google Maps
                     </Button>
@@ -163,8 +160,7 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
             <Button
               variant='outlined'
               size='small'
-              href={tracklog}
-              target='_blank'
+              onClick={() => onOpenTracklog(tracklog)}
               sx={{ mb: 0.5 }}
             >
               Tracklog {index + 1}
@@ -236,10 +232,7 @@ export function SiteDetailView({ site }: SiteDetailViewProps) {
           <Button
             variant='contained'
             startIcon={<LocationOnIcon />}
-            onClick={() => {
-              const [lng, lat] = site.location.coordinates;
-              window.open(`https://maps.google.com/maps?q=${lat},${lng}`, '_blank');
-            }}
+            onClick={() => onOpenLocation(site.location.coordinates)}
           >
             Отвори в Google Maps
           </Button>

@@ -1,23 +1,12 @@
 import { SitesMapContainer as SitesMap } from '@containers/SitesMapContainer';
-import { SitesList } from '@components/main/SitesList';
-import { WindDirectionFilterContainer as WindDirectionFilter } from '@containers/WindDirectionFilterContainer';
+import { SitesListContainer as SitesList } from '@containers/SitesListContainer';
+import { WindDirectionFilter } from '@components/main/WindDirectionFilter';
 import { Box, Fade } from '@mui/material';
-import { useHomePage } from '@hooks/pages/useHomePage';
 import { SEOHead } from '@components/seo/SEOHead';
+import type { HomePageProps } from '@app-types';
 
-export function HomePage() {
+export function HomePage({ isListView, showWindFilter, onWindFilterClose }: HomePageProps) {
   const fadeIn = true;
-
-  const {
-    homeView,
-    // filter,
-    showWindFilter,
-    // onViewToggle,
-    // onWindFilterToggle,
-    onWindFilterClose,
-  } = useHomePage();
-
-  const isListView = homeView === 'list';
 
   return (
     <>

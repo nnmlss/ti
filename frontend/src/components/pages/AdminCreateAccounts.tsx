@@ -16,36 +16,28 @@ import {
   Fade,
 } from '@mui/material';
 import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
-import { useAdminCreateAccountsPage } from '@hooks/pages/useAdminCreateAccountsPage';
-import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@components/common/PageHeader';
+import type { AdminCreateAccountsProps } from '@app-types';
 
-export const AdminCreateAccounts: React.FC = () => {
-  const navigate = useNavigate();
-  const [fadeIn, setFadeIn] = React.useState(true);
-
-  const handleBackClick = () => {
-    setFadeIn(false);
-    setTimeout(() => navigate('/'), 300);
-  };
-
-  const {
-    emails,
-    loading,
-    results,
-    error,
-    successMessage,
-    addEmailField,
-    removeEmailField,
-    updateEmail,
-    onSubmit,
-  } = useAdminCreateAccountsPage();
+export function AdminCreateAccounts({
+  fadeIn,
+  onBackClick,
+  emails,
+  loading,
+  results,
+  error,
+  successMessage,
+  addEmailField,
+  removeEmailField,
+  updateEmail,
+  onSubmit,
+}: AdminCreateAccountsProps) {
 
   return (
     <Container maxWidth='md' sx={{ mt: 4 }}>
       <Fade in={fadeIn} timeout={300}>
         <Paper elevation={3} sx={{ p: 4 }}>
-          <PageHeader title="Още профили" onBackClick={handleBackClick} />
+          <PageHeader title="Още профили" onBackClick={onBackClick} />
 
         <Typography variant='body1' color='textSecondary' align='center' sx={{ mb: 2 }}>
           Потребителите трябва да използват страницата за активация от мейла, за да зададат

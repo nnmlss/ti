@@ -2,9 +2,9 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@hooks/auth/useAuth';
 import { ProtectedRoute } from '@components/auth/ProtectedRoute';
-import type { ProtectedRouteProps } from '@app-types';
+import type { ProtectedRouteContainerProps } from '@app-types';
 
-export const ProtectedRouteContainer: React.FC<ProtectedRouteProps> = ({
+export const ProtectedRouteContainer: React.FC<ProtectedRouteContainerProps> = ({
   children,
   requireSuperAdmin = false,
 }) => {

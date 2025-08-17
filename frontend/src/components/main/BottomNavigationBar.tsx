@@ -5,7 +5,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PublicIcon from '@mui/icons-material/Public';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
-import { UserIconGroupContainer as UserIconGroup } from '@containers/UserIconGroupContainer';
+import { UserIconGroup } from '@components/auth/UserIconGroup';
 import type { BottomNavigationBarProps } from '@app-types';
 
 export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({

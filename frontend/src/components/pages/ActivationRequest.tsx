@@ -9,18 +9,17 @@ import {
   Box,
   CircularProgress 
 } from '@mui/material';
-import { useActivationRequestPage } from '@hooks/pages/useActivationRequestPage';
+import type { ActivationRequestProps } from '@app-types';
 
-export const ActivationRequest: React.FC = () => {
-  const {
-    email,
-    loading,
-    message,
-    error,
-    expiryMinutes,
-    onSubmit,
-    onEmailChange,
-  } = useActivationRequestPage();
+export function ActivationRequest({
+  email,
+  loading,
+  message,
+  error,
+  expiryMinutes,
+  onSubmit,
+  onEmailChange,
+}: ActivationRequestProps) {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>

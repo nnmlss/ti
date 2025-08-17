@@ -1,14 +1,9 @@
 import { Helmet } from 'react-helmet-async';
-import type { SEOConfig, FlyingSite } from '@app-types';
+import type { SEOHeadProps } from '@app-types';
 
 const DEFAULT_TITLE = 'Места за летене с парапланер в България';
 const DEFAULT_DESCRIPTION =
   'Открийте най-добрите места за летене с парапланер в България. Подробна информация за старт, достъп, височина, посока на вятър и условия за всяко място.';
-
-interface SEOHeadProps {
-  config: SEOConfig;
-  site?: FlyingSite;
-}
 
 export function SEOHead({ config, site }: SEOHeadProps) {
   const pageTitle = site

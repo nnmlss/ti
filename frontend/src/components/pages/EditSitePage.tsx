@@ -1,4 +1,3 @@
-import { useEditSitePage } from '@hooks/pages/useEditSitePage';
 import EditSite from '@components/site/EditSite';
 import { AccessibleDialog } from '@components/ui/AccessibleDialog';
 import {
@@ -8,14 +7,12 @@ import {
   CircularProgress,
   Alert,
   Box,
-  // Button,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-// import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import type { EditSitePageProps } from '@app-types';
 
-export function EditSitePage() {
-  const { site, loading, siteId, onClose } = useEditSitePage();
+export function EditSitePage({ site, loading, siteId, onClose }: EditSitePageProps) {
 
   const renderContent = () => {
     // Show loading while fetching individual site data

@@ -9,19 +9,18 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
-import { useLoginPage } from '@hooks/pages/useLoginPage';
+import type { LoginProps } from '@app-types';
 
-export const Login: React.FC = () => {
-  const {
-    username,
-    password,
-    loading,
-    error,
-    setUsername,
-    setPassword,
-    onSubmit,
-    onActivationClick,
-  } = useLoginPage();
+export function Login({
+  username,
+  password,
+  loading,
+  error,
+  setUsername,
+  setPassword,
+  onSubmit,
+  onActivationClick,
+}: LoginProps) {
 
   return (
     <Container maxWidth='sm' sx={{ mt: 8 }}>

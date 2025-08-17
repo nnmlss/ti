@@ -9,24 +9,23 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
-import { useCompleteActivationPage } from '@hooks/pages/useCompleteActivationPage';
+import type { CompleteActivationProps } from '@app-types';
 
-export const CompleteActivation: React.FC = () => {
-  const {
-    username,
-    password,
-    confirmPassword,
-    loading,
-    validating,
-    message,
-    error,
-    tokenValid,
-    setUsername,
-    setPassword,
-    setConfirmPassword,
-    onSubmit,
-    onRequestNewActivation,
-  } = useCompleteActivationPage();
+export function CompleteActivation({
+  username,
+  password,
+  confirmPassword,
+  loading,
+  validating,
+  message,
+  error,
+  tokenValid,
+  setUsername,
+  setPassword,
+  setConfirmPassword,
+  onSubmit,
+  onRequestNewActivation,
+}: CompleteActivationProps) {
 
   if (validating) {
     return (

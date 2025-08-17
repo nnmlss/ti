@@ -1,9 +1,6 @@
 import React from 'react';
 import { Container, Paper, Typography, CircularProgress, Box } from '@mui/material';
-
-interface ProtectedRouteProps {
-  state: 'loading' | 'access-denied';
-}
+import type { ProtectedRouteProps } from '@app-types';
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ state }) => {
   if (state === 'loading') {

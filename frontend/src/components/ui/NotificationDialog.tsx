@@ -1,6 +1,11 @@
 import { useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogActions, Button, Alert, AlertTitle } from '@mui/material';
-import type { NotificationDialogProps } from '@app-types';
+import type { NotificationState } from '@app-types';
+
+interface NotificationDialogProps {
+  notification: NotificationState;
+  onClose: () => void;
+}
 
 export function NotificationDialog({ notification, onClose }: NotificationDialogProps) {
   const { open, message, severity, title, onAutoClose } = notification;
@@ -16,7 +21,7 @@ export function NotificationDialog({ notification, onClose }: NotificationDialog
     if (open) {
       const timer = setTimeout(() => {
         handleClose();
-      }, 7000); // 7 seconds
+      }, 7000);
 
       return () => clearTimeout(timer);
     }
@@ -26,7 +31,7 @@ export function NotificationDialog({ notification, onClose }: NotificationDialog
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       aria-labelledby='notification-dialog-title'
       aria-describedby='notification-dialog-description'
       maxWidth='sm'

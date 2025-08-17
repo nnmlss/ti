@@ -1,6 +1,6 @@
 import { Card } from '@mui/material';
 import type { SiteCardProps } from '@app-types';
-import { SiteCardContentContainer as SiteCardContent } from '@containers/SiteCardContentContainer';
+import { SiteCardContent } from './SiteCardContent';
 import { DeleteConfirmDialogContainer as DeleteConfirmDialog } from '@containers/DeleteConfirmDialogContainer';
 
 export function SiteCard({

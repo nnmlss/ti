@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
 // Mock environment variables
-process.env.NODE_ENV = 'test';
+process.env['NODE_ENV'] = 'test';
 
 // Mock mongoose connection
 vi.mock('mongoose', () => ({

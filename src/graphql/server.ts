@@ -25,7 +25,7 @@ export async function createGraphQLContext({ req }: { req: any }): Promise<Graph
 
   try {
     // Verify JWT token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
+    const decoded = jwt.verify(token, process.env['JWT_SECRET'] || 'fallback-secret') as any;
 
     // Get user from database
     const user = await User.findOne({ _id: decoded.id, isActive: true });
@@ -84,7 +84,7 @@ export async function setupGraphQLBeforeRoutes(app: Express) {
   return schema;
 }
 
-export async function setupGraphQL(app: Express, httpServer: any) {
+export async function setupGraphQL(_app: Express, _httpServer: any) {
   // Not needed anymore
   return null;
 }

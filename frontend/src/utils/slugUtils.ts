@@ -1,14 +1,14 @@
-import type { FlyingSite, LocalizedText } from '@types';
+import type { FlyingSite, LocalizedText } from '@app-types';
 
 // Generate clean slug from Bulgarian site title (no ID)
 export function generateSiteSlug(title: LocalizedText): string {
   const siteTitle = title.bg || title.en || '';
   const slug = siteTitle
     .toLowerCase()
-    .replace(/\s+/g, '-')     // Replace spaces with hyphens
-    .replace(/-+/g, '-')      // Replace multiple hyphens with single
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
     .trim();
-  
+
   return slug || 'site';
 }
 

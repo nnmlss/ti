@@ -4,7 +4,7 @@ import type { RootState, AppDispatch } from '@store/store';
 import { dispatchThunkWithCallback } from '@store/utils/thunkWithCallback';
 import { useImmediateAsync } from '@hooks/utils/useImmediateAsync';
 import { DeleteConfirmDialog } from '@components/ui/DeleteConfirmDialog';
-import type { DeleteConfirmDialogContainerProps } from '@types';
+import type { DeleteConfirmDialogContainerProps } from '@app-types';
 
 export function DeleteConfirmDialogContainer({
   open,

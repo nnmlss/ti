@@ -31,12 +31,14 @@ export interface SiteCardProps {
 
 export interface SiteCardContentProps {
   site: FlyingSite;
-  onEdit: () => void;
-  onDelete: () => void;
+  onEdit: (e?: React.MouseEvent) => void;
+  onDelete: (e?: React.MouseEvent) => void;
   onViewDetails: () => void;
-  onShowOnMap: () => void;
+  onShowOnMap: (e?: React.MouseEvent) => void;
   variant?: 'card' | 'popup';
   compassSize?: number;
+  isAuthenticated: boolean;
+  isPopup: boolean;
 }
 
 export interface SiteDetailViewProps {
@@ -166,9 +168,10 @@ export interface PageHeaderProps {
 
 // ===== NAVIGATION PROPS =====
 export interface BottomNavigationBarProps {
-  // Home page specific props (only used when on home page)
-  homeView?: 'map' | 'list';
-  filter?: { windDirection: string | null };
-  onViewToggle?: (view: 'map' | 'list') => void;
-  onWindFilterToggle?: () => void;
+  isAuthenticated: boolean;
+  isHomePage: boolean;
+  isListView: boolean;
+  filter: { windDirection: string | null };
+  onViewToggle: (view: 'map' | 'list') => void;
+  onWindFilterOpen: () => void;
 }

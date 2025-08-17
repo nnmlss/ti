@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { REQUEST_ACTIVATION } from '@utils/graphqlQueries';
-import type { RequestActivationResponse, UseActivationRequestReturn } from '@types';
+import type { RequestActivationResponse, UseActivationRequestReturn } from '@app-types';
 
 export const useActivationRequest = (): UseActivationRequestReturn => {
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,7 @@ export const useActivationRequest = (): UseActivationRequestReturn => {
       } else {
         setError(data.requestActivation.message || 'An error occurred');
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_err) {
       setError('Failed to send activation request. Please try again.');
     } finally {

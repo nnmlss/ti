@@ -15,7 +15,7 @@ import {
 } from '@store/slices/singleSiteSlice';
 import { setHomeView } from '@store/slices/homeViewSlice';
 import { setWindDirectionFilter, clearFilters } from '@store/slices/filterSlice';
-import type { FlyingSite, WindDirection } from '@types';
+import type { FlyingSite, WindDirection } from '@app-types';
 
 export const useSites = () => {
   const dispatch = useDispatch<AppDispatch>();

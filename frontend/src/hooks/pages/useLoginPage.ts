@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { LOGIN } from '@utils/graphqlQueries';
-import type { LoginResponse } from '@types';
-import { useAuth } from "@hooks/auth/useAuth";
+import type { LoginResponse } from '@app-types';
+import { useAuth } from '@hooks/auth/useAuth';
 
 export function useLoginPage() {
   const navigate = useNavigate();

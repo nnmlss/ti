@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HomeIcon from '@mui/icons-material/Home';
-import type { GlobalErrorNotificationProps } from '@types';
+import type { GlobalErrorNotificationProps } from '@app-types';
 
 export function GlobalErrorNotification({
   open,
@@ -22,7 +22,6 @@ export function GlobalErrorNotification({
   onRetry,
   onGoHome,
 }: GlobalErrorNotificationProps) {
-
   return (
     <Dialog
       open={open}

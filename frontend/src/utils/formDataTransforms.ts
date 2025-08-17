@@ -4,7 +4,7 @@ import type {
   LandingFieldInfo,
   GalleryImage,
   AccessOptionId,
-} from '@types';
+} from '@app-types';
 import { FORM_DEFAULTS } from '@constants';
 
 // Form data type with empty strings instead of null/undefined for UI editing
@@ -78,11 +78,17 @@ const initialFormState: FormDataSite = {
   landingFields: [
     {
       description: { bg: '', en: '' },
-      location: { type: FORM_DEFAULTS.POINT_TYPE, coordinates: FORM_DEFAULTS.EMPTY_COORDINATES },
+      location: {
+        type: FORM_DEFAULTS.POINT_TYPE,
+        coordinates: FORM_DEFAULTS.EMPTY_COORDINATES,
+      },
     },
   ],
   tracklogs: FORM_DEFAULTS.EMPTY_STRING_ARRAY,
-  localPilotsClubs: { bg: FORM_DEFAULTS.EMPTY_STRING_ARRAY, en: FORM_DEFAULTS.EMPTY_STRING_ARRAY },
+  localPilotsClubs: {
+    bg: FORM_DEFAULTS.EMPTY_STRING_ARRAY,
+    en: FORM_DEFAULTS.EMPTY_STRING_ARRAY,
+  },
 };
 
 /**
@@ -112,7 +118,10 @@ export function toFormData(site?: FlyingSite): FormDataSite {
       return [
         {
           description: { bg: '', en: '' },
-          location: { type: FORM_DEFAULTS.POINT_TYPE, coordinates: FORM_DEFAULTS.EMPTY_COORDINATES },
+          location: {
+            type: FORM_DEFAULTS.POINT_TYPE,
+            coordinates: FORM_DEFAULTS.EMPTY_COORDINATES,
+          },
         },
       ];
     }

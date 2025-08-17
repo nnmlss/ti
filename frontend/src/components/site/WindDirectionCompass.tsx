@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { Box, useTheme } from '@mui/material';
-import type { WindDirection, WindDirectionCompassProps } from '@types';
+import type { WindDirection, WindDirectionCompassProps } from '@app-types';
 
 const WIND_DIRECTION_ANGLES: Record<WindDirection, number> = {
   N: 0,

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { CREATE_USER_ACCOUNTS } from '@utils/graphqlQueries';
 import { FORM_DEFAULTS } from '@constants';
-import type { CreateUserAccountsResponse, AccountCreationResult } from '@types';
+import type { CreateUserAccountsResponse, AccountCreationResult } from '@app-types';
 
 export function useAdminCreateAccountsPage() {
   const [emails, setEmails] = useState<string[]>(FORM_DEFAULTS.EMPTY_STRING_ARRAY);

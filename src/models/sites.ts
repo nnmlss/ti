@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import type { FlyingSiteDocument } from '@types'
+import type { FlyingSiteDocument } from '@types';
 
 const LocationSchema = new Schema(
   {
@@ -32,11 +32,11 @@ const GalleryImageSchema = new Schema(
 );
 
 // Deprecated legacy schema kept for backward compatibility in existing documents
-const AccessOptionSchema = new Schema({
-  _id: { type: Number, required: true },
-  bg: { type: String },
-  en: { type: String },
-});
+// const AccessOptionSchema = new Schema({
+//   _id: { type: Number, required: true },
+//   bg: { type: String },
+//   en: { type: String },
+// });
 
 const LandingFieldInfoSchema = new Schema(
   {
@@ -129,8 +129,8 @@ const FlyingSiteSchema = new Schema(
           const isEmptyString = (v: unknown) => typeof v === 'string' && v.trim().length === 0;
 
           // Normalize accessOptions to numbers if legacy objects are present
-          if (Array.isArray(ret.accessOptions)) {
-            ret.accessOptions = ret.accessOptions
+          if (Array.isArray(ret['accessOptions'])) {
+            ret['accessOptions'] = ret['accessOptions']
               .map((v: unknown) => (typeof v === 'number' ? v : (v as { _id?: number })?._id))
               .filter((id: unknown) => typeof id === 'number' && [0, 1, 2, 3, 4].includes(id));
           }
@@ -148,25 +148,25 @@ const FlyingSiteSchema = new Schema(
             removeBilingualArraysIfEmpty
           );
           // Remove access if both bg/en empty or missing
-          if (ret.access) {
-            const bgEmpty = ret.access.bg === undefined || isEmptyString(ret.access.bg);
-            const enEmpty = ret.access.en === undefined || isEmptyString(ret.access.en);
-            if (bgEmpty && enEmpty) delete ret.access;
+          if (ret['access']) {
+            const bgEmpty = ret['access'].bg === undefined || isEmptyString(ret['access'].bg);
+            const enEmpty = ret['access'].en === undefined || isEmptyString(ret['access'].en);
+            if (bgEmpty && enEmpty) delete ret['access'];
           }
           // Remove unique if both bg/en empty or missing
-          if (ret.unique) {
-            const bgEmpty = ret.unique.bg === undefined || isEmptyString(ret.unique.bg);
-            const enEmpty = ret.unique.en === undefined || isEmptyString(ret.unique.en);
-            if (bgEmpty && enEmpty) delete ret.unique;
+          if (ret['unique']) {
+            const bgEmpty = ret['unique'].bg === undefined || isEmptyString(ret['unique'].bg);
+            const enEmpty = ret['unique'].en === undefined || isEmptyString(ret['unique'].en);
+            if (bgEmpty && enEmpty) delete ret['unique'];
           }
           // Remove monuments if both bg/en empty or missing
-          if (ret.monuments) {
-            const bgEmpty = ret.monuments.bg === undefined || isEmptyString(ret.monuments.bg);
-            const enEmpty = ret.monuments.en === undefined || isEmptyString(ret.monuments.en);
-            if (bgEmpty && enEmpty) delete ret.monuments;
+          if (ret['monuments']) {
+            const bgEmpty = ret['monuments'].bg === undefined || isEmptyString(ret['monuments'].bg);
+            const enEmpty = ret['monuments'].en === undefined || isEmptyString(ret['monuments'].en);
+            if (bgEmpty && enEmpty) delete ret['monuments'];
           }
           // Do not expose id virtual or version key
-          delete ret.id;
+          delete ret['id'];
         } catch (e) {
           console.error('toJSON transform error:', e);
           return ret;

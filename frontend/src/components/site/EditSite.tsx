@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Controller } from 'react-hook-form';
 
-import type { EditSiteProps } from '@types';
+import type { EditSiteProps } from '@app-types';
 import { useEditSiteForm } from '@hooks/business/useEditSiteForm';
 import { accessOptions } from '@constants';
 import { windDirections } from '@constants';

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { GET_CONSTANTS } from '@utils/graphqlQueries';
-import type { GetConstantsResponse, UseConstantsReturn } from '@types';
+import type { GetConstantsResponse, UseConstantsReturn } from '@app-types';
 
 export const useConstants = (): UseConstantsReturn => {
   const [expiryMinutes, setExpiryMinutes] = useState<number | null>(null);
@@ -13,7 +13,7 @@ export const useConstants = (): UseConstantsReturn => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const client = getGraphQLClient(false);
         const data = await client.request<GetConstantsResponse>(GET_CONSTANTS);
         setExpiryMinutes(data.constants.activationTokenExpiryMinutes);

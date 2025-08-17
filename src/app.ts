@@ -11,30 +11,32 @@ import { connectDB } from './config/database.js';
 import { EmailService } from './services/emailService.js';
 import { setupGraphQLBeforeRoutes } from './graphql/server.js';
 import path from 'path';
-import type { CustomError } from '@types'
+import type { CustomError } from '@types';
 
 const app = express();
 
 // Security middleware with GraphQL Yoga/GraphiQL support
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
-      fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://unpkg.com"],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      connectSrc: ["'self'"],
-      workerSrc: ["'self'", "blob:"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'],
+        fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:', 'blob:'],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://unpkg.com'],
+        scriptSrcAttr: ["'unsafe-inline'"],
+        connectSrc: ["'self'"],
+        workerSrc: ["'self'", 'blob:'],
+      },
     },
-  },
-  crossOriginEmbedderPolicy: false,
-}));
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 // Dynamic CORS configuration
 const getAllowedOrigins = () => {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env['NODE_ENV'] === 'production') {
     // In production, allow any subdomain of borislav.space
     return /^https:\/\/([a-zA-Z0-9-]+\.)?borislav\.space$/;
   }
@@ -42,10 +44,12 @@ const getAllowedOrigins = () => {
   return ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'];
 };
 
-app.use(cors({
-  origin: getAllowedOrigins(),
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: getAllowedOrigins(),
+    credentials: true,
+  })
+);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -56,17 +60,16 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-
 app.use(limiter);
 
 // Session middleware for CSRF
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
+    secret: process.env['SESSION_SECRET'] || 'fallback-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env['NODE_ENV'] === 'production',
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
@@ -80,16 +83,26 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // CSRF Protection via custom headers
 
 // Custom header CSRF protection middleware
-const customHeaderProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const customHeaderProtection = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
   // Skip for GET requests, GraphQL and GraphiQL
-  if (req.method === 'GET' || req.path.startsWith('/graphql') || req.path.startsWith('/graphiql')) {
+  if (
+    req.method === 'GET' ||
+    req.path.startsWith('/graphql') ||
+    req.path.startsWith('/graphiql')
+  ) {
     return next();
   }
 
   const customHeader = req.headers['x-requested-with'] as string;
 
   if (!customHeader || customHeader !== 'XMLHttpRequest') {
-    return res.status(403).json({ error: 'Missing required custom header for CSRF protection' });
+    return res
+      .status(403)
+      .json({ error: 'Missing required custom header for CSRF protection' });
   }
 
   next();
@@ -154,11 +167,11 @@ app.use(
 
     // Default error response
     const errorObj = err as CustomError;
-    res.status(errorObj.status || 500).json({
+    return res.status(errorObj.status || 500).json({
       error: (err instanceof Error ? err.name : undefined) || 'Internal Server Error',
       message:
         (err instanceof Error ? err.message : undefined) || 'An unexpected error occurred',
-      ...(process.env.NODE_ENV === 'development' &&
+      ...(process.env['NODE_ENV'] === 'development' &&
         err instanceof Error && { stack: err.stack }),
     });
   }
@@ -173,7 +186,7 @@ app.use(
         message: 'Request body contains malformed JSON',
       });
     }
-    next(err);
+    return next(err);
   }
 );
 
@@ -200,7 +213,6 @@ const startServer = async () => {
 
   // Create HTTP server
   const httpServer = createServer(app);
-
 
   httpServer.listen(3000, () => {
     console.log('Server is running on port 3000');

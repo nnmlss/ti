@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '@store/store';
 import { setWindDirectionFilter, clearFilters } from '@store/slices/filterSlice';
 import { WindDirectionFilter } from '@components/main/WindDirectionFilter';
-import type { WindDirectionFilterContainerProps } from '@types';
+import type { WindDirectionFilterContainerProps } from '@app-types';
 
 export function WindDirectionFilterContainer({ onClose }: WindDirectionFilterContainerProps) {
   const dispatch = useDispatch();

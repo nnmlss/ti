@@ -21,7 +21,7 @@ export default defineConfig({
       '@contexts': path.resolve(__dirname, './src/contexts'),
       '@constants': path.resolve(__dirname, './src/constants.ts'),
       '@assets': path.resolve(__dirname, './src/assets'),
-      '@types': path.resolve(__dirname, './src/types'),
+      '@app-types': path.resolve(__dirname, './src/types'),
     },
   },
   server: {

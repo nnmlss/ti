@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { AuthUser, AuthContextType, AuthProviderProps } from '@types';
+import type { AuthUser, AuthContextType, AuthProviderProps } from '@app-types';
 import { AuthContext } from './AuthContext';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -10,7 +10,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Check for existing auth token on app load
     const token = localStorage.getItem('authToken');
     const userData = localStorage.getItem('authUser');
-    
+
     if (token && userData) {
       try {
         const parsedUser = JSON.parse(userData) as AuthUser;
@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('authUser');
       }
     }
-    
+
     setIsLoading(false);
   }, []);
 

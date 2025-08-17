@@ -10,7 +10,7 @@ import {
 
 import GpsOffIcon from '@mui/icons-material/GpsOff';
 import { AccessibleDialog } from './AccessibleDialog';
-import type { DeleteConfirmDialogProps } from '@types';
+import type { DeleteConfirmDialogProps } from '@app-types';
 
 export function DeleteConfirmDialog({
   open,
@@ -19,7 +19,6 @@ export function DeleteConfirmDialog({
   isLoading,
   onConfirm,
 }: DeleteConfirmDialogProps) {
-
   return (
     <AccessibleDialog
       open={open}
@@ -50,12 +49,7 @@ export function DeleteConfirmDialog({
         <Button onClick={onClose} variant='outlined' disabled={isLoading}>
           Не
         </Button>
-        <Button
-          onClick={onConfirm}
-          color='error'
-          variant='contained'
-          disabled={isLoading}
-        >
+        <Button onClick={onConfirm} color='error' variant='contained' disabled={isLoading}>
           {isLoading ? (
             <CircularProgress size={21} sx={{ color: 'white' }} disableShrink />
           ) : (

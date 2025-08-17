@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import type { AccessOptionsViewProps } from '@types';
+import type { AccessOptionsViewProps } from '@app-types';
 import { accessOptions } from '@constants';
 
 // Import all access icons

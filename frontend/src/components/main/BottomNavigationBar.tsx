@@ -1,53 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Button, IconButton, Typography } from '@mui/material';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PublicIcon from '@mui/icons-material/Public';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
 import { UserIconGroupContainer as UserIconGroup } from '@containers/UserIconGroupContainer';
-import { WindDirectionFilterContainer as WindDirectionFilter } from '@containers/WindDirectionFilterContainer';
-import { useAuth } from '@hooks/auth/useAuth';
-import { setHomeView } from '@store/slices/homeViewSlice';
-import type { RootState } from '@store/store';
+import type { BottomNavigationBarProps } from '@app-types/components';
 
-export const BottomNavigationBar: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const homeView = useSelector((state: RootState) => state.homeView);
-  const filter = useSelector((state: RootState) => state.filter);
-  const [showWindFilter, setShowWindFilter] = useState(false);
-  const isHomePage = location.pathname === '/';
-  const isListView = homeView === 'list';
-
-  const handleViewToggle = (view: 'map' | 'list') => {
-    if (isHomePage) {
-      // Just update Redux state if already on home page
-      dispatch(setHomeView(view));
-    } else {
-      // Navigate to home page and set the view in Redux
-      dispatch(setHomeView(view));
-      navigate('/');
-    }
-  };
-
-  const handleWindFilterToggle = () => {
-    setShowWindFilter(!showWindFilter);
-  };
-
-  const handleWindFilterClose = () => {
-    setShowWindFilter(false);
-  };
-
+export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
+  isAuthenticated,
+  isHomePage,
+  isListView,
+  filter,
+  onViewToggle,
+  onWindFilterOpen,
+}) => {
   return (
-    <>
-      {/* Wind Direction Filter */}
-      {showWindFilter && <WindDirectionFilter onClose={handleWindFilterClose} />}
-
-      <Box
+    <Box
       sx={{
         position: 'fixed',
         bottom: 0,
@@ -86,7 +56,7 @@ export const BottomNavigationBar: React.FC = () => {
       <Box>
         {isHomePage && (
           <Button
-            onClick={handleWindFilterToggle}
+            onClick={onWindFilterOpen}
             variant={filter?.windDirection ? 'contained' : 'text'}
             sx={{
               color: filter?.windDirection ? '#fff' : 'inherit',
@@ -101,13 +71,13 @@ export const BottomNavigationBar: React.FC = () => {
           </Button>
         )}
         <IconButton
-          onClick={() => handleViewToggle('map')}
+          onClick={() => onViewToggle('map')}
           sx={{ color: !isListView ? 'primary.main' : 'inherit' }}
         >
           <PublicIcon />
         </IconButton>
         <IconButton
-          onClick={() => handleViewToggle('list')}
+          onClick={() => onViewToggle('list')}
           sx={{ color: isListView ? 'primary.main' : 'inherit' }}
         >
           <FormatListBulletedIcon />
@@ -143,6 +113,5 @@ export const BottomNavigationBar: React.FC = () => {
         </Typography>
       )}
     </Box>
-    </>
   );
 };

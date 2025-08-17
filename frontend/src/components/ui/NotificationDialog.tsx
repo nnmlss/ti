@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogActions, Button, Alert, AlertTitle } from '@mui/material';
-import type { NotificationDialogProps } from '@types';
+import type { NotificationDialogProps } from '@app-types';
 
 export function NotificationDialog({ notification, onClose }: NotificationDialogProps) {
   const { open, message, severity, title, onAutoClose } = notification;

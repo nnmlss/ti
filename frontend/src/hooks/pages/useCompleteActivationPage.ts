@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { VALIDATE_TOKEN, ACTIVATE_ACCOUNT } from '@utils/graphqlQueries';
-import type { ValidateTokenResponse, ActivateAccountResponse } from '@types';
+import type { ValidateTokenResponse, ActivateAccountResponse } from '@app-types';
 import { useAuth } from '@hooks/auth/useAuth';
 
 export function useCompleteActivationPage() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const { login } = useAuth();
-  
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -40,7 +40,7 @@ export function useCompleteActivationPage() {
         } else {
           setError(data.validateToken.message || 'Invalid or expired token');
         }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_err) {
         setError('Failed to validate token');
       } finally {
@@ -53,28 +53,28 @@ export function useCompleteActivationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation
     if (!username.trim()) {
       setError('Username is required');
       return;
     }
-    
+
     if (username.length < 3) {
       setError('Username must be at least 3 characters long');
       return;
     }
-    
+
     if (!password) {
       setError('Password is required');
       return;
     }
-    
+
     if (password.length < 6) {
       setError('Password must be at least 6 characters long');
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -95,13 +95,13 @@ export function useCompleteActivationPage() {
       if (data.activateAccount.token && data.activateAccount.user) {
         // Use AuthContext login method to store both token and user data
         login(data.activateAccount.token, data.activateAccount.user);
-        
+
         // Immediate redirect and clear history to prevent password exposure
         window.location.replace('/');
       } else {
         setError(data.activateAccount.message || 'Activation failed');
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_err) {
       setError('Failed to activate account. Please try again.');
     } finally {

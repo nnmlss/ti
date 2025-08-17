@@ -1,8 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, LayersControl } from 'react-leaflet';
 import { CircularProgress, Alert, Box, Card } from '@mui/material';
-import { SiteCardContent } from '@components/site/SiteCardContent';
+import { SiteCardContentContainer } from '@containers/SiteCardContentContainer';
 import { DeleteConfirmDialogContainer as DeleteConfirmDialog } from '@containers/DeleteConfirmDialogContainer';
-import type { SitesMapProps } from '@types';
+import type { SitesMapProps } from '@app-types';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -26,7 +26,6 @@ export function SitesMap({
   onShowOnMap,
   deleteDialog,
 }: SitesMapProps) {
-
   if (loading === 'pending' && sites.length === 0) {
     return (
       <Box
@@ -127,7 +126,7 @@ export function SitesMap({
               </Tooltip>
               <Popup maxWidth={280} minWidth={260}>
                 <Card sx={{ width: '100%', boxShadow: 'none', border: 'none', p: 0, m: 0 }}>
-                  <SiteCardContent
+                  <SiteCardContentContainer
                     site={site}
                     onEdit={() => onEdit(site._id)}
                     onDelete={() => onDelete(site._id)}

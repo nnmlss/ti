@@ -8,12 +8,12 @@ export class EmailService {
   static async initialize(): Promise<void> {
     try {
       this.transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'mail.borislav.space',
-        port: parseInt(process.env.SMTP_PORT || '465'),
-        secure: process.env.SMTP_SECURE === 'true' || true, // true for 465
+        host: process.env['SMTP_HOST'] || 'mail.borislav.space',
+        port: parseInt(process.env['SMTP_PORT'] || '465'),
+        secure: process.env['SMTP_SECURE'] === 'true' || true, // true for 465
         auth: {
-          user: process.env.SMTP_USER || 'fly@borislav.space',
-          pass: process.env.SMTP_PASS,
+          user: process.env['SMTP_USER'] || 'fly@borislav.space',
+          pass: process.env['SMTP_PASS'],
         },
       });
 
@@ -34,11 +34,11 @@ export class EmailService {
 
     try {
       const activationUrl = `${
-        process.env.FRONTEND_URL || 'http://localhost:5173'
+        process.env['FRONTEND_URL'] || 'http://localhost:5173'
       }/activate/${token}`;
 
       const mailOptions = {
-        from: process.env.FROM_EMAIL || 'noreply@borislav.space',
+        from: process.env['FROM_EMAIL'] || 'noreply@borislav.space',
         to: email,
         subject: 'Activate Your Takeoff Info Account',
         html: `
@@ -95,7 +95,7 @@ export class EmailService {
       }
 
       const mailOptions = {
-        from: process.env.FROM_EMAIL || 'noreply@borislav.space',
+        from: process.env['FROM_EMAIL'] || 'noreply@borislav.space',
         to: 'fly@borislav.space',
         subject: 'Takeoff Info - User Profile Changed',
         html: `
@@ -133,10 +133,10 @@ export class EmailService {
     }
 
     try {
-      const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/adm1n`;
+      const loginUrl = `${process.env['FRONTEND_URL'] || 'http://localhost:5173'}/adm1n`;
 
       const mailOptions = {
-        from: process.env.FROM_EMAIL || 'noreply@borislav.space',
+        from: process.env['FROM_EMAIL'] || 'noreply@borislav.space',
         to: email,
         subject: 'Welcome to Takeoff Info - Account Activated!',
         html: `

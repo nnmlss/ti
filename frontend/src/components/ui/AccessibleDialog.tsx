@@ -1,8 +1,6 @@
 import { useId, forwardRef, useImperativeHandle, useRef } from 'react';
-import {
-  Dialog,
-} from '@mui/material';
-import type { AccessibleDialogProps, AccessibleDialogRef } from '@types';
+import { Dialog } from '@mui/material';
+import type { AccessibleDialogProps, AccessibleDialogRef } from '@app-types';
 
 export const AccessibleDialog = forwardRef<AccessibleDialogRef, AccessibleDialogProps>(
   (
@@ -21,20 +19,24 @@ export const AccessibleDialog = forwardRef<AccessibleDialogRef, AccessibleDialog
     const dialogId = useId();
     const titleId = title ? `${dialogId}-title` : undefined;
     const descriptionId = description ? `${dialogId}-description` : undefined;
-    
+
     // Determine ARIA attributes
     const computedAriaLabelledBy = ariaLabelledBy || titleId;
     const computedAriaDescribedBy = ariaDescribedBy || descriptionId;
 
     // Imperative handle for ref access
-    useImperativeHandle(ref, () => ({
-      focus: () => {
-        if (dialogRef.current) {
-          dialogRef.current.focus();
-        }
-      },
-      getDialogElement: () => dialogRef.current,
-    }), []);
+    useImperativeHandle(
+      ref,
+      () => ({
+        focus: () => {
+          if (dialogRef.current) {
+            dialogRef.current.focus();
+          }
+        },
+        getDialogElement: () => dialogRef.current,
+      }),
+      []
+    );
 
     return (
       <Dialog
@@ -43,7 +45,7 @@ export const AccessibleDialog = forwardRef<AccessibleDialogRef, AccessibleDialog
         // Proper ARIA attributes
         aria-labelledby={computedAriaLabelledBy}
         aria-describedby={computedAriaDescribedBy}
-        aria-label={!computedAriaLabelledBy ? (ariaLabel || 'Dialog') : undefined}
+        aria-label={!computedAriaLabelledBy ? ariaLabel || 'Dialog' : undefined}
         // Let MUI handle all the accessibility features
         PaperProps={{
           ...dialogProps.PaperProps,
@@ -66,7 +68,7 @@ export const AccessibleDialog = forwardRef<AccessibleDialogRef, AccessibleDialog
             {title}
           </span>
         )}
-        
+
         {/* Hidden description for screen readers if provided and not already in content */}
         {description && !ariaDescribedBy && (
           <span
@@ -82,7 +84,7 @@ export const AccessibleDialog = forwardRef<AccessibleDialogRef, AccessibleDialog
             {description}
           </span>
         )}
-        
+
         {children}
       </Dialog>
     );

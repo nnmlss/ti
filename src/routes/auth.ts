@@ -10,10 +10,10 @@ router.get('/test-email', async (_req, res) => {
     res.json({
       emailService: isWorking ? 'working' : 'not working',
       environment: {
-        SMTP_HOST: process.env.SMTP_HOST || 'not set',
-        SMTP_PORT: process.env.SMTP_PORT || 'not set',
-        SMTP_USER: process.env.SMTP_USER || 'not set',
-        FROM_EMAIL: process.env.FROM_EMAIL || 'not set',
+        SMTP_HOST: process.env['SMTP_HOST'] || 'not set',
+        SMTP_PORT: process.env['SMTP_PORT'] || 'not set',
+        SMTP_USER: process.env['SMTP_USER'] || 'not set',
+        FROM_EMAIL: process.env['FROM_EMAIL'] || 'not set',
       },
     });
   } catch (error) {

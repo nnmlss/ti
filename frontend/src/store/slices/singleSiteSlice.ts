@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { FlyingSite } from '@types';
+import type { FlyingSite } from '@app-types';
 import {
   loadSingleSiteThunk,
   addSiteThunk,

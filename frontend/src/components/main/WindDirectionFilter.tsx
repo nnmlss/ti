@@ -1,14 +1,13 @@
 import { Box, Button, Paper, Typography } from '@mui/material';
 import AirIcon from '@mui/icons-material/Air';
 import { windDirections } from '@constants';
-import type { WindDirectionFilterProps } from '@types';
+import type { WindDirectionFilterProps } from '@app-types';
 
 export function WindDirectionFilter({
   selectedFilter,
   onFilterSelect,
   onClearFilter,
 }: WindDirectionFilterProps) {
-
   return (
     <Paper
       sx={{

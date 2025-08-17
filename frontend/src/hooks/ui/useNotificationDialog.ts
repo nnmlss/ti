@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { NotificationState } from '@types';
+import type { NotificationState } from '@app-types';
 
 export const useNotificationDialog = () => {
   const [notification, setNotification] = useState<NotificationState>({

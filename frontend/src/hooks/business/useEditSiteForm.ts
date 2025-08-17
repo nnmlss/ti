@@ -8,9 +8,9 @@ import type { AppDispatch } from '@store/store';
 import { selectAllSitesLoadState } from '@store/slices/allSitesSlice';
 import { toFormData, toApiData, type FormDataSite } from '@utils/formDataTransforms';
 import { TIMEOUTS } from '@constants';
-import type { AccessOptionId, GalleryImage } from '@types';
+import type { AccessOptionId, GalleryImage } from '@app-types';
 import { navigateToHome } from '@utils/navigation';
-import type { FlyingSite, WindDirection } from '@types';
+import type { FlyingSite, WindDirection } from '@app-types';
 
 export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);

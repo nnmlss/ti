@@ -3,7 +3,7 @@ import { useAuth } from '@hooks/auth/useAuth';
 import { getGraphQLClient } from '@utils/graphqlClient';
 import { LOGIN, UPDATE_PROFILE } from '@utils/graphqlQueries';
 import { TIMEOUTS } from '@constants';
-import type { LoginResponse, UpdateProfileResponse, UpdateProfileInput } from '@types';
+import type { LoginResponse, UpdateProfileResponse, UpdateProfileInput } from '@app-types';
 
 export function useProfilePage() {
   const { user, login } = useAuth();
@@ -29,22 +29,20 @@ export function useProfilePage() {
   const doPasswordsMatch = formData.password === formData.repeatPassword;
   const isRepeatPasswordValid = doPasswordsMatch;
 
-  const hasChanges = 
-    formData.email !== user?.email || 
-    formData.username !== user?.username || 
+  const hasChanges =
+    formData.email !== user?.email ||
+    formData.username !== user?.username ||
     formData.password.length > 0;
 
-  const hasValidPasswordChange = 
-    formData.password.length >= 6 && 
-    formData.repeatPassword.length >= 6 && 
-    doPasswordsMatch;
+  const hasValidPasswordChange =
+    formData.password.length >= 6 && formData.repeatPassword.length >= 6 && doPasswordsMatch;
 
-  const needsCurrentPassword = 
-    formData.email !== user?.email || 
-    formData.username !== user?.username || 
+  const needsCurrentPassword =
+    formData.email !== user?.email ||
+    formData.username !== user?.username ||
     hasValidPasswordChange;
 
-  const isFormValid = 
+  const isFormValid =
     formData.email.includes('@') &&
     formData.username.length >= 3 &&
     isPasswordValid &&
@@ -147,14 +145,14 @@ export function useProfilePage() {
   }, [formData.password]);
 
   const resetField = (field: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: field === 'email' ? user?.email || '' : user?.username || '',
     }));
   };
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: e.target.value,
     }));
@@ -170,7 +168,7 @@ export function useProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isFormValid) return;
 
     setLoading(true);
@@ -179,7 +177,7 @@ export function useProfilePage() {
 
     try {
       const client = getGraphQLClient(true);
-      
+
       const updateInput: UpdateProfileInput = {
         currentPassword: formData.currentPassword,
       };
@@ -206,7 +204,7 @@ export function useProfilePage() {
       }
 
       // Update form data with new values
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         email: response.updateProfile.email,
         username: response.updateProfile.username,
@@ -216,7 +214,7 @@ export function useProfilePage() {
       }));
 
       setMessage('Profile updated successfully');
-      
+
       // Reset validation states
       setIsCurrentPasswordValid(false);
       setHasPasswordCheckCompleted(false);

@@ -4,7 +4,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SyncIcon from '@mui/icons-material/Sync';
-import type { UserIconGroupProps } from '@types';
+import type { UserIconGroupProps } from '@app-types';
 
 export const UserIconGroup: React.FC<UserIconGroupProps> = ({
   user,
@@ -13,7 +13,6 @@ export const UserIconGroup: React.FC<UserIconGroupProps> = ({
   onAddUser,
   onMigrateUrls,
 }) => {
-
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
       {/* Profile Icon */}
@@ -46,11 +45,11 @@ export const UserIconGroup: React.FC<UserIconGroupProps> = ({
                 color: 'primary.main',
               },
             }}
-            title="Add Users"
+            title='Add Users'
           >
             <PersonAddIcon />
           </IconButton>
-          
+
           <IconButton
             onClick={onMigrateUrls}
             sx={{
@@ -62,7 +61,7 @@ export const UserIconGroup: React.FC<UserIconGroupProps> = ({
                 color: 'warning.main',
               },
             }}
-            title="Migrate URLs"
+            title='Migrate URLs'
           >
             <SyncIcon />
           </IconButton>

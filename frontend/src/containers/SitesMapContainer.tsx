@@ -5,7 +5,7 @@ import { useSites } from '@hooks/business/useSites';
 import { deleteSiteThunk } from '@store/thunks/sitesThunks';
 import { dispatchThunkWithCallback } from '@store/utils/thunkWithCallback';
 import type { AppDispatch } from '@store/store';
-import type { FlyingSite } from '@types';
+import type { FlyingSite } from '@app-types';
 import { SitesMap } from '@components/main/SitesMap';
 import { getSiteUrl } from '@utils/slugUtils';
 

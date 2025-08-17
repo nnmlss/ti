@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '@models/user.js';
 import type { CustomError, AuthenticatedRequest } from '@types'
@@ -13,7 +13,7 @@ export const generateToken = (user: any): string => {
     isSuperAdmin: user.isSuperAdmin,
   };
 
-  return jwt.sign(payload, process.env.JWT_SECRET || 'fallback-secret', {
+  return jwt.sign(payload, process.env['JWT_SECRET'] || 'fallback-secret', {
     expiresIn: '7d',
   });
 };
@@ -21,7 +21,7 @@ export const generateToken = (user: any): string => {
 //Middleware to authenticate user via JWT
 export const authenticate = async (
   req: AuthenticatedRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   try {
@@ -33,7 +33,7 @@ export const authenticate = async (
       return next(error);
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
+    const decoded = jwt.verify(token, process.env['JWT_SECRET'] || 'fallback-secret') as any;
 
     // Verify user still exists and is active
     const user = await User.findOne({ _id: decoded.id, isActive: true });
@@ -61,7 +61,7 @@ export const authenticate = async (
 };
 
 //Middleware to check if user is super admin
-export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const requireAdmin = (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
   if (!req.user?.isSuperAdmin) {
     const error: CustomError = new Error('Super admin access required');
     error.status = 403;

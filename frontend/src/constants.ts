@@ -1,4 +1,4 @@
-import type { WindDirection } from '@types';
+import type { WindDirection } from '@app-types';
 
 // Access Options
 export const accessOptions = [

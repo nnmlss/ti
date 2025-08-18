@@ -6,36 +6,27 @@
 
 @font-face {
   font-family: 'comfortaa';
-  src: url('./assets/fonts/comfortaa-regular-webfont.eot');
-  src: url('./assets/fonts/comfortaa-regular-webfont.eot#iefix') format('embedded-opentype'),
-    url('./assets/fonts/comfortaa-regular-webfont.woff2') format('woff2'),
-    url('./assets/fonts/comfortaa-regular-webfont.woff') format('woff'),
-    url('./assets/fonts/comfortaa-regular-webfont.ttf') format('truetype'),
-    url('./assets/fonts/comfortaa-regular-webfont.svg#comfortaaregular') format('svg');
+  src: url('./assets/fonts/comfortaa-regular-webfont.woff2') format('woff2'),
+    url('./assets/fonts/comfortaa-regular-webfont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'comfortaalight';
-  src: url('./assets/fonts/comfortaa-light-webfont.eot');
-  src: url('./assets/fonts/comfortaa-light-webfont.eot#iefix') format('embedded-opentype'),
-    url('./assets/fonts/comfortaa-light-webfont.woff2') format('woff2'),
-    url('./assets/fonts/comfortaa-light-webfont.woff') format('woff'),
-    url('./assets/fonts/comfortaa-light-webfont.ttf') format('truetype'),
-    url('./assets/fonts/comfortaa-light-webfont.svg#comfortaalight') format('svg');
+  src: url('./assets/fonts/comfortaa-light-webfont.woff2') format('woff2'),
+    url('./assets/fonts/comfortaa-light-webfont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'comfortaabold';
-  src: url('./assets/fonts/comfortaa-bold-webfont.eot');
-  src: url('./assets/fonts/comfortaa-bold-webfont.eot#iefix') format('embedded-opentype'),
-    url('./assets/fonts/comfortaa-bold-webfont.woff2') format('woff2'),
-    url('./assets/fonts/comfortaa-bold-webfont.woff') format('woff'),
-    url('./assets/fonts/comfortaa-bold-webfont.ttf') format('truetype'),
-    url('./assets/fonts/comfortaa-bold-webfont.svg#comfortaabold') format('svg');
+  src: url('./assets/fonts/comfortaa-bold-webfont.woff2') format('woff2'),
+    url('./assets/fonts/comfortaa-bold-webfont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 body {

@@ -3,6 +3,7 @@ import multer from 'multer';
 // import path from 'path';
 import { uploadImage, deleteImage, generateThumbnails } from '@controllers/image.js';
 import { generateSitemap } from '@controllers/sitemap.js';
+import { generateBuildGuidePDF } from '@controllers/pdfGenerator.js';
 import authRoutes from './auth.js';
 
 const router = Router();
@@ -59,5 +60,8 @@ Sitemap: ${baseUrl}/api/sitemap.xml`;
   res.set('Content-Type', 'text/plain');
   res.send(robotsTxt);
 });
+
+// GET /api/build-guide.pdf - Generate production build guide PDF
+router.get('/build-guide.pdf', generateBuildGuidePDF);
 
 export default router;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SiteCard } from '@components/site/SiteCard';
+import { DeleteConfirmDialogContainer } from '@containers/DeleteConfirmDialogContainer';
 import type { SiteCardContainerProps, DeleteDialogState } from '@app-types';
 
 export const SiteCardContainer: React.FC<SiteCardContainerProps> = ({ site }) => {
@@ -17,7 +18,7 @@ export const SiteCardContainer: React.FC<SiteCardContainerProps> = ({ site }) =>
   };
 
   const handleViewDetails = () => {
-    navigate(`/sites/${site.url}`);
+    navigate(`/парапланер-старт/${site.url}`);
   };
 
   const handleShowOnMap = () => {
@@ -28,26 +29,30 @@ export const SiteCardContainer: React.FC<SiteCardContainerProps> = ({ site }) =>
     }
   };
 
-  const handleDeleteConfirm = () => {
-    // TODO: Implement actual delete logic here
-    console.log('Delete site:', site._id);
-    setDeleteDialogOpen(false);
-  };
-
   const deleteDialog: DeleteDialogState = {
     isOpen: deleteDialogOpen,
     onClose: () => setDeleteDialogOpen(false),
-    onConfirm: handleDeleteConfirm,
+    onConfirm: () => setDeleteDialogOpen(false), // This will be handled by DeleteConfirmDialogContainer
   };
 
   return (
-    <SiteCard
-      site={site}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-      onViewDetails={handleViewDetails}
-      onShowOnMap={handleShowOnMap}
-      deleteDialog={deleteDialog}
-    />
+    <>
+      <SiteCard
+        site={site}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onViewDetails={handleViewDetails}
+        onShowOnMap={handleShowOnMap}
+        deleteDialog={deleteDialog}
+      />
+
+      {/* Delete confirmation dialog */}
+      <DeleteConfirmDialogContainer
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        siteId={site._id}
+        title={site.title?.bg || site.title?.en || 'Неизвестен старт'}
+      />
+    </>
   );
 };

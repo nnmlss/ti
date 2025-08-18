@@ -26,7 +26,7 @@ export function extractIdFromSlug(slug: string): number | null {
 export function getSiteUrl(site: FlyingSite): string {
   // Use the url field from database, fallback to generated slug
   const slug = site.url || generateSiteSlug(site.title);
-  return `/параделта-старт/${slug}`;
+  return `/парапланер-старт/${slug}`;
 }
 
 // Generate canonical URL for redirects

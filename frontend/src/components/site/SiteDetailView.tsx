@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -93,17 +92,12 @@ export function SiteDetailView({
   };
 
   const renderLandingFields = () => {
-    if (!site.landingFields || !Array.isArray(site.landingFields)) return null;
-
-    const hasLandingFields = site.landingFields.some(
-      (field) =>
-        field.description?.bg ||
-        field.description?.en ||
-        (field.location?.coordinates &&
-          field.location.coordinates.some((coord) => coord !== null))
-    );
-
-    if (!hasLandingFields) return null;
+    if (
+      !site.landingFields ||
+      !Array.isArray(site.landingFields) ||
+      site.landingFields.length === 0
+    )
+      return null;
 
     return (
       <Box sx={{ mb: 3 }}>
@@ -111,47 +105,42 @@ export function SiteDetailView({
           Кацалки / Landing Fields
         </Typography>
         {site.landingFields.map((field, index) => {
-          const hasContent =
-            field.description?.bg ||
-            field.description?.en ||
-            (field.location?.coordinates &&
-              field.location.coordinates.some((coord) => coord !== null));
+          const hasBg = field.description?.bg?.trim();
+          const hasEn = field.description?.en?.trim();
 
-          if (!hasContent) return null;
+          if (!hasBg && !hasEn) return null;
 
           return (
-            <Paper key={index} sx={{ p: 2, mb: 2 }}>
-              {(field.description?.bg || field.description?.en) && (
-                <Box sx={{ mb: 2 }}>
-                  {field.description?.bg && (
-                    <Typography variant='body2'>
-                      <strong>BG:</strong> {field.description.bg}
-                    </Typography>
-                  )}
-                  {field.description?.en && (
-                    <Typography variant='body2'>
-                      <strong>EN:</strong> {field.description.en}
-                    </Typography>
-                  )}
+            <Paper key={index} sx={{ p: 2, mb: 1 }}>
+              {hasBg && (
+                <Typography variant='body2' sx={{ mb: hasEn ? 1 : 0 }}>
+                  <strong>BG:</strong> {field.description?.bg}
+                </Typography>
+              )}
+              {hasEn && (
+                <Typography variant='body2'>
+                  <strong>EN:</strong> {field.description?.en}
+                </Typography>
+              )}
+              {field.location && (
+                <Box sx={{ mt: 1 }}>
+                  <Typography variant='caption' color='text.secondary' sx={{ display: 'block', mb: 1 }}>
+                    Latitude: {field.location.coordinates[1].toFixed(4)}, Longitude: {field.location.coordinates[0].toFixed(4)}
+                  </Typography>
+                  <Button
+                    size='small'
+                    variant='outlined'
+                    color='primary'
+                    startIcon={<LocationOnIcon />}
+                    onClick={() => {
+                      const [lng, lat] = field.location!.coordinates;
+                      window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+                    }}
+                  >
+                    Google Maps
+                  </Button>
                 </Box>
               )}
-
-              {field.location?.coordinates &&
-                field.location.coordinates.some((coord) => coord !== null) && (
-                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <Typography variant='body2'>
-                      Coordinates: {field.location.coordinates[1]},{' '}
-                      {field.location.coordinates[0]}
-                    </Typography>
-                    <Button
-                      size='small'
-                      startIcon={<LocationOnIcon />}
-                      onClick={() => onOpenLocation(field.location!.coordinates)}
-                    >
-                      Отвори в Google Maps
-                    </Button>
-                  </Box>
-                )}
             </Paper>
           );
         })}
@@ -190,24 +179,41 @@ export function SiteDetailView({
         {/* Back Button and Title Section */}
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'space-arround', gap: 2, mb: 2 }}>
-            <Button onClick={onClose} sx={{ mt: 0.5 }} aria-label='Go back' variant='outlined'>
+            <Button onClick={onClose} sx={{ mb: 4 }} aria-label='Go back' variant='outlined'>
               <ArrowBackIcon />
             </Button>
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1, ml: 5 }}>
               <Typography
                 variant='h4'
                 component='h1'
                 gutterBottom
                 color='primary.main'
-                sx={{ mb: 1 }}
+                sx={{ mb: 0, textAlign: 'center' }}
               >
                 {site.title.bg}
               </Typography>
               {site.title.en && (
-                <Typography variant='h5' component='h2' color='text.secondary'>
+                <Typography
+                  variant='h5'
+                  component='h2'
+                  color='text.secondary'
+                  sx={{ textAlign: 'center' }}
+                >
                   {site.title.en}
                 </Typography>
               )}
+            </Box>
+            <Box sx={{ mt: 0, mb: 4, display: 'flex', justifyContent: 'center' }}>
+              <Button
+                variant='contained'
+                startIcon={<LocationOnIcon />}
+                onClick={() => onOpenLocation(site.location.coordinates)}
+                sx={{ textAlign: 'right' }}
+              >
+                Google
+                <br />
+                Maps
+              </Button>
             </Box>
           </Box>
         </Box>
@@ -215,7 +221,7 @@ export function SiteDetailView({
         {/* Basic Information */}
         <Grid container spacing={4} sx={{ mb: 4 }}>
           {/* Wind Directions & Altitude */}
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Box sx={{ textAlign: 'center' }}>
               <WindDirectionCompass windDirections={site.windDirection} size={120} />
               {site.altitude && (
@@ -224,13 +230,9 @@ export function SiteDetailView({
                 </Typography>
               )}
             </Box>
-          </Grid>
-
-          {/* Access Options & Location */}
-          <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant='h6' gutterBottom color='primary.main'>
-                Методи на достъп
+                Възможности за достъп
               </Typography>
               <AccessOptionsView
                 accessOptions={site.accessOptions}
@@ -241,28 +243,26 @@ export function SiteDetailView({
               {/* Location */}
             </Box>
           </Grid>
+
+          {/* Access Options & Location */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            {renderLocalizedText(site.access, '')}
+            {renderLocalizedText(site.unique, '')}
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            {renderLandingFields()}
+            {renderLocalizedText(site.monuments, 'Забележителности')}
+            {renderBilingualArray(site.accomodations, 'Настаняване')}
+            {renderBilingualArray(site.alternatives, 'Други занимания')}
+            {renderBilingualArray(site.localPilotsClubs, 'Local Pilots Clubs')}
+          </Grid>
         </Grid>
 
         <Divider sx={{ my: 4 }} />
 
         {/* Detailed Information */}
-        {renderLocalizedText(site.access, 'Достъп')}
-        {renderLocalizedText(site.unique, 'Особености')}
-        {renderLocalizedText(site.monuments, 'Забележителности')}
-        {renderBilingualArray(site.accomodations, 'Настаняване')}
-        {renderBilingualArray(site.alternatives, 'Други занимания')}
-        {renderBilingualArray(site.localPilotsClubs, 'Local Pilots Clubs')}
-        {renderLandingFields()}
+
         {renderTracklogs()}
-        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
-          <Button
-            variant='contained'
-            startIcon={<LocationOnIcon />}
-            onClick={() => onOpenLocation(site.location.coordinates)}
-          >
-            Отвори в Google Maps
-          </Button>
-        </Box>
       </CardContent>
     </Card>
   );

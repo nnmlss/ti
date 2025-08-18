@@ -1,7 +1,8 @@
 import type { AppDispatch } from '@store/store';
+import type { AsyncThunkAction } from '@reduxjs/toolkit';
 
 interface ThunkWithCallbackOptions {
-  thunkAction: any; // RTK thunk - using any to avoid dispatch issues
+  thunkAction: AsyncThunkAction<unknown, unknown, object>;
   onSuccess?: () => void;
   onError?: (error: string) => void;
 }

@@ -34,7 +34,7 @@ export default function AppRoutes() {
           }
         />
         <Route path='/site/:id' element={<SiteDetailPage />} />
-        <Route path='/параделта-старт/:slug' element={<SiteDetailPage />} />
+        <Route path='/парапланер-старт/:slug' element={<SiteDetailPage />} />
 
         {/* Auth Routes - standalone pages */}
         <Route path='/activate' element={<ActivationRequest />} />

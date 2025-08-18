@@ -49,14 +49,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 #### 4. Cookie Interface & Remember System
 
-**Task:** Create cookie interface remember system
+**Task:** Create user preference persistence system
 **Description:**
 
-- Implement comprehensive cookie management system
-- Create user preference persistence (view settings, filters, language)
-- Add cookie consent and privacy controls
+- Implement localStorage/sessionStorage for user preferences
 - Remember user settings across sessions
-- Implement privacy-compliant cookie handling
+- Create simple preference management interface
 
 **Features to Remember:**
 
@@ -65,13 +63,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Language preference
 - Theme/display preferences
 - Form input persistence
-
-**Privacy Requirements:**
-
-- Cookie consent banner
-- Clear privacy policy
-- User control over cookie preferences
-- GDPR compliance considerations
 
 #### 5. Internationalization (i18n)
 

@@ -113,7 +113,7 @@ export const resolvers = {
   Query: {
     sites: async (_parent: unknown): Promise<FlyingSite[]> => {
       try {
-        const sites = await Site.find();
+        const sites = await Site.find().sort({ _id: 1 });
         return sites;
       } catch (error) {
         throw new Error(`Failed to fetch sites: ${error}`);
@@ -146,7 +146,7 @@ export const resolvers = {
       try {
         const sites = await Site.find({
           windDirection: { $in: directions },
-        });
+        }).sort({ _id: 1 });
         return sites;
       } catch (error) {
         throw new Error(`Failed to fetch sites by wind direction: ${error}`);

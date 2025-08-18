@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { BottomNavigationBar } from '@/components/main/BottomNavigationBar';
@@ -15,10 +15,28 @@ export const BottomNavigationBarContainer: React.FC = () => {
   const homeView = useSelector((state: RootState) => state.homeView);
   const filter = useSelector((state: RootState) => state.filter);
   const [showWindFilter, setShowWindFilter] = useState(false);
+  const windFilterRef = useRef<HTMLDivElement>(null);
 
   // Derived state
   const isHomePage = location.pathname === '/';
   const isListView = homeView === 'list';
+
+  // Outside click handler for wind filter
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (windFilterRef.current && !windFilterRef.current.contains(event.target as Node)) {
+        setShowWindFilter(false);
+      }
+    };
+
+    if (showWindFilter) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showWindFilter]);
 
   // Event handlers
   const handleViewToggle = (view: 'map' | 'list') => {
@@ -33,7 +51,11 @@ export const BottomNavigationBarContainer: React.FC = () => {
   return (
     <>
       {/* Wind Direction Filter */}
-      {showWindFilter && <WindDirectionFilter onClose={() => setShowWindFilter(false)} />}
+      {showWindFilter && (
+        <div ref={windFilterRef}>
+          <WindDirectionFilter onClose={() => setShowWindFilter(false)} />
+        </div>
+      )}
 
       <BottomNavigationBar
         isAuthenticated={isAuthenticated}

@@ -6,8 +6,10 @@ function generateUrlSlug(title: { bg?: string; en?: string }): string {
   const siteTitle = title.bg || title.en || '';
   const slug = siteTitle
     .toLowerCase()
-    .replace(/\s+/g, '-')     // Replace spaces with hyphens
-    .replace(/-+/g, '-')      // Replace multiple hyphens with single
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/[^\u0400-\u04FF\w-]/g, '') // Keep only Cyrillic letters, Latin letters, numbers, and hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
     .trim();
   
   return slug || 'site';
@@ -18,9 +20,9 @@ async function migrateAddUrls() {
     await connectDB();
     console.log('Connected to database');
 
-    // Get all sites that don't have a url field
-    const sites = await Site.find({ url: { $exists: false } });
-    console.log(`Found ${sites.length} sites without URL field`);
+    // Get all sites to rebuild ALL URLs
+    const sites = await Site.find({});
+    console.log(`Found ${sites.length} sites to rebuild URLs`);
 
     let updated = 0;
     const errors: string[] = [];

@@ -261,6 +261,7 @@ export interface MigrationResult {
   message: string;
   sitesUpdated: number;
   errors: string[];
+  updatedUrls: string[];
 }
 
 export interface MigrationResultDialogProps {
@@ -321,9 +322,7 @@ export interface BottomNavigationBarProps {
   isHomePage: boolean;
   isListView: boolean;
   filter: { windDirection: string | null };
-  showLabels: boolean;
   showWindFilter: boolean;
   onViewToggle: (view: 'map' | 'list') => void;
   onWindFilterToggle: () => void;
-  onLabelsToggle: () => void;
 }

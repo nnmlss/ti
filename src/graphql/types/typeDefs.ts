@@ -135,6 +135,7 @@ export const typeDefs = gql`
     message: String!
     sitesUpdated: Int!
     errors: [String!]!
+    updatedUrls: [String!]!
   }
 
   type AppConstants {

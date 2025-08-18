@@ -34,7 +34,9 @@ function generateUrlSlug(title: { bg?: string; en?: string }): string {
   const slug = siteTitle
     .toLowerCase()
     .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/[^\u0400-\u04FF\w-]/g, '') // Keep only Cyrillic letters, Latin letters, numbers, and hyphens
     .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
     .trim();
 
   return slug || 'site';
@@ -538,11 +540,12 @@ export const resolvers = {
       }
 
       try {
-        // Get all sites that don't have a url field
-        const sites = await Site.find({ url: { $exists: false } });
+        // Get all sites to rebuild ALL URLs
+        const sites = await Site.find({});
 
         let updated = 0;
         const errors: string[] = [];
+        const updatedUrls: string[] = [];
 
         for (const site of sites) {
           try {
@@ -557,6 +560,7 @@ export const resolvers = {
 
             // Update the site with the URL
             await Site.updateOne({ _id: site._id }, { url });
+            updatedUrls.push(`${site.title.bg || site.title.en} → /${url}`);
             updated++;
           } catch (error) {
             errors.push(`Site ${site._id}: ${error}`);
@@ -568,6 +572,7 @@ export const resolvers = {
           message: `Migration completed: ${updated} sites updated, ${errors.length} errors`,
           sitesUpdated: updated,
           errors,
+          updatedUrls,
         };
       } catch (error) {
         throw new Error(`Migration failed: ${error}`);

@@ -79,6 +79,36 @@ export const MigrationResultDialog: React.FC<MigrationResultDialogProps> = ({
                     <strong>Warnings:</strong> {result.errors.length} issue(s) encountered
                   </Typography>
                 )}
+
+                {result.updatedUrls && result.updatedUrls.length > 0 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant='subtitle2' color='text.secondary' gutterBottom>
+                      Updated URLs:
+                    </Typography>
+                    <Box
+                      sx={{
+                        maxHeight: 300,
+                        overflow: 'auto',
+                        bgcolor: 'grey.50',
+                        p: 1,
+                        borderRadius: 1,
+                        fontSize: '0.75rem',
+                        fontFamily: 'monospace',
+                      }}
+                    >
+                      {result.updatedUrls.map((urlInfo, index) => (
+                        <Typography
+                          key={index}
+                          variant='body2'
+                          component='div'
+                          sx={{ color: 'text.secondary', mb: 0.5 }}
+                        >
+                          {urlInfo}
+                        </Typography>
+                      ))}
+                    </Box>
+                  </Box>
+                )}
               </Box>
             )}
 

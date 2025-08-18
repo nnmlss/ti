@@ -6,7 +6,9 @@ export function generateSiteSlug(title: LocalizedText): string {
   const slug = siteTitle
     .toLowerCase()
     .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/[^\u0400-\u04FF\w-]/g, '') // Keep only Cyrillic letters, Latin letters, numbers, and hyphens
     .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
     .trim();
 
   return slug || 'site';

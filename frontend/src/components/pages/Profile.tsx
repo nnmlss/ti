@@ -64,11 +64,11 @@ export function Profile({
             label='Email'
             type='email'
             value={formData.email}
-            onChange={handleInputChange('email')}
+            onChange={(e) => handleInputChange('email', e.target.value)}
             margin='normal'
             required
             disabled={loading}
-            color={formData.email !== user?.email ? 'primary' : undefined}
+            {...(formData.email !== user?.email && { color: 'primary' })}
             slotProps={{
               input: {
                 endAdornment: formData.email !== user?.email && (
@@ -86,12 +86,12 @@ export function Profile({
             fullWidth
             label='Username'
             value={formData.username}
-            onChange={handleInputChange('username')}
+            onChange={(e) => handleInputChange('username', e.target.value)}
             margin='normal'
             required
             disabled={loading}
             helperText='Minimum 3 characters'
-            color={formData.username !== user?.username ? 'primary' : undefined}
+            {...(formData.username !== user?.username && { color: 'primary' })}
             slotProps={{
               input: {
                 endAdornment: formData.username !== user?.username && (
@@ -110,7 +110,7 @@ export function Profile({
             label='New Password'
             type='password'
             value={formData.password}
-            onChange={handleInputChange('password')}
+            onChange={(e) => handleInputChange('password', e.target.value)}
             margin='normal'
             disabled={loading}
             helperText='Leave empty to keep current password. Minimum 6 characters if changing.'
@@ -144,7 +144,7 @@ export function Profile({
               label='Repeat New Password'
               type='password'
               value={formData.repeatPassword}
-              onChange={handleInputChange('repeatPassword')}
+              onChange={(e) => handleInputChange('repeatPassword', e.target.value)}
               margin='normal'
               required
               disabled={loading}
@@ -195,7 +195,7 @@ export function Profile({
                 label='Current Password'
                 type='password'
                 value={formData.currentPassword}
-                onChange={handleInputChange('currentPassword')}
+                onChange={(e) => handleInputChange('currentPassword', e.target.value)}
                 required
                 disabled={loading}
                 error={hasPasswordCheckCompleted && !isCurrentPasswordValid}

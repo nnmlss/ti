@@ -43,9 +43,9 @@ export const AccessibleDialog = forwardRef<AccessibleDialogRef, AccessibleDialog
         {...dialogProps}
         ref={dialogRef}
         // Proper ARIA attributes
-        aria-labelledby={computedAriaLabelledBy}
-        aria-describedby={computedAriaDescribedBy}
-        aria-label={!computedAriaLabelledBy ? ariaLabel || 'Dialog' : undefined}
+        {...(computedAriaLabelledBy && { 'aria-labelledby': computedAriaLabelledBy })}
+        {...(computedAriaDescribedBy && { 'aria-describedby': computedAriaDescribedBy })}
+        {...(!computedAriaLabelledBy && { 'aria-label': ariaLabel || 'Dialog' })}
         // Let MUI handle all the accessibility features
         PaperProps={{
           ...dialogProps.PaperProps,

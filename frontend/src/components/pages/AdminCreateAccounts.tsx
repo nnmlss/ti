@@ -106,14 +106,14 @@ export function AdminCreateAccounts({
             </Alert>
           )}
 
-          {results.length > 0 && (
+          {results && results.length > 0 && (
             <Box sx={{ mt: 3 }}>
               <Typography variant='h6' gutterBottom>
                 Results
               </Typography>
 
               <List>
-                {results.map((result, index) => (
+                {results!.map((result, index) => (
                   <ListItem
                     key={index}
                     secondaryAction={

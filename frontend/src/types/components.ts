@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { FlyingSite, WindDirection, AccessOptionId } from './sites';
-import type { AuthUser as AuthUserType } from './auth';
+import type { AuthUser as AuthUserType, AccountCreationResult } from './auth';
 import type { SEOConfig } from './ui';
 
 // ===== CONTAINER PROPS =====
@@ -31,7 +31,7 @@ export interface AdminCreateAccountsProps {
   onBackClick: () => void;
   emails: string[];
   loading: boolean;
-  results: Array<{ email: string; success: boolean; message: string }> | null;
+  results: AccountCreationResult[] | null;
   error: string | null;
   successMessage: string | null;
   addEmailField: () => void;

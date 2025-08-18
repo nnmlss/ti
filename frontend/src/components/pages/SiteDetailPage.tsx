@@ -37,7 +37,7 @@ export function SiteDetailPage({ site, loading, siteId, onClose }: SiteDetailPag
           description: `Подробна информация за място за летене ${site.title.bg || site.title.en}`,
           ...(site.url && { canonical: `/sites/${site.url}` })
         })
-      }} site={site || undefined} />
+      }} {...(site && { site })} />
       
       <Container maxWidth={false} sx={{ py: 2, minHeight: '100vh', pb: 10 }}>
         {renderContent()}

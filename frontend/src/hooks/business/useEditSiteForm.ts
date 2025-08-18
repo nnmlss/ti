@@ -132,12 +132,12 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
       const newImages: GalleryImage[] = uploadResults.map((result) => ({
         path: result.image.path,
         author: '',
-        width: result.image.width,
-        height: result.image.height,
-        format: result.image.format,
-        thumbnail: result.image.thumbnail,
-        small: result.image.small,
-        large: result.image.large,
+        ...(result.image.width !== undefined && { width: result.image.width }),
+        ...(result.image.height !== undefined && { height: result.image.height }),
+        ...(result.image.format !== undefined && { format: result.image.format }),
+        ...(result.image.thumbnail !== undefined && { thumbnail: result.image.thumbnail }),
+        ...(result.image.small !== undefined && { small: result.image.small }),
+        ...(result.image.large !== undefined && { large: result.image.large }),
       }));
 
       setValue('galleryImages', [...galleryImages, ...newImages]);

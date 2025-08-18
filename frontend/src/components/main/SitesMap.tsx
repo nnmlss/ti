@@ -80,7 +80,7 @@ export function SitesMap({
           .reduce(
             (acc, site) => {
               const [lng, lat] = site.location.coordinates;
-              return [acc[0] + lat!, acc[1] + lng!];
+              return [acc[0]! + lat, acc[1]! + lng];
             },
             [0, 0]
           )

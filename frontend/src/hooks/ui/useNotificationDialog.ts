@@ -6,7 +6,6 @@ export const useNotificationDialog = () => {
     open: false,
     message: '',
     severity: 'info',
-    title: undefined,
   });
 
   const showNotification = (
@@ -19,8 +18,8 @@ export const useNotificationDialog = () => {
       open: true,
       message,
       severity,
-      title,
-      onAutoClose,
+      ...(title !== undefined && { title }),
+      ...(onAutoClose !== undefined && { onAutoClose }),
     });
   };
 

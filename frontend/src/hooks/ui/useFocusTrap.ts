@@ -60,13 +60,13 @@ export const useFocusTrap = (
       // Shift + Tab - moving backwards
       if (document.activeElement === firstElement) {
         event.preventDefault();
-        lastElement.focus();
+        lastElement?.focus();
       }
     } else {
       // Tab - moving forwards
       if (document.activeElement === lastElement) {
         event.preventDefault();
-        firstElement.focus();
+        firstElement?.focus();
       }
     }
   }, [isActive, getFocusableElements]);
@@ -86,7 +86,7 @@ export const useFocusTrap = (
       } else {
         const focusableElements = getFocusableElements();
         if (focusableElements.length > 0) {
-          focusableElements[0].focus();
+          focusableElements[0]?.focus();
         }
       }
     }
@@ -122,14 +122,14 @@ export const useFocusTrap = (
   const focusFirst = useCallback(() => {
     const focusableElements = getFocusableElements();
     if (focusableElements.length > 0) {
-      focusableElements[0].focus();
+      focusableElements[0]?.focus();
     }
   }, [getFocusableElements]);
 
   const focusLast = useCallback(() => {
     const focusableElements = getFocusableElements();
     if (focusableElements.length > 0) {
-      focusableElements[focusableElements.length - 1].focus();
+      focusableElements[focusableElements.length - 1]?.focus();
     }
   }, [getFocusableElements]);
 

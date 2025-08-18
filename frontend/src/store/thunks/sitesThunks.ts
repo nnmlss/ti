@@ -38,47 +38,51 @@ function transformToGraphQLInput(
     windDirection: rest.windDirection || [],
     accessOptions: rest.accessOptions || [],
     // Transform any frontend-specific formats to GraphQL format if needed
-    landingFields: rest.landingFields?.map((field) => ({
-      description: field.description,
-      location: field.location,
-    })),
+    ...(rest.landingFields && {
+      landingFields: rest.landingFields.map((field) => ({
+        ...(field.description && { description: field.description }),
+        ...(field.location && { location: field.location }),
+      }))
+    }),
   };
 }
 
 // Helper function to transform GraphQL response to frontend FlyingSite type
 function transformGraphQLSite(graphqlSite: GraphQLSite): FlyingSite {
   return {
-    ...graphqlSite,
     _id: parseInt(graphqlSite.id), // Convert string ID back to number
+    title: graphqlSite.title,
     windDirection: graphqlSite.windDirection as WindDirection[], // Cast strings to WindDirection enum
     location: graphqlSite.location as Location, // Cast location to proper type
     accessOptions: graphqlSite.accessOptions as AccessOptionId[], // Cast numbers to AccessOptionId
+    ...(graphqlSite.url && { url: graphqlSite.url }),
+    ...(graphqlSite.altitude !== undefined && { altitude: graphqlSite.altitude }),
     // Convert null values to undefined for optional fields
-    galleryImages: graphqlSite.galleryImages
-      ? graphqlSite.galleryImages.map((img) => ({
-          ...img,
-          author: img.author || undefined,
-          width: img.width || undefined,
-          height: img.height || undefined,
-          format: img.format || undefined,
-          thumbnail: img.thumbnail || undefined,
-          small: img.small || undefined,
-          large: img.large || undefined,
-        }))
-      : undefined,
-    access: graphqlSite.access || undefined,
-    accomodations: graphqlSite.accomodations || undefined,
-    alternatives: graphqlSite.alternatives || undefined,
-    landingFields: graphqlSite.landingFields
-      ? graphqlSite.landingFields.map((field) => ({
-          description: field.description || undefined,
-          location: field.location ? (field.location as Location) : undefined,
-        }))
-      : undefined,
-    tracklogs: graphqlSite.tracklogs || undefined,
-    localPilotsClubs: graphqlSite.localPilotsClubs || undefined,
-    unique: graphqlSite.unique || undefined,
-    monuments: graphqlSite.monuments || undefined,
+    ...(graphqlSite.galleryImages && graphqlSite.galleryImages.length > 0 && {
+      galleryImages: graphqlSite.galleryImages.map((img) => ({
+        path: img.path,
+        ...(img.author && { author: img.author }),
+        ...(img.width !== null && img.width !== undefined && { width: img.width }),
+        ...(img.height !== null && img.height !== undefined && { height: img.height }),
+        ...(img.format && { format: img.format }),
+        ...(img.thumbnail && { thumbnail: img.thumbnail }),
+        ...(img.small && { small: img.small }),
+        ...(img.large && { large: img.large }),
+      }))
+    }),
+    ...(graphqlSite.access && { access: graphqlSite.access }),
+    ...(graphqlSite.accomodations && { accomodations: graphqlSite.accomodations }),
+    ...(graphqlSite.alternatives && { alternatives: graphqlSite.alternatives }),
+    ...(graphqlSite.landingFields && graphqlSite.landingFields.length > 0 && {
+      landingFields: graphqlSite.landingFields.map((field) => ({
+        ...(field.description && { description: field.description }),
+        ...(field.location && { location: field.location as Location }),
+      }))
+    }),
+    ...(graphqlSite.tracklogs && { tracklogs: graphqlSite.tracklogs }),
+    ...(graphqlSite.localPilotsClubs && { localPilotsClubs: graphqlSite.localPilotsClubs }),
+    ...(graphqlSite.unique && { unique: graphqlSite.unique }),
+    ...(graphqlSite.monuments && { monuments: graphqlSite.monuments }),
   };
 }
 

@@ -18,7 +18,7 @@ export function ActivationRequestContainer() {
       loading={loading}
       message={message}
       error={error}
-      expiryMinutes={expiryMinutes}
+      expiryMinutes={expiryMinutes ?? 7}
       onSubmit={onSubmit}
       onEmailChange={onEmailChange}
     />

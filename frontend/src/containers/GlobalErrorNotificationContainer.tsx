@@ -69,9 +69,9 @@ export function GlobalErrorNotificationContainer() {
         ) {
           (window as unknown as { __retrySuccessCallback?: () => void })
             .__retrySuccessCallback!();
-          (
+          delete (
             window as unknown as { __retrySuccessCallback?: () => void }
-          ).__retrySuccessCallback = undefined;
+          ).__retrySuccessCallback;
         }
         
         dispatch(hideErrorNotification());
@@ -89,7 +89,7 @@ export function GlobalErrorNotificationContainer() {
   return (
     <GlobalErrorNotification
       open={open}
-      title={title}
+      title={title ?? null}
       message={message}
       isRetrying={isRetrying}
       showRetryButton={showRetryButton}

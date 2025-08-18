@@ -19,6 +19,7 @@ export interface GraphQLErrorResponse {
 export interface GraphQLSite {
   id: string;
   title: { bg?: string; en?: string };
+  url?: string;
   windDirection: string[];
   location: { type: string; coordinates: number[] };
   accessOptions: number[];

@@ -8,7 +8,7 @@ export function EditSitePageContainer() {
     <EditSitePage
       site={site}
       loading={loading}
-      siteId={siteId}
+      siteId={siteId ?? ''}
       onClose={onClose}
     />
   );

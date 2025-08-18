@@ -33,3 +33,16 @@ export function getSiteUrl(site: FlyingSite): string {
 export function getCanonicalSiteUrl(site: FlyingSite): string {
   return getSiteUrl(site);
 }
+
+// Extract site name from URL slug for SEO (before data loads)
+export function extractSiteNameFromSlug(slug: string): string {
+  if (!slug || isNumericSlug(slug)) {
+    return 'Място за летене';
+  }
+  
+  // Convert kebab-case slug back to title case
+  return slug
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}

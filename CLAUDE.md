@@ -2,56 +2,123 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Current Session Status
+
+- **Last Updated**: 2025-08-18
+- **Last Completed**: SEO optimization implementation (React Helmet + meta tags + sitemap)
+- **Current Status**: Ready for new feature development
+- **Next Priority**: Image slideshow implementation for SiteDetailView
+- **Context**: All core SEO features completed, responsive typography implemented
+
+## Technical Decisions Made
+
+- **SEO Approach**: Hybrid static HTML meta tags + React Helmet dynamic updates (SSR optional for future)
+- **Typography**: Responsive breakpoints using `theme.breakpoints.down('sm')` for mobile optimization
+- **Meta Tags**: All pages include "TakeOff Info ti.borislav.space" suffix for brand consistency
+- **Descriptions**: Use pilot-focused terminology ("посоки на вятъра, подходящи за излитане")
+- **URL Structure**: Dual language support `/sites/` and `/парапланер-старт/` already implemented
+
+## Development Commands Reference
+
+```bash
+# Type checking and building
+npm run typecheck          # Check TypeScript errors (backend + frontend)
+npm run build               # Full build (backend + frontend)
+npm run build:frontend      # Frontend only build
+npm run build:backend       # Backend only build
+
+# Development servers
+npm start                   # Start both backend and frontend concurrently
+npm run start:backend       # Backend only - TypeScript watch mode
+npm run start:frontend      # Frontend only - Vite dev server
+
+# Testing and quality
+npm run check              # Run typecheck and frontend lint
+npm test                   # Run tests in watch mode
+npm run test:run           # Run all tests once
+```
+
+## Key Files Location Map
+
+```
+# SEO Implementation
+frontend/src/components/seo/SEOHead.tsx        # Main SEO component
+frontend/index.html                            # Static meta tags
+src/controllers/sitemap.ts                     # XML sitemap generation
+src/routes/api.ts                             # Sitemap and robots.txt endpoints
+
+# Styling and Theme
+frontend/src/theme.ts                         # Material-UI theme + responsive typography
+frontend/src/index.css                       # Font loading and base styles
+
+# Core Components
+frontend/src/AppRoutes.tsx                    # Route definitions
+frontend/src/App.tsx                          # HelmetProvider setup
+frontend/src/components/pages/HomePage.tsx    # Home page with SEO
+frontend/src/components/pages/SiteDetailPage.tsx  # Site detail with dynamic SEO
+
+# Types and Configuration
+frontend/src/types/                           # TypeScript type definitions
+frontend/vite.config.ts                       # Vite build configuration
+src/app.ts                                    # Express server setup
+```
+
+## Session Recovery Checklist
+
+- [ ] Review last completed task in "Current Session Status"
+- [ ] Check git status for any uncommitted changes
+- [ ] Verify development environment is running (`npm start`)
+- [ ] Confirm current branch and recent commits
+- [ ] Review any open issues in "Current Issues & Known Problems"
+- [ ] Check todo list for in-progress tasks
+
+## Recently Completed Features ✅
+
+- **SEO Optimization** (2025-08-18) - Complete implementation with sitemap generation, meta tags, Open Graph/Twitter Cards, and TouristAttraction schema markup
+- **Responsive Typography** (2025-08-18) - Mobile-optimized font sizes using Material-UI breakpoints  
+- **Enhanced Map Preferences** (2025) - Map labels toggle and localStorage persistence with Redux state management
+
 ## Upcoming Development Tasks
 
 ### HIGH PRIORITY 🔴
 
-**Available Commands:**
+#### 1. Image Slideshow for Site Detail View
 
-```bash
-npm run build:analyze  # Build with bundle analysis
-npm run perf:check     # Check current bundle against budgets
-npm run perf:build     # Build and run performance check
-```
+**Task:** Implement interactive image slideshow component for site detail pages
+**Priority:** HIGH - Enhanced user experience
 
-#### ✅ 1.5. Enhanced Map Preferences & UI Controls (COMPLETED)
+**Requirements:**
 
-**Task:** Implement map-specific preference persistence and UI controls
-**Status:** ✅ **COMPLETED** - All map preference features implemented
+1. **Auto-slide Functionality**
+   - Automatic slideshow with 3-second intervals
+   - Auto-advance stops permanently once user manually interacts
+   - Smooth transitions between images
 
-**Completed Features:**
+2. **Manual Controls**
+   - Drag/swipe left/right navigation
+   - Touch support for mobile devices
+   - Optional navigation dots or arrows
 
-- ✅ Map type preference (satellite/street/terrain) with localStorage persistence
-- ✅ Redux state management for map type selection with cycling button
-- ✅ Map labels toggle button with localStorage persistence  
-- ✅ Redux state management for map labels visibility
-- ✅ UI controls integrated into map interface
-- ✅ Consistent Material-UI styling with tooltips
-- ✅ Mobile-responsive design
+3. **Integration**
+   - Position at bottom of SiteDetailView component
+   - Display site gallery images
+   - Fallback for sites without images
 
-**Implementation Details:**
+4. **User Experience**
+   - Responsive design for all screen sizes
+   - Smooth animations and transitions
+   - Clear visual indicators for navigation
+   - Accessibility support (keyboard navigation)
 
-1. **Map Type Preference:**
-   - ✅ Added getMapType/setMapType to preferences.ts
-   - ✅ Created mapTypeSlice.ts with Redux state management
-   - ✅ Integrated with Leaflet LayersControl
-   - ✅ Cycles through terrain → satellite → street
-
-2. **Map Labels Toggle:**
-   - ✅ Added getMapLabels/setMapLabels to preferences.ts  
-   - ✅ Created mapLabelsSlice.ts with toggle action
-   - ✅ Icon button shows visibility state (eye/eye-off icons)
-   - ✅ Site tooltips respect labels visibility setting
-
-3. **UI Integration:**
-   - ✅ Control panel positioned top-left with proper z-index
-   - ✅ Material-UI Paper container with shadow
-   - ✅ Tooltips show current state and action
-   - ✅ Responsive icon buttons with state-based colors
+**Technical Implementation:**
+- Create reusable ImageSlideshow component
+- Integrate with existing site.galleryImages data
+- Handle different image aspect ratios
+- Optimize for performance (lazy loading, image compression)
 
 ### MEDIUM PRIORITY 🟡
 
-#### 5. Internationalization (i18n)
+#### 2. Internationalization (i18n)
 
 **Task:** Translate everything into Bulgarian and create language switch functionality
 **Description:**

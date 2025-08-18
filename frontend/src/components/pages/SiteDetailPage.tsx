@@ -6,9 +6,16 @@ import {
   Box,
 } from '@mui/material';
 import { SEOHead } from '@components/seo/SEOHead';
+import { extractSiteNameFromSlug } from '@utils/slugUtils';
+import { useParams } from 'react-router-dom';
 import type { SiteDetailPageProps } from '@app-types';
 
 export function SiteDetailPage({ site, loading, siteId, onClose }: SiteDetailPageProps) {
+  const { slug } = useParams<{ slug?: string }>();
+  
+  // Extract site name from URL for SEO (before data loads)
+  const fallbackSiteName = slug ? extractSiteNameFromSlug(slug) : 'Място за летене';
+  
   const renderContent = () => {
     // Show loading while fetching individual site data
     if (loading === 'pending') {
@@ -31,13 +38,18 @@ export function SiteDetailPage({ site, loading, siteId, onClose }: SiteDetailPag
 
   return (
     <>
-      <SEOHead config={{
-        title: site ? `${site.title.bg || site.title.en}` : 'Зареждане...',
-        ...(site && {
+      {site ? (
+        <SEOHead config={{
+          title: `Места за летене с парапланер в България - ${site.title.bg || site.title.en}`,
           description: `Подробна информация за място за летене ${site.title.bg || site.title.en}`,
           ...(site.url && { canonical: `/sites/${site.url}` })
-        })
-      }} {...(site && { site })} />
+        }} site={site} />
+      ) : (
+        <SEOHead config={{
+          title: `Подробна информация за ${fallbackSiteName} като място за летене с парапланер в България`,
+          description: `Подробна информация за място за летене ${fallbackSiteName} с парапланер в България. Посоки на вятъра, подходящи за излитане, височина на старта, методи на достъп до София, старт за летене с парапланер.`
+        }} />
+      )}
       
       <Container maxWidth={false} sx={{ py: 2, minHeight: '100vh', pb: 10 }}>
         {renderContent()}

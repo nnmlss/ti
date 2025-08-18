@@ -2,6 +2,7 @@ import express, { Router } from 'express';
 import multer from 'multer';
 // import path from 'path';
 import { uploadImage, deleteImage, generateThumbnails } from '@controllers/image.js';
+import { generateSitemap } from '@controllers/sitemap.js';
 import authRoutes from './auth.js';
 
 const router = Router();
@@ -43,5 +44,20 @@ router.delete('/image/:filename', deleteImage);
 
 // POST /api/image/generate-thumbnails/:filename - Generate missing thumbnails
 router.post('/image/generate-thumbnails/:filename', generateThumbnails);
+
+// GET /api/sitemap.xml - Generate XML sitemap
+router.get('/sitemap.xml', generateSitemap);
+
+// GET /api/robots.txt - Generate robots.txt
+router.get('/robots.txt', (_req, res) => {
+  const baseUrl = process.env['FRONTEND_URL'] || 'https://paragliding.borislav.space';
+  const robotsTxt = `User-agent: *
+Allow: /
+
+Sitemap: ${baseUrl}/api/sitemap.xml`;
+
+  res.set('Content-Type', 'text/plain');
+  res.send(robotsTxt);
+});
 
 export default router;

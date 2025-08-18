@@ -11,6 +11,8 @@ const STORAGE_KEYS = {
   FORM_DRAFTS: 'formDrafts',
   MAP_ZOOM: 'mapZoom',
   MAP_CENTER: 'mapCenter',
+  // MAP_TYPE removed - using native LayersControl instead
+  MAP_LABELS: 'mapLabels',
 } as const;
 
 /**
@@ -178,6 +180,28 @@ export function setMapCenter(center: [number, number]): void {
   }
 }
 
+// Map type functions removed - using native LayersControl instead
+
+/**
+ * Map labels visibility preference
+ */
+export function getMapLabels(): boolean {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.MAP_LABELS);
+    return stored !== 'false'; // default to true (show labels)
+  } catch {
+    return true;
+  }
+}
+
+export function setMapLabels(showLabels: boolean): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.MAP_LABELS, showLabels.toString());
+  } catch (error) {
+    console.warn('Failed to save map labels preference:', error);
+  }
+}
+
 /**
  * Get all preferences as a summary object
  */
@@ -189,6 +213,8 @@ export function getAllPreferences() {
     theme: getTheme(),
     mapZoom: getMapZoom(),
     mapCenter: getMapCenter(),
+    // mapType removed - using native LayersControl instead
+    mapLabels: getMapLabels(),
   };
 }
 

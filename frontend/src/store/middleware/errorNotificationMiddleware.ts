@@ -1,5 +1,5 @@
 import type { Middleware } from '@reduxjs/toolkit';
-import { showErrorNotification } from '@store/slices/errorNotificationSlice';
+import { showErrorNotification, enableMaintenanceMode } from '@store/slices/errorNotificationSlice';
 import { isHandledByCallback } from '@store/utils/thunkWithCallback';
 import { getLocalizedOperationName, getLocalizedErrorMessage } from '@store/utils/errorMessages';
 
@@ -36,6 +36,12 @@ export const errorNotificationMiddleware: Middleware =
         rejectedAction.payload ||
         rejectedAction.error?.message ||
         'An unexpected error occurred';
+
+      // Check for 503 errors and trigger maintenance mode
+      if (rawErrorMessage.includes('503') || rawErrorMessage.includes('Code: 503')) {
+        store.dispatch(enableMaintenanceMode());
+        return result;
+      }
 
       // Get localized Bulgarian messages
       const operationName = getLocalizedOperationName(originalActionType);

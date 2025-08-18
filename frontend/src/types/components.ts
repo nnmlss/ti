@@ -321,6 +321,9 @@ export interface BottomNavigationBarProps {
   isHomePage: boolean;
   isListView: boolean;
   filter: { windDirection: string | null };
+  showLabels: boolean;
+  showWindFilter: boolean;
   onViewToggle: (view: 'map' | 'list') => void;
-  onWindFilterOpen: () => void;
+  onWindFilterToggle: () => void;
+  onLabelsToggle: () => void;
 }

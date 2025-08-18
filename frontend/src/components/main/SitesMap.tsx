@@ -3,6 +3,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+// Labels toggle functionality moved to BottomBar
+import { useSelector } from 'react-redux';
+import type { RootState } from '@store/store';
 import { SiteCardContent } from '@components/site/SiteCardContent';
 import { DeleteConfirmDialogContainer as DeleteConfirmDialog } from '@containers/DeleteConfirmDialogContainer';
 import type { SitesMapProps } from '@app-types';
@@ -29,6 +32,7 @@ export function SitesMap({
   onShowOnMap,
   deleteDialog,
 }: SitesMapProps) {
+  const showLabels = useSelector((state: RootState) => state.mapLabels.showLabels);
   if (loading === 'pending' && sites.length === 0) {
     return (
       <Box
@@ -89,7 +93,10 @@ export function SitesMap({
 
   return (
     <>
+      {/* Labels toggle moved to BottomBar */}
+
       <MapContainer center={mapCenter} zoom={8} style={{ height: '100vh', width: '100vw' }}>
+        {/* Restore LayersControl positioned below our custom controls */}
         <LayersControl position='topright'>
           <LayersControl.BaseLayer checked name='Terrain'>
             <TileLayer
@@ -118,15 +125,17 @@ export function SitesMap({
           const [lng, lat] = site.location.coordinates;
           return (
             <Marker key={site._id} position={[lat!, lng!]}>
-              <Tooltip
-                key={`tooltip-${site._id}`}
-                permanent
-                direction='top'
-                offset={[-15, -7]}
-                opacity={1}
-              >
-                {site.title.bg}
-              </Tooltip>
+              {showLabels && (
+                <Tooltip
+                  key={`tooltip-${site._id}`}
+                  permanent
+                  direction='top'
+                  offset={[-15, -7]}
+                  opacity={1}
+                >
+                  {site.title.bg}
+                </Tooltip>
+              )}
               <Popup maxWidth={280} minWidth={260}>
                 <Card sx={{ width: '100%', boxShadow: 'none', border: 'none', p: 0, m: 0 }}>
                   <SiteCardContent

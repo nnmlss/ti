@@ -1,6 +1,6 @@
 {
   "name": "takeoff-info",
-  "version": "3.5.3",
+  "version": "3.5.4",
   "description": "Nodejs driven API and Frontend for paragliding sites in Bulgaria",
   "license": "ISC",
   "author": "Borislav Denizov",
@@ -31,6 +31,7 @@
     "@graphql-tools/schema": "^10.0.25",
     "@graphql-yoga/plugin-graphql-sse": "^3.15.1",
     "bcryptjs": "^3.0.2",
+    "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "csrf": "^3.1.0",
     "dotenv": "^17.2.1",
@@ -54,6 +55,7 @@
     "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/typescript": "^4.1.6",
     "@graphql-codegen/typescript-resolvers": "^4.5.1",
+    "@types/connect-mongo": "^3.1.2",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/express-session": "^1.18.2",

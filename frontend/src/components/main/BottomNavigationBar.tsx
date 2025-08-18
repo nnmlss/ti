@@ -5,6 +5,8 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PublicIcon from '@mui/icons-material/Public';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
+import AssistantIcon from '@mui/icons-material/Assistant';
+import AssistantOutlinedIcon from '@mui/icons-material/AssistantOutlined';
 import { UserIconGroup } from '@components/auth/UserIconGroup';
 import type { BottomNavigationBarProps } from '@app-types';
 
@@ -13,8 +15,11 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   isHomePage,
   isListView,
   filter,
+  showLabels,
+  showWindFilter,
   onViewToggle,
-  onWindFilterOpen,
+  onWindFilterToggle,
+  onLabelsToggle,
 }) => {
   return (
     <Box
@@ -52,23 +57,45 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         </Typography>
       )}
 
-      {/* Center section - Always show map/list, wind filter only on home */}
+      {/* Center section - Labels toggle, wind filter only on home, map/list view */}
       <Box>
         {isHomePage && (
-          <Button
-            onClick={onWindFilterOpen}
-            variant={filter?.windDirection ? 'contained' : 'text'}
-            sx={{
-              color: filter?.windDirection ? '#fff' : 'inherit',
-              minWidth: '46px',
-              width: '46px',
-              height: '28px',
-              fontSize: filter?.windDirection ? '0.875rem' : 'inherit',
-              fontWeight: filter?.windDirection ? 'normal' : 'normal',
-            }}
-          >
-            {filter?.windDirection || <AirIcon />}
-          </Button>
+          <>
+            <Button
+              onClick={showWindFilter ? undefined : onWindFilterToggle}
+              variant={filter?.windDirection ? 'contained' : 'text'}
+              sx={{
+                color: showWindFilter 
+                  ? 'primary.main' 
+                  : filter?.windDirection 
+                  ? '#fff' 
+                  : 'inherit',
+                minWidth: '46px',
+                width: '46px',
+                height: '28px',
+                fontSize: filter?.windDirection ? '0.875rem' : 'inherit',
+                fontWeight: filter?.windDirection ? 'normal' : 'normal',
+                mr: isListView ? 7 : 1,
+              }}
+            >
+              {filter?.windDirection || <AirIcon />}
+            </Button>
+            {!isListView && (
+              <IconButton
+                onClick={onLabelsToggle}
+                sx={{
+                  ml: 1,
+                  mr: 0,
+                  color: showLabels ? 'primary.main' : 'grey.500',
+                  '&:hover': {
+                    color: showLabels ? 'primary.main' : 'grey.700',
+                  },
+                }}
+              >
+                {showLabels ? <AssistantIcon /> : <AssistantOutlinedIcon />}
+              </IconButton>
+            )}
+          </>
         )}
         <IconButton
           onClick={() => onViewToggle('map')}

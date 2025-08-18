@@ -10,11 +10,13 @@ import {
   deleteSiteThunk,
 } from '@store/thunks/sitesThunks';
 import { GlobalErrorNotification } from '@components/ui/GlobalErrorNotification';
+import { Dialog, DialogContent, Typography, Box } from '@mui/material';
+import ConstructionIcon from '@mui/icons-material/Construction';
 
 export function GlobalErrorNotificationContainer() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { open, message, title, retryAction, isRetrying } = useSelector(
+  const { open, message, title, retryAction, isRetrying, isMaintenanceMode } = useSelector(
     (state: RootState) => state.errorNotification
   );
 
@@ -85,6 +87,48 @@ export function GlobalErrorNotificationContainer() {
     navigate('/');
     handleClose();
   };
+
+  // Show maintenance dialog if in maintenance mode
+  if (isMaintenanceMode) {
+    return (
+      <Dialog
+        open={isMaintenanceMode}
+        maxWidth="sm"
+        fullWidth
+        disableEscapeKeyDown
+        sx={{
+          '& .MuiDialog-paper': {
+            borderRadius: 2,
+            textAlign: 'center',
+            p: 2,
+          },
+        }}
+      >
+        <DialogContent>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 3,
+              py: 2,
+            }}
+          >
+            <ConstructionIcon
+              sx={{
+                fontSize: 64,
+                color: 'warning.main',
+              }}
+            />
+            
+            <Typography variant="h5" component="h2" fontWeight="bold">
+              WebApp under construction
+            </Typography>
+          </Box>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <GlobalErrorNotification

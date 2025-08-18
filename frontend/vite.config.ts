@@ -27,10 +27,10 @@ export default defineConfig({
             if (id.includes('@mui/material') || id.includes('@mui/icons-material')) {
               return 'mui';
             }
-            // Separate Leaflet into its own chunk
-            if (id.includes('leaflet') || id.includes('react-leaflet')) {
-              return 'leaflet';
-            }
+            // Keep Leaflet with vendor chunk to avoid React context issues
+            // if (id.includes('leaflet') || id.includes('react-leaflet')) {
+            //   return 'leaflet';
+            // }
             // Redux and related state management
             if (id.includes('@reduxjs/toolkit') || id.includes('react-redux')) {
               return 'redux';

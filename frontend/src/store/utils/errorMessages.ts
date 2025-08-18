@@ -26,6 +26,8 @@ export const errorMessages = {
     'Site not found': 'Мястото не е намерено',
     'Invalid request': 'Неvalidна заявка',
     'Server error': 'Грешка в сървъра',
+    'GraphQL Error (Code: 503)': 'WebApp under construction',
+    '503': 'WebApp under construction',
   },
 
   // Default messages

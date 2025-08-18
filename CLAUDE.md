@@ -6,63 +6,50 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### HIGH PRIORITY 🔴
 
-**Remaining Tasks:**
+**Available Commands:**
 
-- Implement lazy loading for routes with React.lazy() (page components)
-- Performance monitoring setup
+```bash
+npm run build:analyze  # Build with bundle analysis
+npm run perf:check     # Check current bundle against budgets
+npm run perf:build     # Build and run performance check
+```
 
-#### 1.2. Route-Based Code Splitting
+#### ✅ 1.5. Enhanced Map Preferences & UI Controls (COMPLETED)
 
-**Task:** Implement lazy loading for all major routes
-**Description:**
+**Task:** Implement map-specific preference persistence and UI controls
+**Status:** ✅ **COMPLETED** - All map preference features implemented
 
-- Convert static imports to React.lazy() for page components
-- Add loading fallbacks for each route
-- Split authentication flows into separate chunks
-- Separate admin functionality from public pages
+**Completed Features:**
 
-**Target Routes for Splitting:**
+- ✅ Map type preference (satellite/street/terrain) with localStorage persistence
+- ✅ Redux state management for map type selection with cycling button
+- ✅ Map labels toggle button with localStorage persistence  
+- ✅ Redux state management for map labels visibility
+- ✅ UI controls integrated into map interface
+- ✅ Consistent Material-UI styling with tooltips
+- ✅ Mobile-responsive design
 
-- HomePage (with maps)
-- Admin pages (CreateAccounts, Profile)
-- Authentication flows (Login, Activation)
-- Site editing functionality
+**Implementation Details:**
 
-#### 1.3. Performance Monitoring Setup
+1. **Map Type Preference:**
+   - ✅ Added getMapType/setMapType to preferences.ts
+   - ✅ Created mapTypeSlice.ts with Redux state management
+   - ✅ Integrated with Leaflet LayersControl
+   - ✅ Cycles through terrain → satellite → street
 
-**Task:** Add bundle analysis and performance monitoring
-**Description:**
+2. **Map Labels Toggle:**
+   - ✅ Added getMapLabels/setMapLabels to preferences.ts  
+   - ✅ Created mapLabelsSlice.ts with toggle action
+   - ✅ Icon button shows visibility state (eye/eye-off icons)
+   - ✅ Site tooltips respect labels visibility setting
 
-- Set up automated bundle size monitoring
-- Add performance budgets to CI/CD
-- Implement Core Web Vitals tracking
-- Regular bundle composition analysis
-
-**Tools to Implement:**
-
-- Bundle analyzer in build process
-- Performance budgets (warn if >300KB gzipped)
-- Lighthouse CI integration
-- Bundle size tracking over time
+3. **UI Integration:**
+   - ✅ Control panel positioned top-left with proper z-index
+   - ✅ Material-UI Paper container with shadow
+   - ✅ Tooltips show current state and action
+   - ✅ Responsive icon buttons with state-based colors
 
 ### MEDIUM PRIORITY 🟡
-
-#### 4. Cookie Interface & Remember System
-
-**Task:** Create user preference persistence system
-**Description:**
-
-- Implement localStorage/sessionStorage for user preferences
-- Remember user settings across sessions
-- Create simple preference management interface
-
-**Features to Remember:**
-
-- Map/list view preference
-- Wind filter selections
-- Language preference
-- Theme/display preferences
-- Form input persistence
 
 #### 5. Internationalization (i18n)
 
@@ -119,55 +106,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## Current Issues & Known Problems
+
+### Wind Filter Button Toggle Issue
+
+**Problem**: Wind filter button doesn't properly close filter when clicked while filter is open. Button click and outside click handler interfere with each other.
+
+**Current Behavior**: 
+- Filter closed: Button opens filter correctly
+- Filter open: Button click doesn't close filter as expected
+
+**Workaround**: Use outside click to close filter
+**Status**: Manual fix needed
+
+### Maintenance Mode Implementation
+
+**Feature**: 503 error detection triggers maintenance mode
+- Shows "WebApp under construction" dialog
+- Hides bottom navigation during maintenance
+- Automatically activates on any GraphQL 503 error
+
+### MongoDB Session Store
+
+**Fix Applied**: Replaced default MemoryStore with MongoDB-backed sessions using connect-mongo
+- Eliminates "MemoryStore not designed for production" warning
+- Sessions persist in database for scalability
+- Maintains existing CSRF protection functionality
+
+---
+
 ## Production Build Status & Technical Debt
 
-### TypeScript Configuration Issues (December 2024)
-
-**Current Status**: TypeScript strict type checking temporarily disabled for production builds.
-
-**Disabled Settings in `frontend/tsconfig.app.json`:**
-
-```json
-{
-  "strictNullChecks": false, // TODO: Fix null checks and re-enable
-  "noUncheckedIndexedAccess": false, // TODO: Fix array access and re-enable
-  "exactOptionalPropertyTypes": false // TODO: Fix types and re-enable
-}
-```
-
-**Build Script Modified:**
-
-- **Original**: `"build": "tsc -b && vite build"` (TypeScript validation + build)
-- **Current**: `"build": "vite build"` (Skip TypeScript validation for production)
-
-**Identified Type Errors (~17 remaining):**
-
-1. **AdminCreateAccounts.tsx**: Missing `id` property in result type
-2. **Profile.tsx**: Event handler signature mismatches (5 instances)
-3. **HomePageContainer.tsx**: Missing required props in HomePage component
-4. **NotFoundHandler.tsx**: Missing return type annotation
-5. **useProfilePage.ts**: Missing return statements in event handlers (5 instances)
-6. **useFocusTrap.ts**: Missing return statement in focus handler
-7. **useKeyboardNavigation.ts**: Missing return statement in navigation handler
-
-**Why This Happened:**
-
-- Development mode uses esbuild (ignores TypeScript errors)
-- Production mode runs `tsc` first (validates TypeScript before build)
-- Strict type checking settings exposed existing type safety issues
-
-**Resolution Plan:**
-
-1. **Phase 1**: Deploy with relaxed settings (current status)
-2. **Phase 2**: Systematically fix all type errors
-3. **Phase 3**: Re-enable strict type checking
-4. **Phase 4**: Establish type safety standards for future development
-
-**Risk Assessment:**
-
-- **Low Risk**: Most errors are UI event handlers and optional props
-- **Medium Risk**: Null/undefined access could cause runtime errors
-- **Mitigation**: Thorough testing of production build before deployment
+TypeScript build issues have been resolved. Production builds now work with full type checking enabled.
 
 ---
 

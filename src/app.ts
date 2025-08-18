@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import { createServer } from 'http';
 import apiRouter from './routes/api.js';
 import authRouter from './routes/auth.js';
@@ -51,6 +52,9 @@ app.use(
   })
 );
 
+// Trust proxy for rate limiting and security headers
+app.set('trust proxy', 1);
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -68,6 +72,10 @@ app.use(
     secret: process.env['SESSION_SECRET'] || 'fallback-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env['MONGO_URI'] || 'mongodb://localhost:27017/paragliding',
+      touchAfter: 24 * 3600, // lazy session update
+    }),
     cookie: {
       secure: process.env['NODE_ENV'] === 'production',
       httpOnly: true,

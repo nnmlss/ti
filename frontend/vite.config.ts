@@ -1,18 +1,65 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Bundle analyzer - generates stats.html after build
+    visualizer({
+      filename: 'dist/stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   build: {
+    // Performance budgets
+    chunkSizeWarningLimit: 300, // Warn if chunk > 300KB (before gzip)
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Separate MUI into its own chunk for better caching
-          mui: ['@mui/material', '@mui/icons-material'],
-          // Separate Leaflet into its own chunk
-          leaflet: ['leaflet', 'react-leaflet'],
+        manualChunks: (id) => {
+          // Vendor libraries - highest priority chunks
+          if (id.includes('node_modules')) {
+            // Separate MUI into its own chunk for better caching
+            if (id.includes('@mui/material') || id.includes('@mui/icons-material')) {
+              return 'mui';
+            }
+            // Separate Leaflet into its own chunk
+            if (id.includes('leaflet') || id.includes('react-leaflet')) {
+              return 'leaflet';
+            }
+            // Redux and related state management
+            if (id.includes('@reduxjs/toolkit') || id.includes('react-redux')) {
+              return 'redux';
+            }
+            // React Router
+            if (id.includes('react-router')) {
+              return 'router';
+            }
+            // Other vendor dependencies
+            return 'vendor';
+          }
+          
+          // Application code chunking
+          // Admin pages - separate chunk for super admins only
+          if (id.includes('AdminCreateAccounts') || id.includes('Profile')) {
+            return 'admin';
+          }
+          // Authentication flows - separate chunk
+          if (id.includes('Login') || id.includes('Activation')) {
+            return 'auth';
+          }
+          // Site management - authenticated users
+          if (id.includes('AddSitePage') || id.includes('EditSitePage') || id.includes('EditSite')) {
+            return 'site-management';
+          }
+          // Public pages - default chunk
+          if (id.includes('HomePage') || id.includes('SiteDetail')) {
+            return 'public';
+          }
         },
       },
     },

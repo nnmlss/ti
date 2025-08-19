@@ -3,9 +3,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-// Labels toggle functionality moved to BottomBar
-import { useSelector } from 'react-redux';
+import IconButton from '@mui/material/IconButton';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '@store/store';
+import { toggleMapLabelsAction } from '@store/slices/mapLabelsSlice';
 import { SiteCardContent } from '@components/site/SiteCardContent';
 import { DeleteConfirmDialogContainer as DeleteConfirmDialog } from '@containers/DeleteConfirmDialogContainer';
 import type { SitesMapProps } from '@app-types';
@@ -33,6 +36,7 @@ export function SitesMap({
   deleteDialog,
 }: SitesMapProps) {
   const showLabels = useSelector((state: RootState) => state.mapLabels.showLabels);
+  const dispatch = useDispatch();
   if (loading === 'pending' && sites.length === 0) {
     return (
       <Box
@@ -93,7 +97,28 @@ export function SitesMap({
 
   return (
     <>
-      {/* Labels toggle moved to BottomBar */}
+      <IconButton
+        onClick={() => dispatch(toggleMapLabelsAction())}
+        sx={{
+          position: 'fixed',
+          top: '60px',
+          right: '12px',
+          zIndex: 1000,
+          py: 1,
+          px: 0,
+          minWidth: '45px',
+          minHeight: '45px',
+          color: showLabels ? 'primary.main' : 'grey.500',
+          backgroundColor: 'background.paper',
+          boxShadow: 1,
+          '&:hover': {
+            color: showLabels ? 'primary.main' : 'grey.700',
+            backgroundColor: 'background.paper',
+          },
+        }}
+      >
+        {showLabels ? <VisibilityIcon /> : <VisibilityOffIcon />}
+      </IconButton>
 
       <MapContainer center={mapCenter} zoom={8} style={{ height: '100vh', width: '100vw' }}>
         {/* Restore LayersControl positioned below our custom controls */}

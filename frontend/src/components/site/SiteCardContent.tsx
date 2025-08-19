@@ -3,19 +3,9 @@ import LocationPinIcon from '@mui/icons-material/LocationPin';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAuth } from '@hooks/auth/useAuth';
-import type { FlyingSite } from '@app-types';
+import type { SiteCardContentProps } from '@app-types';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
-
-interface SiteCardContentProps {
-  site: FlyingSite;
-  onEdit: () => void;
-  onDelete: () => void;
-  onViewDetails: () => void;
-  onShowOnMap: () => void;
-  compassSize?: number;
-  variant?: 'card' | 'popup';
-}
 
 export function SiteCardContent({
   site,
@@ -23,7 +13,7 @@ export function SiteCardContent({
   onDelete,
   onViewDetails,
   onShowOnMap,
-  compassSize = 75,
+  compassSize = 47,
   variant = 'card',
 }: SiteCardContentProps) {
   const { isAuthenticated } = useAuth();
@@ -43,11 +33,13 @@ export function SiteCardContent({
   const titleStyles = {
     mb: isPopup ? 1 : 1.5,
     textAlign: 'center',
+    lineHeight: 1.1,
     color: 'primary.light',
   };
 
   const subtitleStyles = {
     textAlign: 'center',
+    lineHeight: 1.1,
     ...(isPopup && { color: 'text.secondary' }),
   };
 
@@ -60,7 +52,6 @@ export function SiteCardContent({
   // Reusable Google Maps Button Component
   const GoogleMapsButton = ({ showInActions = false }) => (
     <Button onClick={onShowOnMap} size={showInActions && isAuthenticated ? 'small' : 'medium'}>
-      Отвори в
       <LocationPinIcon sx={{ mr: 0 }} />
       Google Maps
     </Button>
@@ -89,9 +80,9 @@ export function SiteCardContent({
           </Typography>
         </Box>
 
-        <AccessOptionsView accessOptions={site.accessOptions} size={36} />
+        <AccessOptionsView accessOptions={site.accessOptions} />
 
-        {isAuthenticated && <GoogleMapsButton />}
+        {isAuthenticated && <Box sx={{ display: { xs: 'none', sm: 'block' } }}><GoogleMapsButton /></Box>}
       </CardContent>
 
       <Divider />

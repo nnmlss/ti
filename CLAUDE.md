@@ -32,6 +32,10 @@ npm start                   # Start both backend and frontend concurrently
 npm run start:backend       # Backend only - TypeScript watch mode
 npm run start:frontend      # Frontend only - Vite dev server
 
+# Production testing
+npm run preview             # Start production servers (after build)
+npm run build:preview       # Build + start production servers
+
 # Testing and quality
 npm run check              # Run typecheck and frontend lint
 npm test                   # Run tests in watch mode
@@ -82,7 +86,36 @@ src/app.ts                                    # Express server setup
 
 ### HIGH PRIORITY 🔴
 
-#### 1. Image Slideshow for Site Detail View
+#### 1. Component Naming Consistency
+
+**Task:** Standardize component naming conventions across the codebase
+**Priority:** HIGH - Code maintainability and developer experience
+
+**Current Issues:**
+- Inconsistent naming between page components and view components
+- `HomePage.tsx` should follow `*Page` suffix pattern
+- Some components unclear if they're pages or views
+
+**Naming Convention Rules:**
+- **Route Pages** (actual URL routes) → `*Page` suffix
+- **View Components** (sub-components within pages) → No suffix
+
+**Implementation Steps:**
+1. Analyze all page and view components to identify inconsistencies
+2. Define clear naming convention rules
+3. Rename components following the established pattern:
+   - `HomePage.tsx` → `Home.tsx` (route page)
+   - Keep `SiteDetailPage.tsx`, `AddSitePage.tsx` (correct)
+   - Keep `SitesList.tsx`, `SitesMap.tsx` (correct - views)
+4. Update all import statements to reflect renamed components
+5. Update route definitions and any references to renamed components
+
+**Benefits:**
+- Clear distinction between pages and views
+- Improved developer experience and code navigation
+- Consistent codebase structure
+
+#### 2. Image Slideshow for Site Detail View
 
 **Task:** Implement interactive image slideshow component for site detail pages
 **Priority:** HIGH - Enhanced user experience

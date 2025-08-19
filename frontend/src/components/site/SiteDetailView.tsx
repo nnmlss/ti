@@ -10,6 +10,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
+import { compactButton } from '@/styles/buttonStyles';
 import type { SiteDetailViewProps } from '@app-types';
 
 export function SiteDetailView({
@@ -124,8 +125,13 @@ export function SiteDetailView({
               )}
               {field.location && (
                 <Box sx={{ mt: 1 }}>
-                  <Typography variant='caption' color='text.secondary' sx={{ display: 'block', mb: 1 }}>
-                    Latitude: {field.location.coordinates[1].toFixed(4)}, Longitude: {field.location.coordinates[0].toFixed(4)}
+                  <Typography
+                    variant='caption'
+                    color='text.secondary'
+                    sx={{ display: 'block', mb: 1 }}
+                  >
+                    Latitude: {field.location.coordinates[1].toFixed(4)}, Longitude:{' '}
+                    {field.location.coordinates[0].toFixed(4)}
                   </Typography>
                   <Button
                     size='small'
@@ -174,15 +180,28 @@ export function SiteDetailView({
   };
 
   return (
-    <Card sx={{ maxWidth: '98vw', mx: 'auto' }}>
-      <CardContent sx={{ p: 4 }}>
+    <Card sx={{ maxWidth: { xs: '100vw', sm: '98vw' }, mx: 'auto', mb: 10 }}>
+      <CardContent sx={{ p: { xs: 1, md: 4 } }}>
         {/* Back Button and Title Section */}
         <Box sx={{ mb: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'space-arround', gap: 2, mb: 2 }}>
-            <Button onClick={onClose} sx={{ mb: 4 }} aria-label='Go back' variant='outlined'>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: { xs: 'space-between', sm: 'space-arround' },
+              gap: { xs: 0, sm: 2 },
+              mb: 2,
+            }}
+          >
+            <Button
+              onClick={onClose}
+              sx={compactButton}
+              aria-label='Go back'
+              variant='outlined'
+            >
               <ArrowBackIcon />
             </Button>
-            <Box sx={{ flex: 1, ml: 5 }}>
+
+            <Box sx={{ flex: 1, ml: { xs: 0, sm: 5 } }}>
               <Typography
                 variant='h4'
                 component='h1'
@@ -203,12 +222,18 @@ export function SiteDetailView({
                 </Typography>
               )}
             </Box>
-            <Box sx={{ mt: 0, mb: 4, display: 'flex', justifyContent: 'center' }}>
+
+            <Box sx={{ mt: 0, mb: 5, display: 'flex', justifyContent: 'center' }}>
               <Button
                 variant='contained'
-                startIcon={<LocationOnIcon />}
+                startIcon={<LocationOnIcon sx={{ mr: { xs: -1, sm: 'unset' }, p: 0 }} />}
                 onClick={() => onOpenLocation(site.location.coordinates)}
-                sx={{ textAlign: 'right' }}
+                sx={{
+                  textAlign: 'right',
+                  fontSize: { xs: '0.65rem', sm: 'unset' },
+                  paddingX: { sx: '5px!important' },
+                  ...compactButton,
+                }}
               >
                 Google
                 <br />
@@ -221,9 +246,9 @@ export function SiteDetailView({
         {/* Basic Information */}
         <Grid container spacing={4} sx={{ mb: 4 }}>
           {/* Wind Directions & Altitude */}
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{ textAlign: 'center' }}>
-              <WindDirectionCompass windDirections={site.windDirection} size={120} />
+              <WindDirectionCompass windDirections={site.windDirection} size={100} />
               {site.altitude && (
                 <Typography variant='h6' sx={{ mt: 2 }}>
                   {site.altitude}m
@@ -245,10 +270,11 @@ export function SiteDetailView({
           </Grid>
 
           {/* Access Options & Location */}
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
             {renderLocalizedText(site.access, '')}
             {renderLocalizedText(site.unique, '')}
           </Grid>
+
           <Grid size={{ xs: 12 }}>
             {renderLandingFields()}
             {renderLocalizedText(site.monuments, 'Забележителности')}
@@ -264,6 +290,20 @@ export function SiteDetailView({
 
         {renderTracklogs()}
       </CardContent>
+      <Button
+        onClick={onClose}
+        sx={{
+          ...compactButton,
+          mb: 5,
+          mx: 'auto!important',
+          position: 'relative',
+          display: { xs: 'flex', md: 'none' },
+        }}
+        aria-label='Go back'
+        variant='outlined'
+      >
+        <ArrowBackIcon />
+      </Button>
     </Card>
   );
 }

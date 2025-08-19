@@ -5,8 +5,6 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PublicIcon from '@mui/icons-material/Public';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
-import AssistantIcon from '@mui/icons-material/Assistant';
-import AssistantOutlinedIcon from '@mui/icons-material/AssistantOutlined';
 import { UserIconGroup } from '@components/auth/UserIconGroup';
 import type { BottomNavigationBarProps } from '@app-types';
 
@@ -15,11 +13,9 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   isHomePage,
   isListView,
   filter,
-  showLabels,
   showWindFilter,
   onViewToggle,
   onWindFilterToggle,
-  onLabelsToggle,
 }) => {
   return (
     <Box
@@ -30,7 +26,8 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         right: 0,
         zIndex: 1001,
         display: 'flex',
-        justifyContent: 'space-between',
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: { xs: 'center', sm: 'space-between' },
         alignItems: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
         backdropFilter: 'blur(8px)',
@@ -57,88 +54,90 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         </Typography>
       )}
 
-      {/* Center section - Labels toggle, wind filter only on home, map/list view */}
-      <Box>
-        {isHomePage && (
-          <>
+      {/* Center and Right sections - grouped on xs, separate on sm+ */}
+      <Box
+        sx={{
+          display: { xs: 'flex', sm: 'contents' },
+          justifyContent: 'space-evenly',
+          width: { xs: '100%', sm: 'auto' },
+        }}
+      >
+        {/* Center section - Labels toggle, wind filter only on home, map/list view */}
+        <Box>
+          {isHomePage && (
             <Button
               onClick={showWindFilter ? undefined : onWindFilterToggle}
               variant={filter?.windDirection ? 'contained' : 'text'}
               sx={{
-                color: showWindFilter 
-                  ? 'primary.main' 
-                  : filter?.windDirection 
-                  ? '#fff' 
+                color: showWindFilter
+                  ? 'primary.main'
+                  : filter?.windDirection
+                  ? '#fff'
                   : 'inherit',
-                minWidth: '46px',
-                width: '46px',
-                height: '28px',
-                fontSize: filter?.windDirection ? '0.875rem' : 'inherit',
+                minWidth: '32px',
+                width: '32px',
+                height: '23px',
+                fontSize: filter?.windDirection ? '0.6rem' : 'inherit',
                 fontWeight: filter?.windDirection ? 'normal' : 'normal',
-                mr: isListView ? 7 : 1,
+                // mr: filter?.windDirection ? 2 : 1,
               }}
             >
               {filter?.windDirection || <AirIcon />}
             </Button>
-            {!isListView && (
-              <IconButton
-                onClick={onLabelsToggle}
-                sx={{
-                  ml: 1,
-                  mr: 0,
-                  color: showLabels ? 'primary.main' : 'grey.500',
-                  '&:hover': {
-                    color: showLabels ? 'primary.main' : 'grey.700',
-                  },
-                }}
-              >
-                {showLabels ? <AssistantIcon /> : <AssistantOutlinedIcon />}
-              </IconButton>
-            )}
+          )}
+          <>
+            <IconButton
+              onClick={() => onViewToggle('map')}
+              sx={{ color: !isListView ? 'primary.main' : 'inherit' }}
+            >
+              <PublicIcon />
+            </IconButton>
           </>
-        )}
-        <IconButton
-          onClick={() => onViewToggle('map')}
-          sx={{ color: !isListView ? 'primary.main' : 'inherit' }}
-        >
-          <PublicIcon />
-        </IconButton>
-        <IconButton
-          onClick={() => onViewToggle('list')}
-          sx={{ color: isListView ? 'primary.main' : 'inherit' }}
-        >
-          <FormatListBulletedIcon />
-        </IconButton>
-      </Box>
 
-      {/* Right section */}
-      {isAuthenticated ? (
-        <Box>
-          <Button
-            component={Link}
-            to='/add-site'
-            variant='contained'
-            startIcon={<AddCircleOutlineIcon />}
+          <IconButton
+            onClick={() => onViewToggle('list')}
+            sx={{ color: isListView ? 'primary.main' : 'inherit' }}
           >
-            добави старт
-          </Button>
+            <FormatListBulletedIcon />
+          </IconButton>
         </Box>
-      ) : (
-        <Typography
-          variant='h5'
-          component='h1'
-          sx={{
-            color: 'primary.main',
-            fontSize: '1rem',
-            display: { xs: 'none', sm: 'block' },
-          }}
-        >
-          copyright
-          <Button component={Link} variant='text' to='https://borislav.space'>
-            borislav.space
-          </Button>
-        </Typography>
-      )}
+
+        {/* Right section */}
+        {isAuthenticated ? (
+          <Box>
+            <Button
+              component={Link}
+              to='/add-site'
+              variant='contained'
+              startIcon={<AddCircleOutlineIcon />}
+              sx={{
+                '& .MuiButton-startIcon': {
+                  mr: { xs: 0, sm: 1 },
+                },
+              }}
+            >
+              <Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                добави старт
+              </Box>
+            </Button>
+          </Box>
+        ) : (
+          <Typography
+            variant='h5'
+            component='h1'
+            sx={{
+              color: 'primary.main',
+              fontSize: '1rem',
+              display: { xs: 'none', sm: 'block' },
+            }}
+          >
+            copyright
+            <Button component={Link} variant='text' to='https://borislav.space'>
+              borislav.space
+            </Button>
+          </Typography>
+        )}
+      </Box>
     </Box>
   );
 };

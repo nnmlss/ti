@@ -1,6 +1,6 @@
 {
   "name": "takeoff-info",
-  "version": "3.5.5",
+  "version": "3.5.7",
   "description": "Nodejs driven API and Frontend for paragliding sites in Bulgaria",
   "license": "ISC",
   "author": "Borislav Denizov",
@@ -18,6 +18,8 @@
     "build:analyze": "cd frontend && npm run build:analyze",
     "perf:check": "cd frontend && npm run perf:check",
     "perf:build": "npm run build && npm run perf:check",
+    "preview": "concurrently \"NODE_ENV=production node dist/app.js\" \"cd frontend && npm run preview\"",
+    "build:preview": "npm run build && npm run preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",

@@ -30,7 +30,7 @@ const CARDINAL_DIRECTIONS = [
 
 export function WindDirectionCompass({
   windDirections = [],
-  size = 120,
+  size = 100,
 }: WindDirectionCompassProps) {
   const theme = useTheme();
   const radius = size / 2;

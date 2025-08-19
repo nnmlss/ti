@@ -20,12 +20,16 @@ const accessIconMap: Record<number, string> = {
 
 export function AccessOptionsView({
   accessOptions: accessOptionIds,
-  size = 24,
+  size = 27,
   showLabels = false,
 }: AccessOptionsViewProps) {
   if (!accessOptionIds || accessOptionIds.length === 0) {
     return null;
   }
+
+  // Handle responsive size object or single value
+  const iconStyles =
+    typeof size === 'object' ? { width: size, height: size } : { width: size, height: size };
 
   return (
     <Box
@@ -51,13 +55,13 @@ export function AccessOptionsView({
               key={id}
               sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}
             >
-              <img
+              <Box
+                component='img'
                 src={iconSrc}
                 alt={accessOption?.bg || `Access option ${id}`}
-                style={{
-                  width: size,
-                  height: size,
+                sx={{
                   objectFit: 'contain',
+                  ...iconStyles,
                 }}
                 loading='lazy'
                 onError={(e) => {
@@ -75,14 +79,14 @@ export function AccessOptionsView({
         }
 
         return (
-          <img
+          <Box
             key={id}
+            component='img'
             src={iconSrc}
             alt={accessOption?.bg || `Access option ${id}`}
-            style={{
-              width: size,
-              height: size,
+            sx={{
               objectFit: 'contain',
+              ...iconStyles,
             }}
             loading='lazy'
             onError={(e) => {

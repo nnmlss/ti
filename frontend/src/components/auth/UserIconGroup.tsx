@@ -18,6 +18,7 @@ const MIGRATE_URLS_MUTATION = gql`
       message
       sitesUpdated
       errors
+      updatedUrls
     }
   }
 `;

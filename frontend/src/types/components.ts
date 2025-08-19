@@ -183,6 +183,16 @@ export interface SiteCardProps {
   deleteDialog: DeleteDialogState;
 }
 
+export interface SiteCardContentProps {
+  site: FlyingSite;
+  onEdit: () => void;
+  onDelete: () => void;
+  onViewDetails: () => void;
+  onShowOnMap: () => void;
+  compassSize?: number;
+  variant?: 'card' | 'popup';
+}
+
 
 export interface SiteDetailViewContainerProps {
   site: FlyingSite;
@@ -214,7 +224,7 @@ export interface WindDirectionCompassProps {
 
 export interface AccessOptionsViewProps {
   accessOptions: AccessOptionId[];
-  size?: number;
+  size?: number | string | { xs?: number | string; sm?: number | string; md?: number | string; lg?: number | string; xl?: number | string };
   showLabels?: boolean;
 }
 

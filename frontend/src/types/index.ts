@@ -55,6 +55,7 @@ export type {
   HomePageContainerProps,
   HomePageProps,
   SiteCardProps,
+  SiteCardContentProps,
   SiteDetailViewContainerProps,
   SiteDetailViewProps,
   EditSiteContainerProps,

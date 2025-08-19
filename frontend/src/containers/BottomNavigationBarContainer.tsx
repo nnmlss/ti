@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BottomNavigationBar } from '@/components/main/BottomNavigationBar';
 import { WindDirectionFilter } from '@components/main/WindDirectionFilter';
 import { setHomeView } from '@store/slices/homeViewSlice';
-import { toggleMapLabelsAction } from '@store/slices/mapLabelsSlice';
 import { useAuth } from '@hooks/auth/useAuth';
 import type { RootState } from '@store/store';
 
@@ -15,7 +14,6 @@ export const BottomNavigationBarContainer: React.FC = () => {
   const dispatch = useDispatch();
   const homeView = useSelector((state: RootState) => state.homeView);
   const filter = useSelector((state: RootState) => state.filter);
-  const showLabels = useSelector((state: RootState) => state.mapLabels.showLabels);
   const isMaintenanceMode = useSelector((state: RootState) => state.errorNotification.isMaintenanceMode);
   const [showWindFilter, setShowWindFilter] = useState(false);
   const windFilterRef = useRef<HTMLDivElement>(null);
@@ -51,9 +49,6 @@ export const BottomNavigationBarContainer: React.FC = () => {
     }
   };
 
-  const handleLabelsToggle = () => {
-    dispatch(toggleMapLabelsAction());
-  };
 
   // Hide navigation during maintenance mode
   if (isMaintenanceMode) {
@@ -74,11 +69,9 @@ export const BottomNavigationBarContainer: React.FC = () => {
         isHomePage={isHomePage}
         isListView={isListView}
         filter={filter}
-        showLabels={showLabels}
         onViewToggle={handleViewToggle}
         onWindFilterToggle={() => setShowWindFilter(true)}
         showWindFilter={showWindFilter}
-        onLabelsToggle={handleLabelsToggle}
       />
     </>
   );

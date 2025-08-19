@@ -82,7 +82,7 @@ export function SiteCardContent({
 
         <AccessOptionsView accessOptions={site.accessOptions} />
 
-        {isAuthenticated && <Box sx={{ display: { xs: 'none', sm: 'block' } }}><GoogleMapsButton /></Box>}
+        {/* {isAuthenticated && <Box sx={{ display: { xs: 'none', sm: 'block' } }}><GoogleMapsButton /></Box>} */}
       </CardContent>
 
       <Divider />

@@ -9,9 +9,7 @@ import {
   updateSiteThunk,
   deleteSiteThunk,
 } from '@store/thunks/sitesThunks';
-import { GlobalErrorNotification } from '@components/ui/GlobalErrorNotification';
-import { Dialog, DialogContent, Typography, Box } from '@mui/material';
-import ConstructionIcon from '@mui/icons-material/Construction';
+import { ErrorNotificationView } from '@components/ui/ErrorNotificationView';
 
 export function GlobalErrorNotificationContainer() {
   const dispatch = useDispatch<AppDispatch>();
@@ -63,7 +61,7 @@ export function GlobalErrorNotificationContainer() {
             dispatch(setRetrying(false));
             return;
         }
-        
+
         if (onSuccess) {
           onSuccess();
         } else if (
@@ -71,11 +69,10 @@ export function GlobalErrorNotificationContainer() {
         ) {
           (window as unknown as { __retrySuccessCallback?: () => void })
             .__retrySuccessCallback!();
-          delete (
-            window as unknown as { __retrySuccessCallback?: () => void }
-          ).__retrySuccessCallback;
+          delete (window as unknown as { __retrySuccessCallback?: () => void })
+            .__retrySuccessCallback;
         }
-        
+
         dispatch(hideErrorNotification());
       } catch {
         dispatch(setRetrying(false));
@@ -88,56 +85,17 @@ export function GlobalErrorNotificationContainer() {
     handleClose();
   };
 
-  // Show maintenance dialog if in maintenance mode
-  if (isMaintenanceMode) {
-    return (
-      <Dialog
-        open={isMaintenanceMode}
-        maxWidth="sm"
-        fullWidth
-        disableEscapeKeyDown
-        sx={{
-          '& .MuiDialog-paper': {
-            borderRadius: 2,
-            textAlign: 'center',
-            p: 2,
-          },
-        }}
-      >
-        <DialogContent>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 3,
-              py: 2,
-            }}
-          >
-            <ConstructionIcon
-              sx={{
-                fontSize: 64,
-                color: 'warning.main',
-              }}
-            />
-            
-            <Typography variant="h5" component="h2" fontWeight="bold">
-              WebApp under construction
-            </Typography>
-          </Box>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
   return (
-    <GlobalErrorNotification
-      open={open}
-      title={title ?? null}
-      message={message}
-      isRetrying={isRetrying}
-      showRetryButton={showRetryButton}
-      showHomeButton={showHomeButton}
+    <ErrorNotificationView
+      isMaintenanceMode={isMaintenanceMode}
+      errorNotification={{
+        open,
+        title,
+        message,
+        isRetrying,
+        showRetryButton,
+        showHomeButton,
+      }}
       onClose={handleClose}
       onRetry={handleRetry}
       onGoHome={handleGoHome}

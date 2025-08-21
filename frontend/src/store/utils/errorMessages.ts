@@ -27,7 +27,11 @@ export const errorMessages = {
     'Invalid request': 'Неvalidна заявка',
     'Server error': 'Грешка в сървъра',
     'GraphQL Error (Code: 503)': 'WebApp under construction',
+    'GraphQL Error (Code: 500)': 'Възникна грешка в сървъра',
+    'Network Error: No internet connection': 'Няма интернет връзка. Моля, проверете мрежовата си връзка.',
+    'Network Error: Server unreachable': 'Сървърът не отговаря. Възможно е да има техническа поддръжка.',
     '503': 'WebApp under construction',
+    '500': 'Възникна грешка в сървъра',
   },
 
   // Default messages

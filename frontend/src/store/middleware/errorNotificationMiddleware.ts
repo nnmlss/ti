@@ -2,6 +2,7 @@ import type { Middleware } from '@reduxjs/toolkit';
 import { showErrorNotification, enableMaintenanceMode } from '@store/slices/errorNotificationSlice';
 import { isHandledByCallback } from '@store/utils/thunkWithCallback';
 import { getLocalizedOperationName, getLocalizedErrorMessage } from '@store/utils/errorMessages';
+import { diagnoseConnectivityIssue } from '@utils/networkCheck';
 
 interface RejectedAction {
   type: string;
@@ -37,10 +38,62 @@ export const errorNotificationMiddleware: Middleware =
         rejectedAction.error?.message ||
         'An unexpected error occurred';
 
-      // Check for 503 errors and trigger maintenance mode
+      // Check for 503 errors - always trigger maintenance mode
       if (rawErrorMessage.includes('503') || rawErrorMessage.includes('Code: 503')) {
         store.dispatch(enableMaintenanceMode());
         return result;
+      }
+
+      // Check for 500 errors - diagnose the issue first
+      if (rawErrorMessage.includes('500') || rawErrorMessage.includes('Code: 500')) {
+        // Perform network diagnosis asynchronously
+        diagnoseConnectivityIssue().then((issueType) => {
+          const operationName = getLocalizedOperationName(originalActionType);
+          
+          if (issueType === 'network') {
+            // User has no internet connection - show network error
+            store.dispatch(
+              showErrorNotification({
+                title: `${operationName} се провали`,
+                message: 'Няма интернет връзка. Моля, проверете мрежовата си връзка.',
+                retryAction: {
+                  type: originalActionType,
+                  payload,
+                },
+              })
+            );
+          } else if (issueType === 'server') {
+            // Server is unreachable - show server error
+            store.dispatch(
+              showErrorNotification({
+                title: `${operationName} се провали`,
+                message: 'Сървърът не отговаря. Възможно е да има техническа поддръжка.',
+                retryAction: {
+                  type: originalActionType,
+                  payload,
+                },
+              })
+            );
+          } else {
+            // Server responds but returns 500 - maintenance mode
+            store.dispatch(enableMaintenanceMode());
+          }
+        }).catch(() => {
+          // If diagnosis fails, show generic server error
+          const operationName = getLocalizedOperationName(originalActionType);
+          store.dispatch(
+            showErrorNotification({
+              title: `${operationName} се провали`,
+              message: 'Възникна грешка в сървъра',
+              retryAction: {
+                type: originalActionType,
+                payload,
+              },
+            })
+          );
+        });
+        
+        return result; // Exit early, async handling will dispatch appropriate action
       }
 
       // Get localized Bulgarian messages

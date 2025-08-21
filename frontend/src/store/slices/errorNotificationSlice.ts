@@ -11,14 +11,14 @@ export interface ErrorNotificationState {
     onSuccess?: () => void;
   };
   isRetrying: boolean;
-  isMaintenanceMode: boolean;
+  isServerError: boolean;
 }
 
 const initialState: ErrorNotificationState = {
   open: false,
   message: '',
   isRetrying: false,
-  isMaintenanceMode: false,
+  isServerError: false,
 };
 
 const errorNotificationSlice = createSlice({
@@ -46,14 +46,14 @@ const errorNotificationSlice = createSlice({
     setRetrying: (state, action: PayloadAction<boolean>) => {
       state.isRetrying = action.payload;
     },
-    enableMaintenanceMode: (state) => {
-      state.isMaintenanceMode = true;
+    enableServerError: (state) => {
+      state.isServerError = true;
     },
-    disableMaintenanceMode: (state) => {
-      state.isMaintenanceMode = false;
+    disableServerError: (state) => {
+      state.isServerError = false;
     },
   },
 });
 
-export const { showErrorNotification, hideErrorNotification, setRetrying, enableMaintenanceMode, disableMaintenanceMode } = errorNotificationSlice.actions;
+export const { showErrorNotification, hideErrorNotification, setRetrying, enableServerError, disableServerError } = errorNotificationSlice.actions;
 export const errorNotificationReducer = errorNotificationSlice.reducer;

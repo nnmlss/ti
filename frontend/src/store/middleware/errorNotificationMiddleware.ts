@@ -1,5 +1,5 @@
 import type { Middleware } from '@reduxjs/toolkit';
-import { showErrorNotification, enableMaintenanceMode } from '@store/slices/errorNotificationSlice';
+import { showErrorNotification, enableServerError } from '@store/slices/errorNotificationSlice';
 import { isHandledByCallback } from '@store/utils/thunkWithCallback';
 import { getLocalizedOperationName, getLocalizedErrorMessage } from '@store/utils/errorMessages';
 import { diagnoseConnectivityIssue } from '@utils/networkCheck';
@@ -38,9 +38,9 @@ export const errorNotificationMiddleware: Middleware =
         rejectedAction.error?.message ||
         'An unexpected error occurred';
 
-      // Check for 503 errors - always trigger maintenance mode
+      // Check for 503 errors - always trigger server error mode
       if (rawErrorMessage.includes('503') || rawErrorMessage.includes('Code: 503')) {
-        store.dispatch(enableMaintenanceMode());
+        store.dispatch(enableServerError());
         return result;
       }
 
@@ -75,8 +75,8 @@ export const errorNotificationMiddleware: Middleware =
               })
             );
           } else {
-            // Server responds but returns 500 - maintenance mode
-            store.dispatch(enableMaintenanceMode());
+            // Server responds but returns 500 - server error mode
+            store.dispatch(enableServerError());
           }
         }).catch(() => {
           // If diagnosis fails, show generic server error

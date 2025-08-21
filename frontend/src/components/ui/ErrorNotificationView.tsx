@@ -4,7 +4,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { GlobalErrorNotification } from '@components/ui/GlobalErrorNotification';
 
 interface ErrorNotificationViewProps {
-  isMaintenanceMode: boolean;
+  isServerError: boolean;
   errorNotification: {
     open: boolean;
     title: string | undefined;
@@ -19,16 +19,16 @@ interface ErrorNotificationViewProps {
 }
 
 export function ErrorNotificationView({
-  isMaintenanceMode,
+  isServerError,
   errorNotification,
   onClose,
   onRetry,
   onGoHome,
 }: ErrorNotificationViewProps) {
-  if (isMaintenanceMode) {
+  if (isServerError) {
     return (
       <Dialog
-        open={isMaintenanceMode}
+        open={isServerError}
         maxWidth='sm'
         fullWidth
         disableEscapeKeyDown

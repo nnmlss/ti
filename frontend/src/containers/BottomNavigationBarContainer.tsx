@@ -14,7 +14,7 @@ export const BottomNavigationBarContainer: React.FC = () => {
   const dispatch = useDispatch();
   const homeView = useSelector((state: RootState) => state.homeView);
   const filter = useSelector((state: RootState) => state.filter);
-  const isMaintenanceMode = useSelector((state: RootState) => state.errorNotification.isMaintenanceMode);
+  const isServerError = useSelector((state: RootState) => state.errorNotification.isServerError);
   const [showWindFilter, setShowWindFilter] = useState(false);
   const windFilterRef = useRef<HTMLDivElement>(null);
 
@@ -50,8 +50,8 @@ export const BottomNavigationBarContainer: React.FC = () => {
   };
 
 
-  // Hide navigation during maintenance mode
-  if (isMaintenanceMode) {
+  // Hide navigation during server error
+  if (isServerError) {
     return null;
   }
 

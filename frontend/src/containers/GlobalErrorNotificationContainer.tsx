@@ -14,7 +14,7 @@ import { ErrorNotificationView } from '@components/ui/ErrorNotificationView';
 export function GlobalErrorNotificationContainer() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { open, message, title, retryAction, isRetrying, isMaintenanceMode } = useSelector(
+  const { open, message, title, retryAction, isRetrying, isServerError } = useSelector(
     (state: RootState) => state.errorNotification
   );
 
@@ -87,7 +87,7 @@ export function GlobalErrorNotificationContainer() {
 
   return (
     <ErrorNotificationView
-      isMaintenanceMode={isMaintenanceMode}
+      isServerError={isServerError}
       errorNotification={{
         open,
         title,

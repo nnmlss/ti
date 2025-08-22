@@ -38,8 +38,9 @@ export const errorNotificationMiddleware: Middleware =
         rejectedAction.error?.message ||
         'An unexpected error occurred';
 
-      // Check for 503 errors - always trigger server error mode
-      if (rawErrorMessage.includes('503') || rawErrorMessage.includes('Code: 503')) {
+      // Check for 503/404 errors - always trigger server error mode
+      if (rawErrorMessage.includes('503') || rawErrorMessage.includes('Code: 503') ||
+          rawErrorMessage.includes('404') || rawErrorMessage.includes('Code: 404')) {
         store.dispatch(enableServerError());
         return result;
       }

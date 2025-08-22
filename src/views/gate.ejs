@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Места за летене с парапланер в България - TakeOff Info ti.borislav.space</title>
+  <meta name="description" content="Информация за места за летене с парапланер в България. Посоки на вятъра, подходящи за излитане, височина на старта, методи за достъп до стартове за летене с парапланер в България." />
+  <meta name="keywords" content="парапланер, парапланеризъм, българия, карта, места за летене, paragliding, bulgaria" />
+  
+  <!-- Font preloading for critical fonts -->
+  <link rel="preload" href="/frontend/dist/assets/fonts/comfortaa-regular-webfont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/frontend/dist/assets/fonts/comfortaa-light-webfont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/frontend/dist/assets/fonts/comfortaa-bold-webfont.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <% if (showGate) { %>
+  <style>
+    @font-face {
+      font-family: 'Comfortaa';
+      src: url('/frontend/dist/assets/fonts/comfortaa-regular-webfont.woff2') format('woff2'),
+           url('/frontend/dist/assets/fonts/comfortaa-regular-webfont.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Comfortaa';
+      src: url('/frontend/dist/assets/fonts/comfortaa-light-webfont.woff2') format('woff2'),
+           url('/frontend/dist/assets/fonts/comfortaa-light-webfont.woff') format('woff');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Comfortaa';
+      src: url('/frontend/dist/assets/fonts/comfortaa-bold-webfont.woff2') format('woff2'),
+           url('/frontend/dist/assets/fonts/comfortaa-bold-webfont.woff') format('woff');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    
+    body { 
+      font-family: 'Comfortaa', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; 
+      background: #f5f5f5; 
+      margin: 0; 
+      padding: 40px 20px; 
+    }
+    .container { 
+      max-width: 400px; 
+      margin: 0 auto; 
+      background: white; 
+      padding: 40px; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+    }
+    h1 { 
+      color: #333; 
+      margin-bottom: 20px; 
+      font-size: 24px; 
+      text-align: center;
+    }
+    p { 
+      color: #666; 
+      margin-bottom: 30px; 
+      line-height: 1.5; 
+      text-align: center;
+    }
+    input[type="password"] { 
+      width: 100%; 
+      padding: 12px; 
+      border: 2px solid #ddd; 
+      border-radius: 4px; 
+      font-size: 16px; 
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+    button { 
+      width: 100%; 
+      padding: 12px; 
+      background: #007bff; 
+      color: white; 
+      border: none; 
+      border-radius: 4px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      transition: background-color 0.2s;
+    }
+    button:hover { 
+      background: #0056b3; 
+    }
+    .error { 
+      color: #dc3545; 
+      margin-bottom: 20px; 
+      padding: 12px; 
+      background: #f8d7da; 
+      border: 1px solid #f5c6cb;
+      border-radius: 4px; 
+      text-align: center;
+    }
+    .brand { 
+      color: #666; 
+      font-size: 14px; 
+      margin-top: 30px; 
+      text-align: center; 
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+  </style>
+  <% } else { %>
+  <style type="text/css">
+
+  </style>
+  <% } %>
+</head>
+
+<body>
+  <% if (showGate) { %>
+  <div class="container">
+    <h1>🪂 Access Required</h1>
+    
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+    
+    <p>This site requires a password to access. Please enter the access password to continue.</p>
+    
+    <form method="post" action="/site-access">
+      <input 
+        type="password" 
+        name="password" 
+        placeholder="Enter access password" 
+        required 
+        autofocus
+      >
+      <button type="submit">Access Site</button>
+    </form>
+    
+    <div class="brand">TakeOff Info - ti.borislav.space</div>
+  </div>
+  <% } else { %>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+  <% } %>
+</body>
+
+</html>

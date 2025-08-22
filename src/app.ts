@@ -11,10 +11,25 @@ import authRouter from './routes/auth.js';
 import { connectDB } from './config/database.js';
 import { EmailService } from './services/emailService.js';
 import { setupGraphQLBeforeRoutes } from './graphql/server.js';
+import { gateMiddleware } from './middleware/gateMiddleware.js';
 import path from 'path';
 import type { CustomError } from '@types';
 
 const app = express();
+
+// Set up EJS template engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(process.cwd(), 'src/views'));
+
+
+// Apply gate middleware FIRST - before all security middleware (conditionally)
+if (process.env['SITE_ACCESS_PASSWORD'] !== 'false') {
+  console.log('🔧 Setting up gate middleware...');
+  app.use(gateMiddleware);
+  console.log('✅ Gate middleware registered');
+} else {
+  console.log('🔧 Gate middleware disabled (SITE_ACCESS_PASSWORD=false)');
+}
 
 // Security middleware with GraphQL Yoga/GraphiQL support
 app.use(
@@ -133,6 +148,7 @@ app.use('/api', apiRouter);
 // Serve static images - must come after API routes
 app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
 
+
 // 404 handler will be added after GraphQL setup in startServer function
 
 // Global error handling middleware - must be after all routes
@@ -211,7 +227,7 @@ const startServer = async () => {
   // Set up GraphQL BEFORE adding 404 handler
   await setupGraphQLBeforeRoutes(app);
 
-  // NOW add the 404 handler after GraphQL is set up
+  // Handle 404 for unmatched routes
   app.use((req: express.Request, res: express.Response) => {
     res.status(404).json({
       error: 'Not Found',
@@ -222,9 +238,12 @@ const startServer = async () => {
   // Create HTTP server
   const httpServer = createServer(app);
 
-  httpServer.listen(3000, () => {
-    console.log('Server is running on port 3000');
-    console.log('GraphQL Playground available at http://localhost:3000/graphql');
+  const port = parseInt(process.env['PORT'] || '3000', 10);
+  const hostname = process.env['HOSTNAME'] || '127.0.0.1';
+  
+  httpServer.listen(port, hostname, () => {
+    console.log(`Server is running on ${hostname}:${port}`);
+    console.log(`GraphQL Playground available at http://${hostname}:${port}/graphql`);
   });
 };
 

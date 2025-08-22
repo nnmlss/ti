@@ -4,14 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Session Status
 
-- **Last Updated**: 2025-08-18
-- **Last Completed**: SEO optimization implementation (React Helmet + meta tags + sitemap)
-- **Current Status**: Ready for new feature development
+- **Last Updated**: 2025-08-22
+- **Last Completed**: Gate middleware implementation with conditional activation + 404 error handling
+- **Current Status**: Gate middleware system ready for cloud server deployment
 - **Next Priority**: Image slideshow implementation for SiteDetailView
-- **Context**: All core SEO features completed, responsive typography implemented
+- **Context**: Gate middleware works with environment variable control, 404 errors show maintenance dialog
 
 ## Technical Decisions Made
 
+- **Gate Middleware**: Conditional activation via `SITE_ACCESS_PASSWORD` environment variable
+  - `SITE_ACCESS_PASSWORD=false` → Gate disabled (development/open access)
+  - `SITE_ACCESS_PASSWORD=<password>` → Gate enabled (production/restricted access)
+- **Error Handling**: 404/503/500 GraphQL errors trigger "WebApp under construction" maintenance dialog
+- **Development Setup**: Vite proxy configuration updated for conditional gate middleware
+- **Deployment**: CommonJS wrapper (`dist/server.cjs`) for cPanel/LiteSpeed compatibility
 - **SEO Approach**: Hybrid static HTML meta tags + React Helmet dynamic updates (SSR optional for future)
 - **Typography**: Responsive breakpoints using `theme.breakpoints.down('sm')` for mobile optimization
 - **Meta Tags**: All pages include "TakeOff Info ti.borislav.space" suffix for brand consistency
@@ -55,6 +61,16 @@ src/routes/api.ts                             # Sitemap and robots.txt endpoints
 frontend/src/theme.ts                         # Material-UI theme + responsive typography
 frontend/src/index.css                       # Font loading and base styles
 
+# Gate Middleware System
+src/middleware/gateMiddleware.ts              # Gate password protection middleware
+src/views/gate.ejs                            # Gate password form template
+.env (SITE_ACCESS_PASSWORD)                   # Gate enable/disable control
+
+# Error Handling & Maintenance Mode
+frontend/src/components/ui/ErrorNotificationView.tsx     # Maintenance dialog component
+frontend/src/store/middleware/errorNotificationMiddleware.ts  # Error handling logic
+frontend/src/store/utils/errorMessages.ts    # Bulgarian error message mapping
+
 # Core Components
 frontend/src/AppRoutes.tsx                    # Route definitions
 frontend/src/App.tsx                          # HelmetProvider setup
@@ -63,8 +79,12 @@ frontend/src/components/pages/SiteDetailPage.tsx  # Site detail with dynamic SEO
 
 # Types and Configuration
 frontend/src/types/                           # TypeScript type definitions
-frontend/vite.config.ts                       # Vite build configuration
-src/app.ts                                    # Express server setup
+frontend/vite.config.ts                       # Vite build configuration (conditional proxy)
+src/app.ts                                    # Express server setup (conditional gate)
+
+# Build & Deployment
+dist/server.cjs                               # CommonJS wrapper for LiteSpeed compatibility
+create-cjs-wrapper.js                         # Script to generate CommonJS wrapper
 ```
 
 ## Session Recovery Checklist
@@ -78,6 +98,9 @@ src/app.ts                                    # Express server setup
 
 ## Recently Completed Features ✅
 
+- **Gate Middleware System** (2025-08-22) - Conditional password protection with environment variable control (`SITE_ACCESS_PASSWORD=false` disables gate, any other value enables it)
+- **Error Handling Enhancement** (2025-08-22) - 404/503/500 GraphQL errors trigger "WebApp under construction" maintenance dialog instead of regular error messages  
+- **LiteSpeed Compatibility** (2025-08-22) - CommonJS wrapper (`dist/server.cjs`) for cPanel/CloudLinux deployment environments
 - **SEO Optimization** (2025-08-18) - Complete implementation with sitemap generation, meta tags, Open Graph/Twitter Cards, and TouristAttraction schema markup
 - **Responsive Typography** (2025-08-18) - Mobile-optimized font sizes using Material-UI breakpoints  
 - **Enhanced Map Preferences** (2025) - Map labels toggle and localStorage persistence with Redux state management
@@ -598,8 +621,11 @@ SMTP_PASS=<production-email-password>
    mkdir -p gallery
    chmod 755 gallery
 
-   # Start the application
-   node dist/app.js
+   # Start the application (LiteSpeed compatibility)
+   node dist/server.cjs
+   
+   # Alternative: Direct ES module (if supported)
+   # node dist/app.js
    ```
 
 4. **Web Server Configuration:**
@@ -612,13 +638,16 @@ SMTP_PASS=<production-email-password>
 5. **Process Management:**
 
    ```bash
-   # Simple start
-   NODE_ENV=production node dist/app.js
+   # Simple start (LiteSpeed compatible)
+   NODE_ENV=production node dist/server.cjs
 
    # With PM2 (recommended)
-   pm2 start dist/app.js --name "paragliding-app"
+   pm2 start dist/server.cjs --name "paragliding-app"
    pm2 startup  # Auto-start on server reboot
    pm2 save     # Save current process list
+   
+   # Alternative: Direct ES module (if server supports)
+   # pm2 start dist/app.js --name "paragliding-app"
    ```
 
 6. **Verification Steps:**

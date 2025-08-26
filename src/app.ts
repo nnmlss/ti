@@ -3,15 +3,14 @@ import express from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
-import session from 'express-session';
-import MongoStore from 'connect-mongo';
-import { createServer } from 'http';
+import cookieParser from 'cookie-parser';
+// createServer removed - wrapper handles server creation
 import apiRouter from './routes/api.js';
 import authRouter from './routes/auth.js';
 import { connectDB } from './config/database.js';
 import { EmailService } from './services/emailService.js';
 import { setupGraphQLBeforeRoutes } from './graphql/server.js';
-import { gateMiddleware } from './middleware/gateMiddleware.js';
+// import { gateMiddleware } from './middleware/gateMiddleware.js'; // DISABLED
 import path from 'path';
 import type { CustomError } from '@types';
 
@@ -21,8 +20,12 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'src/views'));
 
+// Cookie parser MUST come before gate middleware
+app.use(cookieParser());
 
 // Apply gate middleware FIRST - before all security middleware (conditionally)
+// DISABLED: Gateway middleware temporarily disabled for production
+/*
 if (process.env['SITE_ACCESS_PASSWORD'] !== 'false') {
   console.log('🔧 Setting up gate middleware...');
   app.use(gateMiddleware);
@@ -30,6 +33,8 @@ if (process.env['SITE_ACCESS_PASSWORD'] !== 'false') {
 } else {
   console.log('🔧 Gate middleware disabled (SITE_ACCESS_PASSWORD=false)');
 }
+*/
+console.log('🔧 Gate middleware DISABLED - commented out');
 
 // Security middleware with GraphQL Yoga/GraphiQL support
 app.use(
@@ -81,27 +86,46 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-// Session middleware for CSRF
-app.use(
-  session({
-    secret: process.env['SESSION_SECRET'] || 'fallback-secret-change-in-production',
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env['MONGO_URI'] || 'mongodb://localhost:27017/paragliding',
-      touchAfter: 24 * 3600, // lazy session update
-    }),
-    cookie: {
-      secure: process.env['NODE_ENV'] === 'production',
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    },
-  })
-);
+// Cookie parser moved to top of file
 
 // Body parsing with size limits
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Gate access route (BEFORE CSRF protection to avoid blocking)
+// DISABLED: Route disabled along with gateway middleware
+/*
+app.post('/site-access', (req, res) => {
+  console.log('🔑 Password submission received!');
+  console.log('Body:', req.body);
+  console.log('Expected password:', process.env['SITE_ACCESS_PASSWORD']);
+  
+  const { password } = req.body;
+  
+  if (!password) {
+    console.log('❌ No password provided');
+    return res.render('gate', { 
+      showGate: true, 
+      error: 'Password is required' 
+    });
+  }
+  
+  if (password !== process.env['SITE_ACCESS_PASSWORD']) {
+    console.log('❌ Password incorrect:', password);
+    return res.render('gate', { 
+      showGate: true, 
+      error: 'Incorrect password' 
+    });
+  }
+  
+  // Password correct - set bypass cookie and redirect
+  console.log('✅ Password correct! Setting cookie and redirecting');
+  res.cookie('site_access', 'granted', { 
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours - simplified options
+  });
+  res.redirect('/');
+});
+*/
 
 // CSRF Protection via custom headers
 
@@ -131,6 +155,21 @@ const customHeaderProtection = (
   next();
 };
 
+// Remove duplicate - moved above
+
+// Test route to verify server is running and show environment
+// DISABLED: Remove test route for production
+/*
+app.get('/test', (_req, res) => {
+  res.json({ 
+    message: 'Node.js server is working!', 
+    timestamp: new Date().toISOString(),
+    siteAccessPassword: process.env['SITE_ACCESS_PASSWORD'] || 'NOT_SET',
+    nodeEnv: process.env['NODE_ENV'] || 'NOT_SET'
+  });
+});
+*/
+
 // Apply CSRF protection to /api routes (except auth test endpoint)
 app.use('/api/auth', (req, res, next) => {
   // Skip CSRF for test-email endpoint
@@ -148,9 +187,15 @@ app.use('/api', apiRouter);
 // Serve static images - must come after API routes
 app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
 
+// Serve frontend static files BUT exclude root route (let gateway handle it)
+app.use((req, res, next) => {
+  if (req.path === '/') {
+    return next(); // Let gateway handle root route
+  }
+  express.static(path.join(process.cwd(), 'frontend/dist'))(req, res, next);
+});
 
 // 404 handler will be added after GraphQL setup in startServer function
-
 // Global error handling middleware - must be after all routes
 app.use(
   (err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -227,7 +272,7 @@ const startServer = async () => {
   // Set up GraphQL BEFORE adding 404 handler
   await setupGraphQLBeforeRoutes(app);
 
-  // Handle 404 for unmatched routes
+  // Handle 404 for unmatched routes - gate middleware handles main routes
   app.use((req: express.Request, res: express.Response) => {
     res.status(404).json({
       error: 'Not Found',
@@ -235,16 +280,16 @@ const startServer = async () => {
     });
   });
 
-  // Create HTTP server
-  const httpServer = createServer(app);
-
-  const port = parseInt(process.env['PORT'] || '3000', 10);
-  const hostname = process.env['HOSTNAME'] || '127.0.0.1';
-  
-  httpServer.listen(port, hostname, () => {
-    console.log(`Server is running on ${hostname}:${port}`);
-    console.log(`GraphQL Playground available at http://${hostname}:${port}/graphql`);
-  });
+  return app; // Return configured app for wrapper
 };
 
-startServer().catch(console.error);
+// Start server directly when running app.js (not via wrapper)
+startServer().then(app => {
+  app.listen(3000, () => {
+    console.log('Server is running on port 3000');
+    console.log('GraphQL endpoint available at http://localhost:3000/graphql');
+  });
+}).catch(console.error);
+
+// Export Promise for production wrapper
+export default startServer();

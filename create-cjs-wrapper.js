@@ -8,14 +8,26 @@ const wrapperContent = `// CommonJS wrapper for ES module backend
 async function startServer() {
   try {
     // Dynamic import of ES module
-    const { default: app } = await import('./app.js');
+    const appModule = await import('./app.js');
+    const app = appModule.default;
     
-    // The app should already be listening, but if not, start it
-    if (app && typeof app.listen === 'function') {
+    // Handle both Promise and Express app
+    if (app && typeof app.then === 'function') {
+      // It's a Promise - await it
+      const expressApp = await app;
+      const port = process.env.PORT || 3000;
+      expressApp.listen(port, () => {
+        console.log(\`Server started on port \${port}\`);
+      });
+    } else if (app && typeof app.listen === 'function') {
+      // It's already an Express app
       const port = process.env.PORT || 3000;
       app.listen(port, () => {
         console.log(\`Server started on port \${port}\`);
       });
+    } else {
+      console.error('Invalid app export - expected Express app or Promise');
+      process.exit(1);
     }
   } catch (error) {
     console.error('Failed to start server:', error);

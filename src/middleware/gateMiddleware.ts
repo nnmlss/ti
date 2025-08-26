@@ -9,6 +9,13 @@ export const gateMiddleware = (req: Request, res: Response, next: NextFunction) 
   if (process.env['SITE_ACCESS_PASSWORD'] === 'false') {
     return next();
   }
+  
+  // Skip gate if user has bypass cookie
+  console.log('🍪 Checking cookies:', req.cookies);
+  if (req.cookies && req.cookies['site_access'] === 'granted') {
+    console.log('✅ Cookie found! Bypassing gate');
+    return next();
+  }
 
   console.log('🚪 Gate middleware triggered!');
   console.log('Method:', req.method);

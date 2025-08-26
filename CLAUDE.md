@@ -4,17 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Session Status
 
-- **Last Updated**: 2025-08-22
-- **Last Completed**: Gate middleware implementation with conditional activation + 404 error handling
-- **Current Status**: Gate middleware system ready for cloud server deployment
+- **Last Updated**: 2025-08-26
+- **Last Completed**: Gate middleware disabled due to production hosting conflicts
+- **Current Status**: Gateway middleware temporarily disabled, all files preserved in project
 - **Next Priority**: Image slideshow implementation for SiteDetailView
-- **Context**: Gate middleware works with environment variable control, 404 errors show maintenance dialog
+- **Context**: Production hosting (CloudLinux/Passenger) static file serving conflicts with Node.js routing
 
 ## Technical Decisions Made
 
-- **Gate Middleware**: Conditional activation via `SITE_ACCESS_PASSWORD` environment variable
-  - `SITE_ACCESS_PASSWORD=false` → Gate disabled (development/open access)
-  - `SITE_ACCESS_PASSWORD=<password>` → Gate enabled (production/restricted access)
+- **Gate Middleware**: **DISABLED** (2025-08-26) - Code commented out in `src/app.ts` due to production hosting conflicts
+  - **Issue**: CloudLinux/Passenger static file serving overrides Node.js routing for root URL (`/`)
+  - **Root Cause**: Web server serves `frontend/dist/index.html` directly, bypassing Node.js app for `/` route
+  - **Solution Applied**: Temporarily disabled middleware and `/site-access` route via comments
+  - **Files Preserved**: `src/middleware/gateMiddleware.ts`, `src/views/gate.ejs` kept for future use
+  - **Re-enable**: Uncomment sections in `src/app.ts` (lines ~27-36, ~96-128, import on line 13)
 - **Error Handling**: 404/503/500 GraphQL errors trigger "WebApp under construction" maintenance dialog
 - **Development Setup**: Vite proxy configuration updated for conditional gate middleware
 - **Deployment**: CommonJS wrapper (`dist/server.cjs`) for cPanel/LiteSpeed compatibility
@@ -255,6 +258,16 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
 - Eliminates "MemoryStore not designed for production" warning
 - Sessions persist in database for scalability
 - Maintains existing CSRF protection functionality
+
+### Gateway Middleware Production Conflict (DISABLED)
+
+**Issue**: Gateway middleware bypassed on root URL (`/`) in production environment
+- **Root Cause**: CloudLinux/Passenger static file serving takes precedence over Node.js routing
+- **Behavior**: Web server serves `frontend/dist/index.html` directly for `/`, bypassing Node.js app
+- **Testing Confirmed**: Renaming `index.html` → gateway works, restoring file → gateway bypassed
+- **Status**: **DISABLED** - Middleware commented out in `src/app.ts`
+- **Files Preserved**: All gateway files kept for potential future solutions
+- **Alternative Solutions**: Require web server configuration changes or static file restructuring
 
 ---
 

@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Current Session Status
 
-- **Last Updated**: 2025-08-26
-- **Last Completed**: Gate middleware disabled due to production hosting conflicts
-- **Current Status**: Gateway middleware temporarily disabled, all files preserved in project
-- **Next Priority**: Image slideshow implementation for SiteDetailView
-- **Context**: Production hosting (CloudLinux/Passenger) static file serving conflicts with Node.js routing
+- **Last Updated**: 2025-09-24
+- **Last Completed**: Code standards compliance analysis and CLAUDE.md cleanup
+- **Current Status**: Critical priority violations identified (45+ conditional spreading, multiple `any` types)
+- **Next Priority**: Fix CLAUDE.md coding rules violations (critical priority)
+- **Context**: Comprehensive codebase analysis completed, cleanup plan added to development tasks
 
 ## Technical Decisions Made
 
@@ -21,7 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Error Handling**: 404/503/500 GraphQL errors trigger "WebApp under construction" maintenance dialog
 - **Development Setup**: Vite proxy configuration updated for conditional gate middleware
 - **Deployment**: CommonJS wrapper (`dist/server.cjs`) for cPanel/LiteSpeed compatibility
-- **SEO Approach**: Hybrid static HTML meta tags + React Helmet dynamic updates (SSR optional for future)
+- **SEO Implementation**: See SEO.md for complete details
 - **Typography**: Responsive breakpoints using `theme.breakpoints.down('sm')` for mobile optimization
 - **Meta Tags**: All pages include "TakeOff Info ti.borislav.space" suffix for brand consistency
 - **Descriptions**: Use pilot-focused terminology ("посоки на вятъра, подходящи за излитане")
@@ -30,35 +30,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands Reference
 
 ```bash
-# Type checking and building
-npm run typecheck          # Check TypeScript errors (backend + frontend)
-npm run build               # Full build (backend + frontend)
-npm run build:frontend      # Frontend only build
-npm run build:backend       # Backend only build
-
 # Development servers
 npm start                   # Start both backend and frontend concurrently
 npm run start:backend       # Backend only - TypeScript watch mode
 npm run start:frontend      # Frontend only - Vite dev server
 
-# Production testing
-npm run preview             # Start production servers (after build)
-npm run build:preview       # Build + start production servers
+# Building
+npm run build               # Full build (backend + frontend)
+npm run build:backend       # Compile TypeScript to dist/
+npm run build:frontend      # Build React app for production
+npm run clean               # Remove dist/ directory
+
+# Frontend-specific (run from /frontend/)
+npm run dev                 # Vite dev server with HMR
+npm run lint                # ESLint checking
+npm run preview             # Preview production build
 
 # Testing and quality
+npm run typecheck          # TypeScript type checking (backend + frontend)
 npm run check              # Run typecheck and frontend lint
 npm test                   # Run tests in watch mode
 npm run test:run           # Run all tests once
+npm run test:ui            # Run tests with UI interface
+
+# Production testing
+npm run build:preview       # Build + start production servers
 ```
 
 ## Key Files Location Map
 
 ```
-# SEO Implementation
-frontend/src/components/seo/SEOHead.tsx        # Main SEO component
-frontend/index.html                            # Static meta tags
-src/controllers/sitemap.ts                     # XML sitemap generation
-src/routes/api.ts                             # Sitemap and robots.txt endpoints
+# Documentation
+SEO.md                                        # Complete SEO implementation guide
+CLAUDE.md                                     # Project guidance and development tasks
 
 # Styling and Theme
 frontend/src/theme.ts                         # Material-UI theme + responsive typography
@@ -110,36 +114,74 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
 
 ## Upcoming Development Tasks
 
-### HIGH PRIORITY 🔴
+### CRITICAL PRIORITY 🚨
 
-#### 1. Component Naming Consistency
+#### 1. Code Standards Compliance (CLAUDE.md Rules Violations)
 
-**Task:** Standardize component naming conventions across the codebase
-**Priority:** HIGH - Code maintainability and developer experience
+**Task:** Fix violations of global CLAUDE.md coding standards throughout the codebase
+**Priority:** CRITICAL - Code quality, type safety, and maintainability
 
-**Current Issues:**
-- Inconsistent naming between page components and view components
-- `HomePage.tsx` should follow `*Page` suffix pattern
-- Some components unclear if they're pages or views
+**🔴 HIGH PRIORITY VIOLATIONS:**
 
-**Naming Convention Rules:**
-- **Route Pages** (actual URL routes) → `*Page` suffix
-- **View Components** (sub-components within pages) → No suffix
+1. **`any` Type Usage (FORBIDDEN)**
+   - **Rule**: "NEVER use `any` type - maintain strict type safety at all times"
+   - **Locations**:
+     - `src/graphql/server.ts:17,87` - Parameters typed as `any`
+     - `src/middleware/auth.ts:7,36` - Function parameters and JWT decode results
+     - `src/graphql/scalars/index.ts` - Multiple `any` types in scalar implementations
+     - Test files using `as any` for mocking
 
-**Implementation Steps:**
-1. Analyze all page and view components to identify inconsistencies
-2. Define clear naming convention rules
-3. Rename components following the established pattern:
-   - `HomePage.tsx` → `Home.tsx` (route page)
-   - Keep `SiteDetailPage.tsx`, `AddSitePage.tsx` (correct)
-   - Keep `SitesList.tsx`, `SitesMap.tsx` (correct - views)
-4. Update all import statements to reflect renamed components
-5. Update route definitions and any references to renamed components
+2. **Conditional Spreading (FORBIDDEN)**
+   - **Rule**: "NEVER use conditional spreading `{...(condition && { prop })}` to bypass TypeScript"
+   - **Locations**: 45+ violations across:
+     - `frontend/src/components/site/SiteCardContent.tsx:43,49`
+     - `frontend/src/utils/formDataTransforms.ts:199-205`
+     - `frontend/src/hooks/business/useEditSiteForm.ts:135-140`
+     - `frontend/src/store/thunks/sitesThunks.ts:41-85` (extensive violations)
+     - Many more throughout the codebase
+
+3. **Component Naming Inconsistency**
+   - **Rule**: Follow `*Page` suffix pattern for route pages
+   - **Violation**: `HomePage.tsx` should be `Home.tsx` (route page)
+
+**🟡 MEDIUM PRIORITY VIOLATIONS:**
+
+4. **Inline Type Definitions**
+   - **Rule**: "ALWAYS keep interfaces and types in centralized type definition files"
+   - **Locations**: Component-specific interfaces in:
+     - `frontend/src/components/main/WindDirectionFilter.tsx:8`
+     - `frontend/src/components/ui/ErrorNotificationView.tsx:6`
+     - `frontend/src/components/ui/NotificationDialog.tsx:5`
+
+**Implementation Plan:**
+
+1. **Phase 1 - Type Safety Restoration**
+   - Replace all `any` types with proper TypeScript interfaces
+   - Create proper type definitions for GraphQL context, auth middleware
+   - Update scalar implementations with strict typing
+
+2. **Phase 2 - Eliminate Conditional Spreading**
+   - Replace conditional spreading with proper optional properties
+   - Use type-safe alternatives like conditional types or union types
+   - Update form data transforms to use strict typing
+
+3. **Phase 3 - Centralize Type Definitions**
+   - Move component prop interfaces to centralized type files
+   - Create shared interface files for common patterns
+   - Update imports across components
+
+4. **Phase 4 - Component Naming Consistency**
+   - Rename `HomePage.tsx` to `Home.tsx`
+   - Update all import statements and route references
+   - Establish clear naming convention documentation
 
 **Benefits:**
-- Clear distinction between pages and views
-- Improved developer experience and code navigation
-- Consistent codebase structure
+- Restore strict TypeScript type safety
+- Eliminate type system bypassing patterns
+- Improve code maintainability and developer experience
+- Ensure consistency with established coding standards
+
+### HIGH PRIORITY 🔴
 
 #### 2. Image Slideshow for Site Detail View
 
@@ -177,7 +219,7 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
 
 ### MEDIUM PRIORITY 🟡
 
-#### 2. Internationalization (i18n)
+#### 3. Internationalization (i18n)
 
 **Task:** Translate everything into Bulgarian and create language switch functionality
 **Description:**
@@ -269,13 +311,6 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
 - **Files Preserved**: All gateway files kept for potential future solutions
 - **Alternative Solutions**: Require web server configuration changes or static file restructuring
 
----
-
-## Production Build Status & Technical Debt
-
-TypeScript build issues have been resolved. Production builds now work with full type checking enabled.
-
----
 
 ## Project Overview
 
@@ -307,48 +342,6 @@ This is "Takeoff Info" - a paragliding sites application for Bulgaria with a Nod
 - **Location**: GeoJSON Point with coordinates array [longitude, latitude]
 - **CustomError**: Extended Error interface with `status`, `isValidationError`, and `errors` properties
 
-## Development Commands
-
-### Full Stack Development
-
-```bash
-npm start                    # Start both backend and frontend concurrently
-npm run start:backend       # Backend only - TypeScript watch mode
-npm run start:frontend      # Frontend only - Vite dev server
-```
-
-### Building
-
-```bash
-npm run build               # Build both backend and frontend
-npm run build:backend       # Compile TypeScript to dist/
-npm run build:frontend      # Build React app for production
-```
-
-### Frontend-Specific (run from /frontend/)
-
-```bash
-npm run dev                 # Vite dev server with HMR
-npm run build               # Production build
-npm run lint                # ESLint checking
-npm run preview             # Preview production build
-```
-
-### Backend-Specific
-
-```bash
-npm run clean               # Remove dist/ directory
-```
-
-### Testing
-
-```bash
-npm test                    # Run tests in watch mode
-npm run test:run           # Run all tests once
-npm run test:ui            # Run tests with UI interface
-npm run typecheck          # TypeScript type checking for both backend and frontend
-npm run check              # Run typecheck and frontend lint
-```
 
 ## Key Configuration
 
@@ -432,43 +425,6 @@ npm run check              # Run typecheck and frontend lint
 - MongoDB instance
 - MONGO_URI environment variable for database connection
 
-### Production Environment Variables
-
-**Critical Security Variables (REQUIRED):**
-
-```bash
-NODE_ENV=production
-SESSION_SECRET=<64-character-random-string>  # Generate: openssl rand -base64 64
-JWT_SECRET=<64-character-random-string>      # Generate: openssl rand -base64 64
-MONGO_URI=mongodb://username:password@host:port/database
-```
-
-**Email Service Configuration:**
-
-```bash
-SMTP_HOST=mail.borislav.space
-SMTP_PORT=465
-SMTP_SECURE=true
-SMTP_USER=fly@borislav.space
-SMTP_PASS=<your-email-password>
-FROM_EMAIL=noreply@borislav.space
-```
-
-**Frontend Configuration:**
-
-```bash
-FRONTEND_URL=https://your-subdomain.borislav.space
-```
-
-**Security Notes:**
-
-- ⚠️ **CRITICAL**: `SESSION_SECRET` and `JWT_SECRET` currently use fallback values
-- 🔒 Generate unique 64+ character secrets for production
-- 📧 Email functionality requires valid SMTP credentials
-- 🌐 Frontend URL must match your actual domain for email links
-
-**Environment Validation:**
-The app will start with fallback secrets but this is a **security vulnerability** in production. Ensure all variables are properly set before deployment.
 
 ## Planned User Management System
 
@@ -585,10 +541,22 @@ NODE_ENV=production|development
 ```bash
 NODE_ENV=production
 PORT=3000
+SESSION_SECRET=<64-character-random-string>  # Generate: openssl rand -base64 64
+JWT_SECRET=<64-character-random-string>      # Generate: openssl rand -base64 64
 MONGO_URI=mongodb://localhost:27017/paragliding-production
-SESSION_SECRET=<strong-random-secret-for-production>
+SMTP_HOST=mail.borislav.space
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=fly@borislav.space
 SMTP_PASS=<production-email-password>
+FROM_EMAIL=noreply@borislav.space
+FRONTEND_URL=https://your-subdomain.borislav.space
 ```
+
+**Security Notes:**
+- ⚠️ **CRITICAL**: Generate unique 64+ character secrets for production
+- 📧 Email functionality requires valid SMTP credentials
+- 🌐 Frontend URL must match your actual domain for email links
 
 **CORS Configuration:**
 

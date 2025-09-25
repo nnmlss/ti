@@ -1,0 +1,3216 @@
+{
+  "timestamp": "2025-09-25T17:58:27.869Z",
+  "version": "1.0.0",
+  "sites": [
+    {
+      "_id": 1,
+      "title": {
+        "bg": "София - Комините",
+        "en": "Sofia - Kominite"
+      },
+      "windDirection": [
+        "N",
+        "NNE",
+        "NE",
+        "N",
+        "NNE",
+        "NE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_7700.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_7780.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/DSC_0394.JPG",
+          "width": 3920,
+          "height": 2204
+        }
+      ],
+      "access": {
+        "bg": "От последната станция на драгалевския лифт \"Бай Кръстьо\" ходене 20-40 мин. \nС автомобил/автобус 66 по пътя за х.Алеко до N 42.59, E 23.293 и ходене 20-40 мин.",
+        "en": "From the top station of chair lift Dragalevtsi \"Bai Krastio\" - 20-40 min walk. By car or bus number 66 on the road to Aleko hut toN 42.59, E 23.293 followed by20-40 min walk."
+      },
+      "landingFields": [
+        {
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              23.324,
+              42.632
+            ]
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.285,
+          42.601
+        ]
+      },
+      "accessOptions": [
+        0,
+        2,
+        1
+      ],
+      "altitude": 1800,
+      "localPilotsClubs": {
+        "bg": [
+          "www.skyspirit.bg, Драгалевци площада"
+        ],
+        "en": [
+          "www.skyspirit.bg, Dragalevtsi main square"
+        ]
+      },
+      "url": "софия-комините"
+    },
+    {
+      "_id": 2,
+      "title": {
+        "bg": "Сопот",
+        "en": "Sopot"
+      },
+      "accomodations": {
+        "bg": [
+          "Палатки на манастирска поляна (има чешма), хотели и къщи за гости в град Сопот."
+        ],
+        "en": [
+          "Tents (free camping) on the main landing spot at the bottom of the chair lift - Manastirska polyana, water is available. Hotels and guest house rooms also availablein the town of Sopot."
+        ]
+      },
+      "windDirection": [
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W",
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_8949.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_8840.JPG",
+          "width": 2992,
+          "height": 2992
+        },
+        {
+          "path": "/gallery/Valeri kaca.jpg",
+          "width": 3990,
+          "height": 2826
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "Downhil Велотрасе, XC вело маршрути, пешеходен туризъм, музей на Иван Вазов"
+        ],
+        "en": [
+          "Downhil track, XC cycling, hiking, Ivan Vazov museum, other cultural touristic opportunities."
+        ]
+      },
+      "access": {
+        "bg": "пеш се изкачва за час и половина - два \nСедалков лифт, работи при с променливо работно време, доста често с минимум човека в дни, в които няма профилактика.",
+        "en": "hike and fly for hour and half . Chairlift works with not regular schedule, sometimes for groups only."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Обособено място за кацане има точно до началната станция на въжения лифт на Манастирска поляна. Алтернативната по-голяма кацалка е на запад от лифта - поляна ориентирана И-З.",
+            "en": "Bottom of chairlift has a dedicated landing site. A second larger landing site is located West of the bottom station of the chairlift - strip of land / lawns oriented E/W."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.75,
+          42.69
+        ]
+      },
+      "accessOptions": [
+        0,
+        3,
+        4
+      ],
+      "altitude": 1440,
+      "localPilotsClubs": {
+        "bg": [
+          "www.sky-camp.com",
+          "www.skynomad.com"
+        ],
+        "en": [
+          "www.sky-camp.com",
+          "www.skynomad.net"
+        ]
+      },
+      "url": "сопот"
+    },
+    {
+      "_id": 3,
+      "title": {
+        "bg": "Марково",
+        "en": "Markovo"
+      },
+      "windDirection": [
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "NW",
+        "NNW",
+        "N",
+        "NNE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_2721.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "Има прекрасна гледка към град Пловдив."
+        ],
+        "en": [
+          "Great view towards the city of Plovdiv."
+        ]
+      },
+      "access": {
+        "bg": "Асфалтов път отбиващ в ляво в края на селото, завършващ с 200-300 м черен път до основата на хълма. С 4x4 може да се качите и до върха.",
+        "en": "Asphalt road ending with adirt road(last 200-300m) atthe bottom of the hill. With a 4x4 you can get to the top of the hill."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Поляната в основата на хълма.",
+            "en": "The fields below the hill."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.72,
+          42.06
+        ]
+      },
+      "accessOptions": [
+        0
+      ],
+      "altitude": 400,
+      "localPilotsClubs": {
+        "bg": [
+          "Клуб Тангра Асеновград(<a class=\"ext\" href=\"http://tangrax3m.com/BG/\" style=\"box-sizing: border-box; color: rgb(51, 122, 183); text-decoration: none; font-family: verdana, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; background-color: rgb(254, 254, 254);\" target=\"_blank\">http://tangrax3m.com/BG/</a>)"
+        ],
+        "en": [
+          "Tangra Paragliding club Asenovgrad (http://tangrax3m.com/BG/)"
+        ]
+      },
+      "url": "марково"
+    },
+    {
+      "_id": 4,
+      "title": {
+        "bg": "Калоян",
+        "en": "Kaloyan"
+      },
+      "windDirection": [
+        "WNW",
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "WNW",
+        "NW",
+        "NNW",
+        "N",
+        "NNE"
+      ],
+      "access": {
+        "bg": "По асфалтов път от с.Марково към с.Гълъбово. Ходене пеша или 4х4 от N42.041, E24.706",
+        "en": "Asphalt road from Markovo village towards Galabovo village. Walking or 4x4 vehicle onwards fromN42.041, E24.706"
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.71,
+          42.05
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "url": "калоян"
+    },
+    {
+      "_id": 5,
+      "title": {
+        "bg": "Брестовица",
+        "en": "Brestovitsa"
+      },
+      "windDirection": [
+        "W",
+        "WNW",
+        "NW",
+        "W",
+        "WNW",
+        "NW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_2648.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.59,
+          42.063
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 600,
+      "url": "брестовица"
+    },
+    {
+      "_id": 6,
+      "title": {
+        "bg": "Чепън",
+        "en": "Chepan"
+      },
+      "windDirection": [
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_5106.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_5129.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "access": {
+        "bg": "Отбивката за черния път е на изхода на Драгоман в посока Годеч",
+        "en": "Turn for the dirt road is at the exit of Dragoman whenheading towards Godech."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Драгоманското блато",
+            "en": "Dragoman swamp"
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          22.957,
+          42.947
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 1150,
+      "url": "чепън"
+    },
+    {
+      "_id": 7,
+      "title": {
+        "bg": "Витановци",
+        "en": "Vitanovtsi"
+      },
+      "windDirection": [
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "S",
+        "SSW",
+        "SW",
+        "WSW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_5834.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_5737.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "unique": {
+        "bg": "международно летищеСофия",
+        "en": "Sofia International Airport"
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          22.985,
+          42.635
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 800,
+      "url": "витановци"
+    },
+    {
+      "_id": 8,
+      "title": {
+        "bg": "Беклемето юг",
+        "en": "Beklemeto South"
+      },
+      "windDirection": [
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W",
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_2481.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_8260.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "unique": {
+        "bg": "Кацането в непострдствена близост от селата Христо Даново и Розино е придружено с масирано присъствие на сънародници от най-голямата малцинсвена групировка (циганета)!!!!!",
+        "en": "Landing in close proximity to the villages Hristo Danovo and Rozino is related to enclunters of the 3rd kind -large groups of gipsy kids and adults that will probably ask you for money, try to snatch some of your gearand can be aggressive if provoked."
+      },
+      "access": {
+        "bg": "Прохода \"Беклеме\", непосредствено до асфалтовия път. 12 километра от Кърнаре, 37 км от Троян.",
+        "en": "Beklemeto Pass, adjascent to the asphalt road. 12 km from Karnare, 37 km from Troyan."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Полето между селата Христо Даново и Кърнаре.",
+            "en": "The fields between vilages Hristo Danovo and Karnare."
+          }
+        },
+        {
+          "description": {
+            "bg": "Достига себез термика.",
+            "en": "Reachable without lift (thermal)."
+          }
+        },
+        {
+          "description": {
+            "bg": "официална кацалка skynomad.",
+            "en": "official landing site by owned byskynomad."
+          },
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              24.61,
+              42.72
+            ]
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.613,
+          42.742
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1200,
+      "localPilotsClubs": {
+        "bg": [
+          "www.sky-camp.com",
+          "www.skynomad.com"
+        ],
+        "en": [
+          "www.sky-camp.com",
+          "www.skynomad.com"
+        ]
+      },
+      "url": "беклемето-юг"
+    },
+    {
+      "_id": 9,
+      "title": {
+        "bg": "Беклемето арка",
+        "en": "Beklemeto Arch"
+      },
+      "windDirection": [
+        "NNW",
+        "N",
+        "NNE",
+        "NE",
+        "NNW",
+        "N",
+        "NNE",
+        "NE"
+      ],
+      "unique": {
+        "bg": [
+          "По протежение на билото, на запад и на изток има много подходящи места за излитане.",
+          "Преди делтаджйите са излитали на запад от арката, а сега повечето парапланеристи на изток от нея."
+        ],
+        "en": "Along the top of the ridge(east-west) there are many spots suitable for take off. Back in the days the delta pilots used to take off west of the arch, but now most ofthe paragliding pilots take off east of it."
+      },
+      "access": {
+        "bg": "Прохода \"Беклеме\", непосредствено до асфалтовия път. 24 километра от Кърнаре, 25км от Троян.",
+        "en": "Beklemeto pass, adjascent to the asphalt road. 24 km from Karnare, 25 kmfrom Troyan."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Топ лендинг",
+            "en": "Top landing"
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.646,
+          42.7761
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1600,
+      "localPilotsClubs": {
+        "bg": [
+          "www.sky-camp.com",
+          "www.skynomad.com"
+        ],
+        "en": [
+          "www.sky-camp.com",
+          "www.skynomad.com"
+        ]
+      },
+      "url": "беклемето-арка"
+    },
+    {
+      "_id": 10,
+      "title": {
+        "bg": "Дърманци",
+        "en": "Darmantsi"
+      },
+      "windDirection": [
+        "W",
+        "WNW",
+        "NW",
+        "W",
+        "WNW",
+        "NW"
+      ],
+      "access": {
+        "bg": "Питаите в ресторанта на Дърманци за транспорт.",
+        "en": "Ask in the local restaurant in Darmantsi for transport."
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.718,
+          43.117
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 430,
+      "url": "дърманци"
+    },
+    {
+      "_id": 11,
+      "title": {
+        "bg": "Шумен - Север",
+        "en": "Shumen - North"
+      },
+      "accomodations": {
+        "en": [
+          "Hotels and guesthouses in Shumen."
+        ]
+      },
+      "windDirection": [
+        "N",
+        "N"
+      ],
+      "alternatives": {
+        "en": [
+          "Plenty of museums, art and cultural heritage sites in Shumen and the vicinity."
+        ]
+      },
+      "unique": {
+        "bg": "Паметник :)",
+        "en": "The spot has a massive monument from the communist regime."
+      },
+      "access": {
+        "bg": "Лесен.",
+        "en": "Easy - asphalt road to the take off."
+      },
+      "monuments": {
+        "en": "Monument."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Топленд или прелет.",
+            "en": "Top landing or fields around the plateu."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          26.921,
+          43.262
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 435,
+      "url": "шумен-север"
+    },
+    {
+      "_id": 12,
+      "title": {
+        "bg": "Шумен СИ",
+        "en": "Shumen - North East"
+      },
+      "windDirection": [
+        "NE",
+        "NE"
+      ],
+      "unique": {
+        "bg": "Рекорднипрелети, термично реене.",
+        "en": "Record flights, soaring, thermal soaring."
+      },
+      "access": {
+        "bg": "Лесен",
+        "en": "Easy - asphalt road to the top."
+      },
+      "monuments": {
+        "en": "Plenty in Shumen and the vicinity."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "От другата страна на пътя.",
+            "en": "On the other side of the road."
+          },
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              26.935,
+              43.251
+            ]
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          26.927,
+          43.258
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 434,
+      "url": "шумен-си"
+    },
+    {
+      "_id": 13,
+      "title": {
+        "bg": "Шумен - Изток",
+        "en": "Shumen - East"
+      },
+      "accomodations": {
+        "en": [
+          "Hotels and guest houses in Shumen."
+        ]
+      },
+      "windDirection": [
+        "E",
+        "E"
+      ],
+      "unique": {
+        "bg": "Рекорднипрелети, термично реене.",
+        "en": "Record flights. Soaring. Thermal soaring."
+      },
+      "access": {
+        "bg": "Лесен.",
+        "en": "Easy - asphalt road to the top."
+      },
+      "monuments": {
+        "en": "Plenty of museums, historical and cultural sites."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "От другата страна на пътя.",
+            "en": "On the other side of the road."
+          },
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              26.935,
+              43.251
+            ]
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          26.928,
+          43.252
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "url": "шумен-изток"
+    },
+    {
+      "_id": 14,
+      "title": {
+        "bg": "Шумен ЮИ",
+        "en": "Shumen - South East"
+      },
+      "windDirection": [
+        "SE",
+        "SE"
+      ],
+      "unique": {
+        "bg": "Прелети, термично реене.",
+        "en": "XC, thermal soaring."
+      },
+      "access": {
+        "bg": "Лесен",
+        "en": "Easy - asphalt road to the top."
+      },
+      "monuments": {
+        "en": "Plenty in Shumen and the vicinity."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "От другата страна на пътя.",
+            "en": "On the other side of the road."
+          },
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              26.935,
+              43.251
+            ]
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          26.925,
+          43.251
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "url": "шумен-юи"
+    },
+    {
+      "_id": 15,
+      "title": {
+        "bg": "Мадара",
+        "en": "Madara"
+      },
+      "windDirection": [
+        "NW",
+        "NW"
+      ],
+      "unique": {
+        "bg": "Полети към морето.",
+        "en": "Flights towards the seaside."
+      },
+      "access": {
+        "bg": "Черен път.",
+        "en": "Dirt road"
+      },
+      "monuments": {
+        "bg": "Мадарски конник.",
+        "en": "Madara rider / horseman (UNESCO world heritage sight)."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Близо до пътя пред старта.",
+            "en": "Close to the road in front of the take off."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          27.119,
+          43.282
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 400,
+      "url": "мадара"
+    },
+    {
+      "_id": 16,
+      "title": {
+        "bg": "Невша",
+        "en": "Nevsha"
+      },
+      "windDirection": [
+        "NE",
+        "NE"
+      ],
+      "unique": {
+        "bg": [
+          "Рекордни прелети. Реене.",
+          "Над самия старт редовно летят самолети 1000-1400м. Захождат при И вятър директно над старта. <strong>Ваденето на Невша е опасно при всички положения.</strong>"
+        ],
+        "en": "Record flights. Soaring."
+      },
+      "access": {
+        "bg": "Лесен. 1 минута пеша.",
+        "en": "Easy. About a minute walk."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Полето пред старта.",
+            "en": "The field in front of take off."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          27.284,
+          43.263
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "url": "невша"
+    },
+    {
+      "_id": 17,
+      "title": {
+        "bg": "Добростан",
+        "en": "Dobrostan"
+      },
+      "accomodations": {
+        "bg": [
+          "Малкия заслон на старта, построен от клуб Тангра е винаги отключен и всички са добре дошли. Вътре има камина, голяма маса с пейки, а на втория етаж на чували могат да спят 6-8 човека. Можете и свободно да къмпингувате на самия старт. Горе няма вода, така че си носете за пиене и готвене. Пазете мястото чисто, както сте го намерили!"
+        ],
+        "en": [
+          "The little hut at the take off site is always open and everyone is welcome. It has a fireplace, large table and a second floor that can accommodate up to 6-8 pilots in sleeping bags. A tent is also an option - free camping. No water source so bring your own."
+        ]
+      },
+      "windDirection": [
+        "E",
+        "NNE",
+        "NE",
+        "ENE",
+        "E",
+        "NNE",
+        "NE",
+        "ENE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_3229.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_3238.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_3240.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "Колела - крос кънтри. Пеши преходи."
+        ],
+        "en": [
+          "Bicycles XC"
+        ]
+      },
+      "unique": {
+        "bg": [
+          "В близост до военно въздушна база \"Крумово\"",
+          "Между селата Червен и Горнослав има военно стрелбище.",
+          "При вятър С - СЗ старта е в завет (ротор)."
+        ],
+        "en": [
+          "Krumovo air base is in the vicinity - military and civil aircraft.",
+          "Between the villages Cherven and Gornoslav there isa military shooting range.",
+          "With S or SW winds the take off is in wind shade /rotor."
+        ]
+      },
+      "access": {
+        "bg": "Последните 300-400м. до старта се изминават пеша или с 4х4",
+        "en": "By car to the bottom of the hill. The last 300-400 meters to the top are accessible only on foot or with a 4x4 vehicle."
+      },
+      "monuments": {
+        "bg": [
+          "Тракйиско оброчище Белинташ. N41.843 ,E 24.967.",
+          "От Горнослав към Добростан се завива на ляво вс.Орешец, след това се следва главния път."
+        ],
+        "en": [
+          "Belintash - sacred cult site of the ancient Tracians. N41.843 ,E 24.967.",
+          "Travelling from the village Gornoslav towards Dobrostan make a right in Oreshets village and follow the main road."
+        ]
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Удобна кацалка N41.926, 24.962",
+            "en": "Landing site N41.926, 24.962"
+          },
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              24.962,
+              41.926
+            ]
+          }
+        },
+        {
+          "description": {
+            "bg": "Тракийското поле",
+            "en": "The Tracian valley - large fields suitable for landing"
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.931,
+          41.909
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1250,
+      "localPilotsClubs": {
+        "bg": [
+          "http://tangrax3m.com/ Клуб \"Тангра\" Асеновград - много готини хора, готови винаги да ви насочат или да ви помогнат."
+        ],
+        "en": [
+          "http://tangrax3m.com/ Tangra Paragliding Club - Asenovgrad, a very friendly and helpful bunch"
+        ]
+      },
+      "url": "добростан"
+    },
+    {
+      "_id": 18,
+      "title": {
+        "bg": "Коняво",
+        "en": "Konyavo"
+      },
+      "windDirection": [
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "S",
+        "SSW",
+        "SW",
+        "WSW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_5007.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "unique": {
+        "bg": "Ако се чувствате неуверени на камеенист старт, погледнете \"<a href=\"http://www.paraglidebulgaria.com/bg/%D0%BA%D0%BE%D0%BD%D1%8F%D0%B2%D0%BE-%D1%82%D1%80%D0%B5%D0%B2%D0%B8%D1%81%D1%82\">Коняво тревист</a>\"",
+        "en": "If you feel uncomfortable on a rocky take off, check \"<a href=\"http://www.paraglidebulgaria.com/en/konyavo-grassy\">Konyavo grassy</a>\" take off."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "черешника",
+            "en": "Chereshnika"
+          },
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              22.815,
+              42.321
+            ]
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          22.838,
+          42.345
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1465,
+      "url": "коняво"
+    },
+    {
+      "_id": 19,
+      "title": {
+        "bg": "Коняво тревист",
+        "en": "Konyavo grassy"
+      },
+      "windDirection": [
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "S",
+        "SSW",
+        "SW",
+        "WSW"
+      ],
+      "access": {
+        "bg": "10-15 минути пеша",
+        "en": "10-15 min walk"
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "черешарника",
+            "en": "Chereshnika"
+          },
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              22.816,
+              42.321
+            ]
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          22.84,
+          42.342
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1420,
+      "url": "коняво-тревист"
+    },
+    {
+      "_id": 20,
+      "title": {
+        "bg": "Расник",
+        "en": "Rasnik"
+      },
+      "windDirection": [
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "NE",
+        "ENE",
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "NE",
+        "ENE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_8480.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_8537.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "unique": {
+        "bg": [
+          "международно летищеСофия",
+          "Старта на юг е по средата на черния път изкачващ хълма"
+        ],
+        "en": [
+          "Sofia International Airport.",
+          "South take off is in the middle of the dirt road leading to the top of the hill."
+        ]
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          22.986,
+          42.714
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        }
+      ],
+      "altitude": 1030,
+      "url": "расник"
+    },
+    {
+      "_id": 21,
+      "title": {
+        "bg": "София - копитото",
+        "en": "Sofia - Kopitoto"
+      },
+      "windDirection": [
+        "NW",
+        "NW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_7882.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_7897.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "unique": {
+        "bg": "международно летищеСофия",
+        "en": "Sofia International Airport"
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Кацалката има жици и е терасирана, хубаво е да се има в предвид.",
+            "en": "Note that the landing field has close proximity to power lines and is terraced."
+          },
+          "location": {
+            "type": "Point",
+            "coordinates": [
+              23.235,
+              42.65
+            ]
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.241,
+          42.637
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1280,
+      "url": "софия-копитото"
+    },
+    {
+      "_id": 22,
+      "title": {
+        "bg": "Околчица",
+        "en": "Okolchica"
+      },
+      "windDirection": [
+        "NE",
+        "ENE",
+        "NE",
+        "ENE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_3368.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_3377.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/DSC_0160.JPG",
+          "width": 3920,
+          "height": 2204
+        },
+        {
+          "path": "/gallery/DSC_0175.JPG",
+          "width": 3920,
+          "height": 2204
+        },
+        {
+          "path": "/gallery/DSC_0376.JPG",
+          "width": 3920,
+          "height": 2204
+        },
+        {
+          "path": "/gallery/DSC_0339.JPG",
+          "width": 3920,
+          "height": 2204
+        },
+        {
+          "path": "/gallery/DSC_0338.JPG",
+          "width": 3920,
+          "height": 2204
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "Скално катерене, много пещери."
+        ],
+        "en": [
+          "Rock clibming, many caves."
+        ]
+      },
+      "unique": {
+        "bg": "Старта е сравнително равен иима доста скрити камъни и дупки.",
+        "en": "Take off is relatively flat with lots of hidden stones and holes."
+      },
+      "monuments": {
+        "bg": "връх Вола/Околчица",
+        "en": "Vola peak / Okolchica"
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Удобно място е до бензиностанцията на главния път Е79",
+            "en": "There is acomfortable site next to the gas station on main road E79."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.585,
+          43.152
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1055,
+      "url": "околчица"
+    },
+    {
+      "_id": 23,
+      "title": {
+        "bg": "Златица",
+        "en": "Zlatitsa"
+      },
+      "windDirection": [
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_1939.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_1944.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "unique": {
+        "bg": "Благоприятно за летене и при по-силен югоисточен вятър",
+        "en": "Suitable for flying in SE winds (even if they are a bit stronger for other sites)."
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.092,
+          42.732
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1200,
+      "url": "златица"
+    },
+    {
+      "_id": 24,
+      "title": {
+        "bg": "Бузлуджа / Тонзос",
+        "en": "Buzludzha / Tonzos "
+      },
+      "windDirection": [
+        "S",
+        "SSW",
+        "SW",
+        "S",
+        "SSW",
+        "SW"
+      ],
+      "unique": {
+        "bg": "Старта е сравнително равен и се прелита пътя в момента на излитане.",
+        "en": "Take off site is relatively flat and you will fly above the road immediately after take off."
+      },
+      "monuments": {
+        "bg": "Бетонна летяща чиния",
+        "en": "Concrete flying saucer."
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          25.384,
+          42.712
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1100,
+      "url": "бузлуджа-тонзос"
+    },
+    {
+      "_id": 25,
+      "title": {
+        "bg": "Синилка",
+        "en": "Sinilka"
+      },
+      "windDirection": [
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W",
+        "E",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "W"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          26.439,
+          42.696
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 930,
+      "url": "синилка"
+    },
+    {
+      "_id": 26,
+      "title": {
+        "bg": "Беласица",
+        "en": "Belasitsa"
+      },
+      "accomodations": {
+        "bg": [
+          "хижа Конгур, хижа Беласица"
+        ]
+      },
+      "windDirection": [
+        "WNW",
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "NE",
+        "ENE",
+        "WNW",
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "NE",
+        "ENE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_9750.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_9874.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "Даун хил."
+        ],
+        "en": [
+          "Daanhill (might be pronounced as Daun)."
+        ]
+      },
+      "unique": {
+        "bg": "Непосредствена близост с Гърция.",
+        "en": "Greece is in very close proximity."
+      },
+      "access": {
+        "bg": "До хижа Конгур се стига със лек автомобил и от там може пеша, около час час и нещо. По билото на планината може да се излети във всички посоки. На юг е Гърция.",
+        "en": "You can get to Kongur mountain hut by car and then walk for about an hour, hour and a half. Take off is possible in all directions from the top of the ridge. Greece is due south."
+      },
+      "monuments": {
+        "bg": "Самуилова крепост.",
+        "en": "Samuil's fortress."
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.174301,
+          41.321636
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 1910,
+      "url": "беласица"
+    },
+    {
+      "_id": 27,
+      "title": {
+        "bg": "Славянка",
+        "en": "Slavyanka"
+      },
+      "windDirection": [
+        "NW",
+        "NNW",
+        "N",
+        "NW",
+        "NNW",
+        "N"
+      ],
+      "unique": {
+        "bg": "В близост до Гърция.",
+        "en": "Very close to Greece."
+      },
+      "access": {
+        "bg": "Преди село Голешово се завива по черен път, който е доста тесен и много трудно разминаването, но няма трафик :) След края на пътя се ходи пеша час,час и нещо. При желание от централното било може да се излети във всички посоки. Гърция",
+        "en": "Turn on dirt road before the village Goleshevo. Dirt road is quite narrow and it is hard to pass another vehicle but there is no traffic on it. About an hour, hour and a half walk afterthe end of the road. The main ridge allows take off in all directions. Greece is in the vicinity."
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.607,
+          41.388
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "url": "славянка"
+    },
+    {
+      "_id": 28,
+      "title": {
+        "bg": "Плоски",
+        "en": "Ploski"
+      },
+      "windDirection": [
+        "S",
+        "SSW",
+        "SW",
+        "WSW",
+        "S",
+        "SSW",
+        "SW",
+        "WSW"
+      ],
+      "unique": {
+        "bg": "Много лозови масиви. Денивелация под 200м.",
+        "en": "Lots of vines. Denivelation under 200 m."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Между лозови масиви.",
+            "en": "Between plots with vines."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.256,
+          41.643
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 560,
+      "url": "плоски"
+    },
+    {
+      "_id": 29,
+      "title": {
+        "bg": "Мощанец",
+        "en": "Moshtanets"
+      },
+      "windDirection": [
+        "NE",
+        "NE"
+      ],
+      "unique": {
+        "bg": "Подходящ за реене.",
+        "en": "Soaring site."
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.069,
+          41.972
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "url": "мощанец"
+    },
+    {
+      "_id": 30,
+      "title": {
+        "bg": "Тодорка",
+        "en": "Todorka"
+      },
+      "accomodations": {
+        "bg": [
+          "Много каъщи за гости и хотели. Хотел \"Кралев двор\""
+        ],
+        "en": [
+          "Plenty of hotels andguesthouses. Kralev Dvor hotel."
+        ]
+      },
+      "windDirection": [
+        "N",
+        "NNE",
+        "NE",
+        "ENE",
+        "N",
+        "NNE",
+        "NE",
+        "ENE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/10460865_10152989911038914_7254195563146667857_o.jpg",
+          "width": 1368,
+          "height": 768
+        },
+        {
+          "path": "/gallery/10854944_10152989994563914_6029764050800789032_o.jpg",
+          "width": 1368,
+          "height": 768
+        },
+        {
+          "path": "/gallery/10887291_10152989921313914_7507920263411353132_o.jpg",
+          "width": 1368,
+          "height": 768
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "Ски, планинарство, катерене, колелета."
+        ],
+        "en": [
+          "Winter sports, mountaineering, hiking, climbing, cycling."
+        ]
+      },
+      "unique": {
+        "bg": "Може да има силен долинен вятър известен като Пределския врятър.",
+        "en": "Strong valley winds known as Predela winds are sometimes present if you fly down the mountain above the townfurther from the take off."
+      },
+      "access": {
+        "bg": "През лятото пеша, зимата лифтовете работят.",
+        "en": "Hiking in the summer,chairlifts in the winter."
+      },
+      "monuments": {
+        "bg": "Църквите в Добърско и Банско.",
+        "en": "Churches in Dobarsko and Bansko, museums in Bansko, etc."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Бъндеришка поляна или в котловината.",
+            "en": "Banderishka polyana or the valley."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.436,
+          41.759
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 4,
+          "bg": "лифт",
+          "en": "chairlift"
+        }
+      ],
+      "altitude": 2450,
+      "url": "тодорка"
+    },
+    {
+      "_id": 31,
+      "title": {
+        "bg": "Ореляк",
+        "en": "Orelyak"
+      },
+      "windDirection": [
+        "E",
+        "ESE",
+        "SE",
+        "N",
+        "NNE",
+        "NE",
+        "ENE",
+        "E",
+        "ESE",
+        "SE",
+        "N",
+        "NNE",
+        "NE",
+        "ENE"
+      ],
+      "unique": {
+        "bg": "При желание може да се излита и на запад, но по правата не се долита до населено мясти и асвалтов път.",
+        "en": "Posibility to take off due West but a straight flight (without thermalling) does not allow landing in proximity toany villages or asphalt roads."
+      },
+      "access": {
+        "bg": "Черен път.",
+        "en": "Dirt road."
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.614,
+          41.571
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 2050,
+      "url": "ореляк"
+    },
+    {
+      "_id": 32,
+      "title": {
+        "bg": "Калин",
+        "en": "Kalin"
+      },
+      "windDirection": [
+        "SSW",
+        "SW",
+        "WSW",
+        "W",
+        "SSW",
+        "SW",
+        "WSW",
+        "W"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_3327.JPG",
+          "width": 2736,
+          "height": 3648
+        },
+        {
+          "path": "/gallery/IMG_3332.JPG",
+          "width": 3648,
+          "height": 2736
+        },
+        {
+          "path": "/gallery/IMG_3345.JPG",
+          "width": 3648,
+          "height": 2736
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "Планинарство"
+        ],
+        "en": [
+          "Hiking and mountaineering."
+        ]
+      },
+      "unique": {
+        "bg": [
+          "Деневилация 2000м. Подходящо за летене при слаби ветрове.",
+          "При желание за пешене, под час може да се излита и на северозапад."
+        ],
+        "en": [
+          "Denivelation 2000m. Suitable for flying in calm winds.",
+          "Less than an hour hike from take off there is a NW take off."
+        ]
+      },
+      "access": {
+        "bg": "Пътя за Рилски Манастир, отклонява се при Пастра, пътя до горе е бетонен, стръмен и с остри завои.",
+        "en": "Follow the road to Rila Monastery up to Pastra and take the detour ontheconcrete road - steep with a lot of turns to the top."
+      },
+      "monuments": {
+        "bg": "Язовир Калин е най-високия язовир в България, построен от немците посредством въжена линия на воден принцип.",
+        "en": "Kalin dam is the highest damin Bulgaria (2394 m above sea level). It is built by German engineersusing a ropeway conveyor powered bywater."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Стадиона в град Рила. Малки, аварийни поляни преди град Рила.",
+            "en": "The stadium in Rila city."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.259,
+          42.171
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 2450,
+      "url": "калин"
+    },
+    {
+      "_id": 33,
+      "title": {
+        "bg": "Реселец",
+        "en": "Reselets"
+      },
+      "windDirection": [
+        "E",
+        "ESE",
+        "ENE",
+        "E",
+        "ESE",
+        "ENE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/Reselec 1_0.jpg",
+          "width": 4608,
+          "height": 2808
+        },
+        {
+          "path": "/gallery/Reselec 2_0.jpg",
+          "width": 4608,
+          "height": 2448
+        },
+        {
+          "path": "/gallery/Reselec 3_0.jpg",
+          "width": 4608,
+          "height": 2484
+        },
+        {
+          "path": "/gallery/Reselec 4_0.jpg",
+          "width": 4608,
+          "height": 2640
+        },
+        {
+          "path": "/gallery/Reselec 5_0.jpg",
+          "width": 4608,
+          "height": 2772
+        },
+        {
+          "path": "/gallery/Reselec 6_0.jpg",
+          "width": 4608,
+          "height": 2772
+        },
+        {
+          "path": "/gallery/Reselec 7_0.jpg",
+          "width": 4608,
+          "height": 3144
+        },
+        {
+          "path": "/gallery/Reselec 8_0.jpg",
+          "width": 4608,
+          "height": 2952
+        },
+        {
+          "path": "/gallery/Reselec 9_0.jpg",
+          "width": 4608,
+          "height": 2688
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.031,
+          43.252
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 300,
+      "url": "реселец"
+    },
+    {
+      "_id": 34,
+      "title": {
+        "bg": "Иглика",
+        "en": "Iglika"
+      },
+      "accomodations": {
+        "bg": [
+          "хижа Иглика, хижа Осогово, хотел Три Буки"
+        ],
+        "en": [
+          "Iglika hut, Osogovo hut, Tri Buki hotel"
+        ]
+      },
+      "windDirection": [
+        "NW",
+        "NW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/10868036_10205521752112136_3797422063715848534_n.jpg",
+          "width": 960,
+          "height": 720
+        },
+        {
+          "path": "/gallery/IMG_2788.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2783.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2785.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "access": {
+        "bg": "Стартът се намира на около 10-15 минути, пеша от хижа Иглика, до която има асфалтов път - 11 км от Кюстендил.",
+        "en": "Take off is about 10-15 min walking distance from Iglika Hut. There is an asphalt road to the Hut - 11km from Kyustendil."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Широка поляна намираща се между кварталите Младост и Върташево, До магазин Технополис",
+            "en": "A large lawn between Mladost and Vartashevo neighbourhoods, next to Tehnopolis dept. store."
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          22.656422,
+          42.241638
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1238,
+      "url": "иглика"
+    },
+    {
+      "_id": 35,
+      "title": {
+        "bg": "Бургас, Морската градина",
+        "en": "Burgas, Sea garden"
+      },
+      "windDirection": [
+        "E",
+        "E"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/11264963_10204144379802112_51473352_o.jpg",
+          "width": 2048,
+          "height": 1536
+        },
+        {
+          "path": "/gallery/11211890_10204144379962116_1993381789_o.jpg",
+          "width": 2048,
+          "height": 1536
+        }
+      ],
+      "access": {
+        "bg": "Стартът се намира в Морската градина в Бургас.",
+        "en": "Take off is located in the Sea garden in Burgas."
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          27.482858,
+          42.496676
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        }
+      ],
+      "altitude": 23,
+      "url": "бургас-морската-градина"
+    },
+    {
+      "_id": 36,
+      "title": {
+        "bg": "Иракли",
+        "en": "Irakli"
+      },
+      "windDirection": [
+        "E",
+        "ENE",
+        "E",
+        "ENE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_8680.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2743.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2760.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2739.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "unique": {
+        "bg": "Стартът е специфичен, тъй като при слаб вятър е възможно човек да падне в гората."
+      },
+      "access": {
+        "bg": "Най-лесният достъп е през плажа, по пътека, покрай каменна маса."
+      },
+      "monuments": {
+        "bg": "Нос Емине"
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Старта или плажа"
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          27.89,
+          42.74
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 33,
+      "localPilotsClubs": {
+        "bg": [
+          "Слави"
+        ]
+      },
+      "url": "иракли"
+    },
+    {
+      "_id": 37,
+      "title": {
+        "bg": "Албена ",
+        "en": "Albena"
+      },
+      "windDirection": [
+        "E",
+        "ESE",
+        "SE",
+        "E",
+        "ESE",
+        "SE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_8044.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_8019.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          28.09,
+          43.38
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 75,
+      "url": "албена"
+    },
+    {
+      "_id": 38,
+      "title": {
+        "bg": "Скалско",
+        "en": "Skalsko"
+      },
+      "windDirection": [
+        "WNW",
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "NE",
+        "WNW",
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "NE"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/Skalsko 2.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/Skalsko 3.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/Skalsko 4.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/Skalsko 5.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/Skalsko 6.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/Skalsko 7.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/Skalsko 8.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/Skalsko 9.jpg",
+          "width": 4296,
+          "height": 3174
+        },
+        {
+          "path": "/gallery/Skalsko 10.jpg",
+          "width": 4608,
+          "height": 3120
+        },
+        {
+          "path": "/gallery/Skalsko 12.jpg",
+          "width": 4608,
+          "height": 3084
+        },
+        {
+          "path": "/gallery/Skalsko start.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/skalsko11.jpg",
+          "width": 4608,
+          "height": 3456
+        },
+        {
+          "path": "/gallery/Skaslko7.jpg",
+          "width": 4590,
+          "height": 3198
+        },
+        {
+          "path": "/gallery/Zalez Ostrec.jpg",
+          "width": 4608,
+          "height": 1752
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          25.379,
+          42.965
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 600,
+      "url": "скалско"
+    },
+    {
+      "_id": 39,
+      "title": {
+        "bg": "Чомаковци Девенци",
+        "en": "Chomakovci Devenci"
+      },
+      "windDirection": [
+        "NNW",
+        "N",
+        "NNE",
+        "NNW",
+        "N",
+        "NNE"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.098,
+          43.314
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 200,
+      "url": "чомаковци-девенци"
+    },
+    {
+      "_id": 40,
+      "title": {
+        "bg": "Кунино",
+        "en": "Kunino"
+      },
+      "windDirection": [
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/Kunino 1.jpg",
+          "width": 4608,
+          "height": 3228
+        },
+        {
+          "path": "/gallery/Kunino 2.jpg",
+          "width": 4608,
+          "height": 3036
+        },
+        {
+          "path": "/gallery/Kunino 3.jpg",
+          "width": 4608,
+          "height": 3216
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.008,
+          43.19
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 300,
+      "url": "кунино"
+    },
+    {
+      "_id": 41,
+      "title": {
+        "bg": "Мечит",
+        "en": "Mechit"
+      },
+      "windDirection": [
+        "NW",
+        "NNW",
+        "N",
+        "NW",
+        "NNW",
+        "N"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_0058.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.463953,
+          42.197716
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 2546,
+      "url": "мечит"
+    },
+    {
+      "_id": 42,
+      "title": {
+        "bg": "Руй"
+      },
+      "windDirection": [
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "SW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_0402_0.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_0410_0.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_0424.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Поляните около селата Зелениград, Забел, Турковци"
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          22.5755,
+          42.862895
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 1706,
+      "url": "руй"
+    },
+    {
+      "_id": 43,
+      "title": {
+        "bg": "Топола"
+      },
+      "windDirection": [
+        "S"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_1965.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_1984.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_1989.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "свободно катерене, колоездене"
+        ]
+      },
+      "unique": {
+        "bg": "Подходящ за реене"
+      },
+      "access": {
+        "bg": "До старта се стига с автомобил."
+      },
+      "monuments": {
+        "bg": "Нос Калиакра, Тюленово, Камен бряг, Дуранкулак"
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "поляни под старта, плажната ивица"
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          28.26,
+          43.41
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 139,
+      "url": "топола"
+    },
+    {
+      "_id": 44,
+      "title": {
+        "bg": "Тетевен"
+      },
+      "windDirection": [
+        "SSE",
+        "S",
+        "SSW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_1768.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "alternatives": {
+        "bg": [
+          "Колоездене"
+        ]
+      },
+      "unique": {
+        "bg": "Термично летене"
+      },
+      "access": {
+        "bg": "Около 20-30 минути пеша от село Бабинци, до което се стига с автомобил"
+      },
+      "monuments": {
+        "bg": "Гложенски манастир"
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Стадиона в Тетевен, поляни за аварийно кацане"
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.27,
+          42.95
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 1060,
+      "url": "тетевен"
+    },
+    {
+      "_id": 45,
+      "title": {
+        "en": "Kapitan Dimitrievo",
+        "bg": "Капитан Димитриево"
+      },
+      "windDirection": [
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "NE",
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "NE",
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "NE"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.342,
+          42.115
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 440,
+      "url": "капитан-димитриево"
+    },
+    {
+      "_id": 46,
+      "title": {
+        "bg": "Жребичко",
+        "en": "Zrebichko"
+      },
+      "windDirection": [
+        "NNE",
+        "NE",
+        "ENE",
+        "NNE",
+        "NE",
+        "ENE"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.446,
+          42.031
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 800,
+      "url": "жребичко"
+    },
+    {
+      "_id": 47,
+      "title": {
+        "en": "Liaskovets",
+        "bg": "Лясковец"
+      },
+      "windDirection": [
+        "E",
+        "E"
+      ],
+      "monuments": {
+        "bg": "Петро-Павловски манастир"
+      },
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          25.706,
+          43.093
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 440,
+      "url": "лясковец"
+    },
+    {
+      "_id": 48,
+      "title": {
+        "en": "Gorna Oriahovitsa",
+        "bg": "Горна Оряховица"
+      },
+      "windDirection": [
+        "SSE",
+        "S",
+        "SSW",
+        "NNW",
+        "N",
+        "NNE",
+        "SSE",
+        "S",
+        "SSW",
+        "NNW",
+        "N",
+        "NNE"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          25.659,
+          43.123
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 400,
+      "url": "горна-оряховица"
+    },
+    {
+      "_id": 49,
+      "title": {
+        "bg": "Дъбене",
+        "en": "Dabene"
+      },
+      "windDirection": [
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "NW",
+        "NNW",
+        "N",
+        "NNE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW",
+        "NW",
+        "NNW",
+        "N",
+        "NNE"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.78,
+          42.602
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 370,
+      "url": "дъбене"
+    },
+    {
+      "_id": 50,
+      "title": {
+        "en": "Rozino",
+        "bg": "Розино"
+      },
+      "windDirection": [
+        "E",
+        "ESE",
+        "ENE",
+        "E",
+        "ESE",
+        "ENE"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24.51,
+          42.704
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 2,
+          "bg": "автобус",
+          "en": "public bus"
+        }
+      ],
+      "altitude": 620,
+      "url": "розино"
+    },
+    {
+      "_id": 51,
+      "title": {
+        "bg": "връх Баба "
+      },
+      "windDirection": [
+        "SSE",
+        "S",
+        "SSW",
+        "SW"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_2535.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2538.JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2542.JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "unique": {
+        "bg": "Ако няма условия е възможно да не се долети до село Буново, в такъв случай е препоръчително да летят опитни пилоти."
+      },
+      "landingFields": [
+        {
+          "description": {
+            "bg": "Поляни в село Буново, има места за аварийно кацане преди голямото дере над селото"
+          }
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.97,
+          42.75
+        ]
+      },
+      "accessOptions": [
+        {
+          "_id": 0,
+          "bg": "hike and fly",
+          "en": "hike and fly"
+        },
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 1770,
+      "url": "връх-баба"
+    },
+    {
+      "_id": 52,
+      "title": {
+        "bg": "Пъстрец"
+      },
+      "windDirection": [
+        "SE",
+        "SSE",
+        "S"
+      ],
+      "galleryImages": [
+        {
+          "path": "/gallery/IMG_2653[1].JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2655[1].JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2663[1].JPG",
+          "width": 4000,
+          "height": 3000
+        },
+        {
+          "path": "/gallery/IMG_2679[1].JPG",
+          "width": 4000,
+          "height": 3000
+        }
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          23.06,
+          41.77
+        ]
+      },
+      "tracklogs": [
+        "http://www.paraglidingforum.com/leonardo/flight/1424647"
+      ],
+      "accessOptions": [
+        {
+          "_id": 3,
+          "bg": "4х4",
+          "en": "4x4"
+        }
+      ],
+      "altitude": 1560,
+      "url": "пъстрец"
+    },
+    {
+      "_id": 53,
+      "title": {
+        "bg": "2344 морската градина и още",
+        "en": "32 сеа гардън анд море "
+      },
+      "url": "2344-морската-градина-и-още",
+      "windDirection": [
+        "E",
+        "SW",
+        "ENE",
+        "ESE",
+        "SE",
+        "SSE",
+        "S",
+        "SSW"
+      ],
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          24,
+          42
+        ]
+      },
+      "accessOptions": [
+        0,
+        1,
+        3,
+        2,
+        4
+      ],
+      "altitude": 342,
+      "access": {
+        "bg": "някакъв",
+        "en": "kind of"
+      }
+    }
+  ]
+}

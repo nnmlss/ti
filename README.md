@@ -29,7 +29,7 @@ npm run check
 - **Node.js + Express** - REST API and GraphQL server
 - **MongoDB + Mongoose** - Database with custom schemas
 - **GraphQL** - Modern API with type-safe queries/mutations
-- **JWT Authentication** - Secure user sessions
+- **Stateless JWT Authentication** - Pure JWT tokens, no server-side sessions
 - **Sharp + Multer** - Image processing and uploads
 
 ### Frontend
@@ -122,14 +122,22 @@ npm run build:preview      # Build + preview production setup
 - **Bottom Navigation** - Touch-friendly mobile navigation
 - **Progressive Enhancement** - Works without JavaScript
 
-## 🔐 Authentication Flow
+## 🔐 Authentication Architecture
 
-1. **Admin Creates Accounts** - Email-only registration
-2. **Public Activation** - Users activate via email token
-3. **Role-Based Access**:
+### **Stateless JWT System**
+- **✅ No Server Sessions** - Pure JWT-based authentication
+- **✅ Bearer Token Headers** - `Authorization: Bearer <jwt>` format
+- **✅ 7-day Token Expiry** - Reasonable security vs usability balance
+- **✅ CSRF Protection** - Custom header-based protection (stateless)
+
+### **User Flow**
+1. **Admin Creates Accounts** - Email-only registration via GraphQL
+2. **Public Activation** - Users activate via email token system
+3. **JWT Login** - Returns JWT token for stateless authentication
+4. **Role-Based Access**:
    - **Anonymous** - Read-only site access
-   - **Active Users** - Create/edit sites
-   - **Super Admin** - User management + migrations
+   - **Active Users** - Create/edit sites with JWT auth
+   - **Super Admin** - User management + admin operations
 
 ## 📸 Image Processing Pipeline
 
@@ -149,15 +157,18 @@ All uploaded images are automatically processed into 4 formats:
 
 ## 🚀 Recent Achievements (2025-09-25)
 
-### ✅ CLAUDE.md Compliance Refactoring
+### ✅ CLAUDE.md Compliance + 12-Factor App Architecture
 - **Type Safety Restoration** - Eliminated all `any` types from codebase
 - **GraphQL Context System** - Proper auth contexts (`PublicGraphQLContext` + `AuthenticatedGraphQLContext`)
 - **Type Centralization** - Moved all inline interfaces to `frontend/src/types/components.ts`
 - **Clean Architecture** - Hybrid container/hooks pattern implementation
+- **12-Factor Compliance** - 4/12 factors fully compliant, stateless JWT architecture
 - **Test Coverage** - All 35 tests passing with proper mocking
 
 ### 📊 Current Status
 - **CLAUDE.md Compliance**: ~90% ✅
+- **12-Factor App Compliance**: 4/12 fully compliant ✅
+- **Authentication**: Stateless JWT (production ready) ✅
 - **TypeScript Strict Mode**: Full compliance
 - **Test Coverage**: 35/35 tests passing
 - **Build Status**: Zero errors/warnings

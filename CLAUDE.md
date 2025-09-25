@@ -106,83 +106,106 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
 ## Recently Completed Features ✅
 
 - **Gate Middleware System** (2025-08-22) - Conditional password protection with environment variable control (`SITE_ACCESS_PASSWORD=false` disables gate, any other value enables it)
-- **Error Handling Enhancement** (2025-08-22) - 404/503/500 GraphQL errors trigger "WebApp under construction" maintenance dialog instead of regular error messages  
+- **Error Handling Enhancement** (2025-08-22) - 404/503/500 GraphQL errors trigger "WebApp under construction" maintenance dialog instead of regular error messages
 - **LiteSpeed Compatibility** (2025-08-22) - CommonJS wrapper (`dist/server.cjs`) for cPanel/CloudLinux deployment environments
 - **SEO Optimization** (2025-08-18) - Complete implementation with sitemap generation, meta tags, Open Graph/Twitter Cards, and TouristAttraction schema markup
-- **Responsive Typography** (2025-08-18) - Mobile-optimized font sizes using Material-UI breakpoints  
+- **Responsive Typography** (2025-08-18) - Mobile-optimized font sizes using Material-UI breakpoints
 - **Enhanced Map Preferences** (2025) - Map labels toggle and localStorage persistence with Redux state management
 
 ## Upcoming Development Tasks
 
 ### CRITICAL PRIORITY 🚨
 
-#### 1. Code Standards Compliance (CLAUDE.md Rules Violations)
 
-**Task:** Fix violations of global CLAUDE.md coding standards throughout the codebase
-**Priority:** CRITICAL - Code quality, type safety, and maintainability
+#### 2. 12-Factor App Architecture Refactoring
 
-**🟡 REMAINING MINOR IMPROVEMENTS:**
+**Task:** Refactor codebase to implement 12-factor app methodology for cloud-native scalability
+**Priority:** CRITICAL - Cloud deployment and horizontal scaling readiness
 
-1. **Architecture Pattern Verification**
-   - **Rule**: Apply Hybrid Container/Hooks Pattern correctly
-   - **Components to Review**: `SitesMap.tsx`, `SiteCardContent.tsx` - verify complexity vs pattern usage
+**Current 12-Factor Compliance Assessment:**
 
-2. **Component Naming Consistency**
-   - **Rule**: Consistent naming patterns
-   - **Action**: Quick verification of all `*Page.tsx` components
+**✅ FULLY COMPLIANT (4/12):**
+- **Factor 1: Codebase** ✅ - Single Git repository with proper version control
+- **Factor 2: Dependencies** ✅ - `package.json` with exact versions, clean dependency management
+- **Factor 6: Processes** ✅ - **STATELESS JWT AUTHENTICATION** - Pure JWT tokens, no server-side sessions
+- **Factor 7: Port Binding** ✅ - Express app exports service via PORT environment variable
 
-**Current Compliance Status:** ~90% ✅
+**⚠️ PARTIALLY COMPLIANT (4/12):**
+- **Factor 3: Config** ⚠️ - Environment variables used but missing `.env.example` and validation
+- **Factor 4: Backing Services** ⚠️ - MongoDB connection good but mixed with app logic
+- **Factor 8: Concurrency** ⚠️ - Can scale horizontally but no proper process management
+- **Factor 9: Disposability** ⚠️ - Has SIGINT handling for DB but incomplete graceful shutdown
 
-**Remaining Work:**
-- Architecture pattern verification (20-30 min)
-- Component naming consistency check (5 min)
+**❌ NON-COMPLIANT (4/12):**
+- **Factor 5: Build/Release/Run** ❌ - Complex build process, no release versioning
+- **Factor 10: Dev/Prod Parity** ❌ - Different environments and build processes
+- **Factor 11: Logs** ❌ - Uses `console.log`, no structured logging
+- **Factor 12: Admin Processes** ❌ - Has `src/scripts/` directory but mostly empty, no CLI commands
 
-### CRITICAL PRIORITY 🚨
+**Refactoring Implementation Plan:**
 
-#### 1.2. Project Documentation & Developer Experience
+**Phase 1: Easy Wins (HIGH PRIORITY)**
 
-**Task:** Create missing standard documentation files for better developer onboarding
-**Priority:** CRITICAL - Developer experience and project accessibility
+1. **Factor 3: Config Template & Validation**
+   - **Current Issue**: Missing `.env.example` template and environment validation
+   - **Solution**: Create `.env.example` template, add environment validation
+   - **Implementation**: Create template file and `src/config/environment.ts` validation
+   - **Impact**: Prevents deployment issues, improves developer experience
 
-**Missing Documentation:**
+2. **Factor 11: Structured Logging**
+   - **Current Issue**: `console.log` makes production debugging difficult
+   - **Solution**: Implement `pino` with log levels and JSON format
+   - **Benefits**: Better observability, log aggregation ready, cloud-native logging
+   - **Implementation**: Replace all console.log with structured logger
 
-1. **Root README.md** - No main project README exists
-   - **Issue**: Poor first impression for new developers
-   - **Content**: Project overview, quick start, architecture summary, key features
-   - **Template**:
-     ```markdown
-     # Takeoff Info - Paragliding Sites Bulgaria
-     > Comprehensive paragliding sites application with bilingual support
+3. **Factor 9: Complete Graceful Shutdown**
+   - **Current Issue**: Only SIGINT for DB, incomplete graceful shutdown
+   - **Solution**: Full SIGTERM/SIGINT handling, connection cleanup, request draining
+   - **Implementation**: Add complete shutdown handlers in `src/app.ts`
 
-     ## Quick Start
-     npm start                # Start development servers
-     npm run build           # Production build
-     npm run typecheck       # Type checking
+**Phase 2: Advanced Improvements (MEDIUM PRIORITY)**
 
-     ## Architecture
-     - Backend: Node.js + Express + GraphQL + MongoDB
-     - Frontend: React 19 + TypeScript + Material-UI
-     - See CLAUDE.md for detailed guidance
-     ```
+4. **Factor 12: Admin CLI Commands**
+   - **Current Issue**: Empty `src/scripts/` directory, no admin utilities
+   - **Solution**: CLI commands for database migrations, user management, maintenance
+   - **Implementation**: Create proper admin command structure
 
-2. **Frontend README.md** - Currently generic Vite template
-   - **Issue**: No project-specific frontend guidance
-   - **Content**: Frontend-specific setup, component structure, development workflow
+5. **Factor 5: Build Process Optimization**
+   - **Current Issue**: Complex build process, no release versioning
+   - **Solution**: Simplify build pipeline, add semantic versioning
+   - **Implementation**: Streamline npm scripts, add version management
 
-3. **Contributing Guidelines** - Missing CONTRIBUTING.md
-   - **Content**: Code review process, development workflow, standards
+**Phase 3: Build & Deployment (LOWER PRIORITY)**
 
-**Implementation Steps:**
-1. Create comprehensive root README.md with project overview
-2. Replace generic frontend README.md with project-specific content
-3. Add CONTRIBUTING.md with development guidelines
-4. Consider adding deployment documentation
+6. **Factor 5: Build Process**
+   - **Solution**: Simplify build pipeline, add release versioning
+   - **Implementation**: Streamline npm scripts, add version management
 
-**Benefits:**
-- Improved developer onboarding experience
-- Clear project overview for stakeholders
-- Standardized contribution process
-- Better project discoverability and professionalism
+7. **Factor 4: Backing Services**
+   - **Solution**: Abstract service connections, make swappable
+   - **Implementation**: Create service abstraction layer
+
+**✅ SECURITY STATUS: STATELESS JWT ALREADY IMPLEMENTED**
+
+**Current Authentication Architecture:**
+- **✅ Pure JWT Authentication**: No server-side sessions, stateless tokens
+- **✅ Bearer Token Headers**: `Authorization: Bearer <jwt>` format
+- **✅ 7-day JWT Expiry**: Reasonable token lifetime
+- **✅ User Validation**: Each request validates user exists and is active
+- **✅ CSRF Protection**: Custom header-based protection (stateless)
+
+**Security Benefits Already Achieved:**
+- **No Session Hijacking**: Eliminated session-based vulnerabilities
+- **Horizontal Scaling**: Stateless auth enables cloud scaling
+- **Request Context**: Each JWT contains full user authentication data
+- **Token-based Security**: Modern cloud-native authentication pattern
+
+**Potential Future Enhancements (Optional):**
+- **Shorter Access Tokens**: Consider 15-minute tokens with refresh strategy
+- **Token Blacklisting**: Add revocation mechanism for compromised tokens
+- **httpOnly Refresh Tokens**: Implement refresh token rotation
+
+**Current Security Rating**: ✅ **PRODUCTION READY** - Stateless, secure, scalable
 
 ### HIGH PRIORITY 🔴
 
@@ -194,16 +217,19 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
 **Requirements:**
 
 1. **Auto-slide Functionality**
+
    - Automatic slideshow with 3-second intervals
    - Auto-advance stops permanently once user manually interacts
    - Smooth transitions between images
 
 2. **Manual Controls**
+
    - Drag/swipe left/right navigation
    - Touch support for mobile devices
    - Optional navigation dots or arrows
 
 3. **Integration**
+
    - Position at bottom of SiteDetailView component
    - Display site gallery images
    - Fallback for sites without images
@@ -215,6 +241,7 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
    - Accessibility support (keyboard navigation)
 
 **Technical Implementation:**
+
 - Create reusable ImageSlideshow component
 - Integrate with existing site.galleryImages data
 - Handle different image aspect ratios
@@ -283,7 +310,8 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
 
 **Problem**: Wind filter button doesn't properly close filter when clicked while filter is open. Button click and outside click handler interfere with each other.
 
-**Current Behavior**: 
+**Current Behavior**:
+
 - Filter closed: Button opens filter correctly
 - Filter open: Button click doesn't close filter as expected
 
@@ -293,27 +321,30 @@ create-cjs-wrapper.js                         # Script to generate CommonJS wrap
 ### Maintenance Mode Implementation
 
 **Feature**: 503 error detection triggers maintenance mode
+
 - Shows "WebApp under construction" dialog
 - Hides bottom navigation during maintenance
 - Automatically activates on any GraphQL 503 error
 
-### MongoDB Session Store
+### ✅ Authentication Architecture (UPDATED)
 
-**Fix Applied**: Replaced default MemoryStore with MongoDB-backed sessions using connect-mongo
-- Eliminates "MemoryStore not designed for production" warning
-- Sessions persist in database for scalability
-- Maintains existing CSRF protection functionality
+**Current Implementation**: Pure JWT-based stateless authentication
+
+- **✅ No server-side sessions** - Eliminated session-based vulnerabilities
+- **✅ Stateless JWT tokens** - 7-day expiry with user validation
+- **✅ Custom CSRF protection** - Header-based, works without sessions
+- **✅ Horizontal scaling ready** - No session affinity requirements
 
 ### Gateway Middleware Production Conflict (DISABLED)
 
 **Issue**: Gateway middleware bypassed on root URL (`/`) in production environment
+
 - **Root Cause**: CloudLinux/Passenger static file serving takes precedence over Node.js routing
 - **Behavior**: Web server serves `frontend/dist/index.html` directly for `/`, bypassing Node.js app
 - **Testing Confirmed**: Renaming `index.html` → gateway works, restoring file → gateway bypassed
 - **Status**: **DISABLED** - Middleware commented out in `src/app.ts`
 - **Files Preserved**: All gateway files kept for potential future solutions
 - **Alternative Solutions**: Require web server configuration changes or static file restructuring
-
 
 ## Project Overview
 
@@ -344,7 +375,6 @@ This is "Takeoff Info" - a paragliding sites application for Bulgaria with a Nod
 - **WindDirection**: Enum for 16 compass directions (N, NNE, NE, etc.)
 - **Location**: GeoJSON Point with coordinates array [longitude, latitude]
 - **CustomError**: Extended Error interface with `status`, `isValidationError`, and `errors` properties
-
 
 ## Key Configuration
 
@@ -427,7 +457,6 @@ This is "Takeoff Info" - a paragliding sites application for Bulgaria with a Nod
 - Node.js (ES modules enabled)
 - MongoDB instance
 - MONGO_URI environment variable for database connection
-
 
 ## Planned User Management System
 
@@ -557,6 +586,7 @@ FRONTEND_URL=https://your-subdomain.borislav.space
 ```
 
 **Security Notes:**
+
 - ⚠️ **CRITICAL**: Generate unique 64+ character secrets for production
 - 📧 Email functionality requires valid SMTP credentials
 - 🌐 Frontend URL must match your actual domain for email links
@@ -607,7 +637,7 @@ FRONTEND_URL=https://your-subdomain.borislav.space
 
    # Start the application (LiteSpeed compatibility)
    node dist/server.cjs
-   
+
    # Alternative: Direct ES module (if supported)
    # node dist/app.js
    ```
@@ -629,7 +659,7 @@ FRONTEND_URL=https://your-subdomain.borislav.space
    pm2 start dist/server.cjs --name "paragliding-app"
    pm2 startup  # Auto-start on server reboot
    pm2 save     # Save current process list
-   
+
    # Alternative: Direct ES module (if server supports)
    # pm2 start dist/app.js --name "paragliding-app"
    ```
@@ -643,10 +673,10 @@ FRONTEND_URL=https://your-subdomain.borislav.space
 
 ### Frontend Security Integration
 
-- `fetchWithCsrf` utility automatically handles CSRF tokens
-- Token caching with 10-minute refresh
-- All state-changing operations protected
-- Session credentials included in requests
+- **JWT Authentication**: `Authorization: Bearer <token>` headers for all authenticated requests
+- **CSRF Protection**: Custom header-based protection (`X-Requested-With` headers)
+- **Stateless Operations**: No session cookies, pure token-based auth
+- **User Context**: JWT payload provides user info for frontend state management
 
 ## Development Roadmap
 

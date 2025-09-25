@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
 // createServer removed - wrapper handles server creation
 import apiRouter from './routes/api.js';
 import authRouter from './routes/auth.js';
@@ -13,6 +15,7 @@ import { setupGraphQLBeforeRoutes } from './graphql/server.js';
 // import { gateMiddleware } from './middleware/gateMiddleware.js'; // DISABLED
 import path from 'path';
 import type { CustomError } from '@types';
+import { logger, httpLogStream } from './config/logger.js';
 
 const app = express();
 
@@ -22,6 +25,9 @@ app.set('views', path.join(process.cwd(), 'src/views'));
 
 // Cookie parser MUST come before gate middleware
 app.use(cookieParser());
+
+// HTTP request logging
+app.use(morgan('combined', { stream: httpLogStream }));
 
 // Apply gate middleware FIRST - before all security middleware (conditionally)
 // DISABLED: Gateway middleware temporarily disabled for production
@@ -34,7 +40,7 @@ if (process.env['SITE_ACCESS_PASSWORD'] !== 'false') {
   console.log('🔧 Gate middleware disabled (SITE_ACCESS_PASSWORD=false)');
 }
 */
-console.log('🔧 Gate middleware DISABLED - commented out');
+logger.info('Gate middleware disabled', { reason: 'Production hosting compatibility' });
 
 // Security middleware with GraphQL Yoga/GraphiQL support
 app.use(
@@ -44,7 +50,17 @@ app.use(
         defaultSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'],
         fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
-        imgSrc: ["'self'", 'data:', 'blob:'],
+        imgSrc: [
+          "'self'",
+          'data:',
+          'blob:',
+          // Leaflet map tiles
+          'https://*.tile.opentopomap.org',
+          'https://server.arcgisonline.com',
+          'https://*.tile.openstreetmap.org',
+          // Leaflet marker icons
+          'https://cdnjs.cloudflare.com'
+        ],
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://unpkg.com'],
         scriptSrcAttr: ["'unsafe-inline'"],
         connectSrc: ["'self'"],
@@ -187,13 +203,8 @@ app.use('/api', apiRouter);
 // Serve static images - must come after API routes
 app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
 
-// Serve frontend static files BUT exclude root route (let gateway handle it)
-app.use((req, res, next) => {
-  if (req.path === '/') {
-    return next(); // Let gateway handle root route
-  }
-  express.static(path.join(process.cwd(), 'frontend/dist'))(req, res, next);
-});
+// Serve frontend static files
+app.use(express.static(path.join(process.cwd(), 'frontend/dist')));
 
 // 404 handler will be added after GraphQL setup in startServer function
 // Global error handling middleware - must be after all routes
@@ -265,19 +276,30 @@ const startServer = async () => {
   // Initialize email service
   try {
     await EmailService.initialize();
+    logger.info('Email service initialized successfully');
   } catch (error) {
-    console.warn('Email service initialization failed:', error);
+    logger.warn('Email service initialization failed', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
   }
 
   // Set up GraphQL BEFORE adding 404 handler
   await setupGraphQLBeforeRoutes(app);
 
-  // Handle 404 for unmatched routes - gate middleware handles main routes
+  // Handle 404 for unmatched routes - SPA fallback
   app.use((req: express.Request, res: express.Response) => {
-    res.status(404).json({
-      error: 'Not Found',
-      message: `Route ${req.method} ${req.originalUrl} not found`,
-    });
+    // For SPA: serve index.html for HTML requests, JSON error for API-like requests
+    const acceptsHtml = req.headers.accept?.includes('text/html');
+
+    if (acceptsHtml) {
+      res.sendFile(path.join(process.cwd(), 'frontend/dist', 'index.html'));
+    } else {
+      res.status(404).json({
+        error: 'Not Found',
+        message: `Route ${req.method} ${req.originalUrl} not found`,
+      });
+    }
   });
 
   return app; // Return configured app for wrapper
@@ -285,10 +307,48 @@ const startServer = async () => {
 
 // Start server directly when running app.js (not via wrapper)
 startServer().then(app => {
-  app.listen(3000, () => {
-    console.log('Server is running on port 3000');
-    console.log('GraphQL endpoint available at http://localhost:3000/graphql');
+  const server = app.listen(3000, () => {
+    logger.info('Server started successfully', {
+      port: 3000,
+      environment: process.env['NODE_ENV'] || 'development',
+      graphqlEndpoint: 'http://localhost:3000/graphql'
+    });
   });
+
+  // Graceful shutdown handler
+  const gracefulShutdown = (signal: string) => {
+    logger.info('Graceful shutdown initiated', { signal });
+
+    // Stop accepting new connections
+    server.close(async () => {
+      logger.info('HTTP server closed');
+
+      // Close database connections
+      try {
+        await mongoose.connection.close();
+        logger.info('Database connections closed');
+        logger.info('Graceful shutdown completed');
+        process.exit(0);
+      } catch (error) {
+        logger.error('Error during database shutdown', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined
+        });
+        process.exit(1);
+      }
+    });
+
+    // Force close after 30 seconds if graceful shutdown hangs
+    setTimeout(() => {
+      logger.warn('Graceful shutdown timeout - forcing exit');
+      process.exit(1);
+    }, 30000);
+  };
+
+  // Register signal handlers
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
 }).catch(console.error);
 
 // Export Promise for production wrapper

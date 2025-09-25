@@ -1,11 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
 import path from 'path';
 import { validateFilename, getGalleryPath } from './fileUtils.js';
+import type { NodeError } from '@types';
 
 // Mock the createError function
 vi.mock('./errorUtils.js', () => ({
   createError: vi.fn((message: string, status: number) => {
-    const error = new Error(message) as any;
+    const error: NodeError = new Error(message);
     error.status = status;
     return error;
   }),

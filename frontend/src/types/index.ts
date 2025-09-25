@@ -92,6 +92,14 @@ export type {
   AccessibleDialogProps,
   AccessibleDialogRef,
   NotificationState,
-  NotificationDialogProps,
   SEOConfig,
 } from './ui';
+
+// ===== COMPONENT PROPS =====
+export type {
+  ErrorNotificationViewProps,
+  NotificationDialogProps,
+  WindDirectionFilterProps,
+  GalleryImageUploadProps,
+  MainLayoutContainerProps,
+} from './components';

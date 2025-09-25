@@ -1,9 +1,6 @@
 import React from 'react';
 import { BottomNavigationBarContainer } from './BottomNavigationBarContainer';
-
-interface MainLayoutContainerProps {
-  children: React.ReactNode;
-}
+import type { MainLayoutContainerProps } from '@app-types';
 
 export const MainLayoutContainer: React.FC<MainLayoutContainerProps> = ({ children }) => {
   return (

@@ -5,6 +5,7 @@ import { TokenService } from '@services/tokenService.js';
 import { EmailService } from '@services/emailService.js';
 import { generateToken } from '@middleware/auth.js';
 import { ACTIVATION_TOKEN_EXPIRY_MINUTES } from '@config/constants.js';
+import type { UserForToken } from '@types';
 import bcrypt from 'bcryptjs';
 import path from 'path';
 import fs from 'fs/promises';
@@ -27,6 +28,7 @@ import type {
   CreateUserAccountsArgs,
   UpdateProfileArgs,
 } from '@types';
+import { isAuthenticatedContext } from '@types';
 
 // Generate URL slug from Bulgarian site title
 function generateUrlSlug(title: { bg?: string; en?: string }): string {
@@ -199,8 +201,12 @@ export const resolvers = {
       { input }: CreateSiteArgs,
       context: GraphQLContext
     ): Promise<FlyingSite> => {
-      if (!context.user) {
+      if (!isAuthenticatedContext(context)) {
         throw new Error('Authentication required');
+      }
+
+      if (!context.user.isActive) {
+        throw new Error('Active user required');
       }
 
       try {
@@ -235,8 +241,12 @@ export const resolvers = {
       { id, input }: UpdateSiteArgs,
       context: GraphQLContext
     ): Promise<FlyingSite> => {
-      if (!context.user) {
+      if (!isAuthenticatedContext(context)) {
         throw new Error('Authentication required');
+      }
+
+      if (!context.user.isActive) {
+        throw new Error('Active user required');
       }
 
       try {
@@ -272,8 +282,12 @@ export const resolvers = {
       { id, fields }: UnsetSiteFieldsArgs,
       context: GraphQLContext
     ): Promise<FlyingSite> => {
-      if (!context.user) {
+      if (!isAuthenticatedContext(context)) {
         throw new Error('Authentication required');
+      }
+
+      if (!context.user.isActive) {
+        throw new Error('Active user required');
       }
 
       try {
@@ -304,8 +318,12 @@ export const resolvers = {
       { id }: DeleteSiteArgs,
       context: GraphQLContext
     ): Promise<boolean> => {
-      if (!context.user) {
+      if (!isAuthenticatedContext(context)) {
         throw new Error('Authentication required');
+      }
+
+      if (!context.user.isActive) {
+        throw new Error('Active user required');
       }
 
       try {
@@ -338,7 +356,7 @@ export const resolvers = {
         // Find user by username
         const user = await User.findOne({ username, isActive: true });
 
-        if (!user || !user.password) {
+        if (!user || !user.password || !user.username) {
           throw new Error('Invalid credentials');
         }
 
@@ -350,7 +368,16 @@ export const resolvers = {
         }
 
         // Generate JWT token
-        const token = generateToken(user);
+        const userForToken: UserForToken = {
+          _id: user._id,
+          email: user.email,
+          username: user.username,
+          isActive: user.isActive,
+        };
+        if (user.isSuperAdmin) {
+          userForToken.isSuperAdmin = user.isSuperAdmin;
+        }
+        const token = generateToken(userForToken);
 
         return {
           token,
@@ -472,7 +499,11 @@ export const resolvers = {
       { emails }: CreateUserAccountsArgs,
       context: GraphQLContext
     ) => {
-      if (!context.user?.isSuperAdmin) {
+      if (!isAuthenticatedContext(context)) {
+        throw new Error('Authentication required');
+      }
+
+      if (!context.user.isSuperAdmin) {
         throw new Error('Super admin access required');
       }
 
@@ -535,7 +566,11 @@ export const resolvers = {
 
     // Super admin migration
     migrateAddUrls: async (_parent: unknown, _args: unknown, context: GraphQLContext) => {
-      if (!context.user?.isSuperAdmin) {
+      if (!isAuthenticatedContext(context)) {
+        throw new Error('Authentication required');
+      }
+
+      if (!context.user.isSuperAdmin) {
         throw new Error('Super admin access required');
       }
 
@@ -584,8 +619,12 @@ export const resolvers = {
       { input }: UpdateProfileArgs,
       context: GraphQLContext
     ): Promise<UserType> => {
-      if (!context.user) {
+      if (!isAuthenticatedContext(context)) {
         throw new Error('Authentication required');
+      }
+
+      if (!context.user.isActive) {
+        throw new Error('Active user required');
       }
 
       const { email, username, password, currentPassword } = input;

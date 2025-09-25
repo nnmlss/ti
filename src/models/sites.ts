@@ -114,13 +114,13 @@ const FlyingSiteSchema = new Schema(
   },
   {
     toJSON: {
-      transform: (_doc: unknown, ret: Record<string, any>) => {
+      transform: (_doc: unknown, ret: Record<string, unknown>) => {
         try {
           const removeArrayIfEmpty = (key: string) => {
             if (Array.isArray(ret[key]) && ret[key].length === 0) delete ret[key];
           };
           const removeBilingualArraysIfEmpty = (key: string) => {
-            const val = ret[key];
+            const val = ret[key] as { bg: string[]; en: string[] };
             if (!val) return;
             const bgEmpty = !Array.isArray(val.bg) || val.bg.length === 0;
             const enEmpty = !Array.isArray(val.en) || val.en.length === 0;
@@ -149,20 +149,23 @@ const FlyingSiteSchema = new Schema(
           );
           // Remove access if both bg/en empty or missing
           if (ret['access']) {
-            const bgEmpty = ret['access'].bg === undefined || isEmptyString(ret['access'].bg);
-            const enEmpty = ret['access'].en === undefined || isEmptyString(ret['access'].en);
+            const access = ret['access'] as { bg: string; en: string };
+            const bgEmpty = !access.bg || isEmptyString(access.bg);
+            const enEmpty = !access.en || isEmptyString(access.en);
             if (bgEmpty && enEmpty) delete ret['access'];
           }
           // Remove unique if both bg/en empty or missing
           if (ret['unique']) {
-            const bgEmpty = ret['unique'].bg === undefined || isEmptyString(ret['unique'].bg);
-            const enEmpty = ret['unique'].en === undefined || isEmptyString(ret['unique'].en);
+            const unique = ret['unique'] as { bg: string; en: string };
+            const bgEmpty = !unique.bg || isEmptyString(unique.bg);
+            const enEmpty = !unique.en || isEmptyString(unique.en);
             if (bgEmpty && enEmpty) delete ret['unique'];
           }
           // Remove monuments if both bg/en empty or missing
           if (ret['monuments']) {
-            const bgEmpty = ret['monuments'].bg === undefined || isEmptyString(ret['monuments'].bg);
-            const enEmpty = ret['monuments'].en === undefined || isEmptyString(ret['monuments'].en);
+            const monuments = ret['monuments'] as { bg: string; en: string };
+            const bgEmpty = !monuments.bg || isEmptyString(monuments.bg);
+            const enEmpty = !monuments.en || isEmptyString(monuments.en);
             if (bgEmpty && enEmpty) delete ret['monuments'];
           }
           // Do not expose id virtual or version key

@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { User } from '@models/user.js';
 import { ACTIVATION_TOKEN_EXPIRY_MS } from '@config/constants.js';
+import type { UserDocument } from '@types';
 
 export class TokenService {
   //Generate a secure random token
@@ -36,7 +37,7 @@ export class TokenService {
   }
 
   //Validate token and return user if valid
-  static async validateToken(token: string): Promise<any> {
+  static async validateToken(token: string): Promise<UserDocument | null> {
     try {
       const user = await User.findOne({
         invitationToken: token,

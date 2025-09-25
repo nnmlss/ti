@@ -186,7 +186,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
                     fullWidth
                     label='Longitude'
                     type='number'
-                    slotProps={{ htmlInput: { step: 'any' } }}
+                    slotProps={{ htmlInput: { step: 0.0001 } }}
                     sx={{ mb: 1 }}
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
@@ -209,7 +209,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
                     fullWidth
                     label='Latitude'
                     type='number'
-                    slotProps={{ htmlInput: { step: 'any' } }}
+                    slotProps={{ htmlInput: { step: 0.000001 } }}
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
@@ -375,7 +375,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
                     fullWidth
                     label='Longitude'
                     type='number'
-                    slotProps={{ htmlInput: { step: 'any' } }}
+                    slotProps={{ htmlInput: { step: 0.000001 } }}
                     required
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
@@ -399,7 +399,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
                     fullWidth
                     label='Latitude'
                     type='number'
-                    slotProps={{ htmlInput: { step: 'any' } }}
+                    slotProps={{ htmlInput: { step: 0.000001 } }}
                     required
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}

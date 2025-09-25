@@ -37,12 +37,21 @@ export type {
 // ===== MIDDLEWARE TYPES =====
 export type {
   AuthenticatedRequest,
+  PublicGraphQLContext,
+  AuthenticatedGraphQLContext,
   GraphQLContext,
+  YogaInitialContext,
+  JWTPayload,
+  UserForToken,
 } from './middleware.js';
+
+export { isAuthenticatedContext } from './middleware.js';
 
 // ===== SERVICE TYPES =====
 export type {
   ImageSize,
   ImagePaths,
   ProcessedImage,
+  NodeError,
+  MockSharpInstance,
 } from './services.js';

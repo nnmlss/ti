@@ -1,5 +1,8 @@
-import type { LocalizedText, Location, WindDirection, GraphQLContext } from '@types'
+import type { LocalizedText } from '@types';
+import type { Location } from '@types';
+import type { WindDirection } from '@types';
 import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import type { GraphQLContext } from '@types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -24,7 +27,7 @@ export type Scalars = {
 export type AccountCreationResult = {
   __typename?: 'AccountCreationResult';
   email: Scalars['String']['output'];
-  id?: Maybe<Scalars['String']['output']>;
+  id: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
 };
@@ -33,6 +36,11 @@ export type ActivationResponse = {
   __typename?: 'ActivationResponse';
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
+};
+
+export type AppConstants = {
+  __typename?: 'AppConstants';
+  activationTokenExpiryMinutes: Scalars['Int']['output'];
 };
 
 export type AuthPayload = {
@@ -56,38 +64,40 @@ export type CreateSiteInput = {
   title: LocalizedTextInput;
   tracklogs?: InputMaybe<Array<Scalars['String']['input']>>;
   unique?: InputMaybe<LocalizedTextInput>;
+  url?: InputMaybe<Scalars['String']['input']>;
   windDirection: Array<Scalars['WindDirection']['input']>;
 };
 
 export type FlyingSite = {
   __typename?: 'FlyingSite';
-  access?: Maybe<Scalars['LocalizedText']['output']>;
+  access: Maybe<Scalars['LocalizedText']['output']>;
   accessOptions: Array<Scalars['Int']['output']>;
-  accomodations?: Maybe<LocalizedStringArray>;
-  alternatives?: Maybe<LocalizedStringArray>;
-  altitude?: Maybe<Scalars['Int']['output']>;
-  galleryImages?: Maybe<Array<GalleryImage>>;
+  accomodations: Maybe<LocalizedStringArray>;
+  alternatives: Maybe<LocalizedStringArray>;
+  altitude: Maybe<Scalars['Int']['output']>;
+  galleryImages: Maybe<Array<GalleryImage>>;
   id: Scalars['ID']['output'];
-  landingFields?: Maybe<Array<LandingFieldInfo>>;
-  localPilotsClubs?: Maybe<LocalizedStringArray>;
+  landingFields: Maybe<Array<LandingFieldInfo>>;
+  localPilotsClubs: Maybe<LocalizedStringArray>;
   location: Scalars['Location']['output'];
-  monuments?: Maybe<Scalars['LocalizedText']['output']>;
+  monuments: Maybe<Scalars['LocalizedText']['output']>;
   title: Scalars['LocalizedText']['output'];
-  tracklogs?: Maybe<Array<Scalars['String']['output']>>;
-  unique?: Maybe<Scalars['LocalizedText']['output']>;
+  tracklogs: Maybe<Array<Scalars['String']['output']>>;
+  unique: Maybe<Scalars['LocalizedText']['output']>;
+  url: Maybe<Scalars['String']['output']>;
   windDirection: Array<Scalars['WindDirection']['output']>;
 };
 
 export type GalleryImage = {
   __typename?: 'GalleryImage';
-  author?: Maybe<Scalars['String']['output']>;
-  format?: Maybe<Scalars['String']['output']>;
-  height?: Maybe<Scalars['Int']['output']>;
-  large?: Maybe<Scalars['String']['output']>;
+  author: Maybe<Scalars['String']['output']>;
+  format: Maybe<Scalars['String']['output']>;
+  height: Maybe<Scalars['Int']['output']>;
+  large: Maybe<Scalars['String']['output']>;
   path: Scalars['String']['output'];
-  small?: Maybe<Scalars['String']['output']>;
-  thumbnail?: Maybe<Scalars['String']['output']>;
-  width?: Maybe<Scalars['Int']['output']>;
+  small: Maybe<Scalars['String']['output']>;
+  thumbnail: Maybe<Scalars['String']['output']>;
+  width: Maybe<Scalars['Int']['output']>;
 };
 
 export type GalleryImageInput = {
@@ -103,8 +113,8 @@ export type GalleryImageInput = {
 
 export type LandingFieldInfo = {
   __typename?: 'LandingFieldInfo';
-  description?: Maybe<Scalars['LocalizedText']['output']>;
-  location?: Maybe<Scalars['Location']['output']>;
+  description: Maybe<Scalars['LocalizedText']['output']>;
+  location: Maybe<Scalars['Location']['output']>;
 };
 
 export type LandingFieldInfoInput = {
@@ -114,8 +124,8 @@ export type LandingFieldInfoInput = {
 
 export type LocalizedStringArray = {
   __typename?: 'LocalizedStringArray';
-  bg?: Maybe<Array<Scalars['String']['output']>>;
-  en?: Maybe<Array<Scalars['String']['output']>>;
+  bg: Maybe<Array<Scalars['String']['output']>>;
+  en: Maybe<Array<Scalars['String']['output']>>;
 };
 
 export type LocalizedStringArrayInput = {
@@ -133,6 +143,15 @@ export type LocationInput = {
   type: Scalars['String']['input'];
 };
 
+export type MigrationResult = {
+  __typename?: 'MigrationResult';
+  errors: Array<Scalars['String']['output']>;
+  message: Scalars['String']['output'];
+  sitesUpdated: Scalars['Int']['output'];
+  success: Scalars['Boolean']['output'];
+  updatedUrls: Array<Scalars['String']['output']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   activateAccount: AuthPayload;
@@ -140,7 +159,10 @@ export type Mutation = {
   createUserAccounts: Array<AccountCreationResult>;
   deleteSite: Scalars['Boolean']['output'];
   login: AuthPayload;
+  migrateAddUrls: MigrationResult;
   requestActivation: ActivationResponse;
+  unsetSiteFields: FlyingSite;
+  updateProfile: User;
   updateSite: FlyingSite;
 };
 
@@ -178,6 +200,17 @@ export type MutationRequestActivationArgs = {
 };
 
 
+export type MutationUnsetSiteFieldsArgs = {
+  fields: Array<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdateProfileArgs = {
+  input: UpdateProfileInput;
+};
+
+
 export type MutationUpdateSiteArgs = {
   id: Scalars['ID']['input'];
   input: CreateSiteInput;
@@ -185,7 +218,8 @@ export type MutationUpdateSiteArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  site?: Maybe<FlyingSite>;
+  constants: AppConstants;
+  site: Maybe<FlyingSite>;
   sites: Array<FlyingSite>;
   sitesByWindDirection: Array<FlyingSite>;
   validateToken: TokenValidation;
@@ -212,13 +246,20 @@ export type TokenValidation = {
   valid: Scalars['Boolean']['output'];
 };
 
+export type UpdateProfileInput = {
+  currentPassword: Scalars['String']['input'];
+  email?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type User = {
   __typename?: 'User';
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
-  isSuperAdmin?: Maybe<Scalars['Boolean']['output']>;
-  username?: Maybe<Scalars['String']['output']>;
+  isSuperAdmin: Maybe<Scalars['Boolean']['output']>;
+  username: Maybe<Scalars['String']['output']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -295,6 +336,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   AccountCreationResult: ResolverTypeWrapper<AccountCreationResult>;
   ActivationResponse: ResolverTypeWrapper<ActivationResponse>;
+  AppConstants: ResolverTypeWrapper<AppConstants>;
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CreateSiteInput: CreateSiteInput;
@@ -313,10 +355,12 @@ export type ResolversTypes = ResolversObject<{
   LocalizedTextInput: LocalizedTextInput;
   Location: ResolverTypeWrapper<Scalars['Location']['output']>;
   LocationInput: LocationInput;
+  MigrationResult: ResolverTypeWrapper<MigrationResult>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   TokenValidation: ResolverTypeWrapper<TokenValidation>;
+  UpdateProfileInput: UpdateProfileInput;
   User: ResolverTypeWrapper<User>;
   WindDirection: ResolverTypeWrapper<Scalars['WindDirection']['output']>;
 }>;
@@ -325,6 +369,7 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   AccountCreationResult: AccountCreationResult;
   ActivationResponse: ActivationResponse;
+  AppConstants: AppConstants;
   AuthPayload: AuthPayload;
   Boolean: Scalars['Boolean']['output'];
   CreateSiteInput: CreateSiteInput;
@@ -343,10 +388,12 @@ export type ResolversParentTypes = ResolversObject<{
   LocalizedTextInput: LocalizedTextInput;
   Location: Scalars['Location']['output'];
   LocationInput: LocationInput;
+  MigrationResult: MigrationResult;
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
   TokenValidation: TokenValidation;
+  UpdateProfileInput: UpdateProfileInput;
   User: User;
   WindDirection: Scalars['WindDirection']['output'];
 }>;
@@ -362,6 +409,11 @@ export type AccountCreationResultResolver<ContextType = GraphQLContext, ParentTy
 export type ActivationResponseResolver<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['ActivationResponse'] = ResolversParentTypes['ActivationResponse']> = ResolversObject<{
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type AppConstantsResolver<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['AppConstants'] = ResolversParentTypes['AppConstants']> = ResolversObject<{
+  activationTokenExpiryMinutes?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -391,6 +443,7 @@ export type FlyingSiteResolver<ContextType = GraphQLContext, ParentType extends 
   title?: Resolver<ResolversTypes['LocalizedText'], ParentType, ContextType>;
   tracklogs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   unique?: Resolver<Maybe<ResolversTypes['LocalizedText']>, ParentType, ContextType>;
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   windDirection?: Resolver<Array<ResolversTypes['WindDirection']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -427,17 +480,30 @@ export interface LocationScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'Location';
 }
 
+export type MigrationResultResolver<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['MigrationResult'] = ResolversParentTypes['MigrationResult']> = ResolversObject<{
+  errors?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  sitesUpdated?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  updatedUrls?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MutationResolver<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   activateAccount?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'password' | 'token' | 'username'>>;
   createSite?: Resolver<ResolversTypes['FlyingSite'], ParentType, ContextType, RequireFields<MutationCreateSiteArgs, 'input'>>;
   createUserAccounts?: Resolver<Array<ResolversTypes['AccountCreationResult']>, ParentType, ContextType, RequireFields<MutationCreateUserAccountsArgs, 'emails'>>;
   deleteSite?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteSiteArgs, 'id'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
+  migrateAddUrls?: Resolver<ResolversTypes['MigrationResult'], ParentType, ContextType>;
   requestActivation?: Resolver<ResolversTypes['ActivationResponse'], ParentType, ContextType, RequireFields<MutationRequestActivationArgs, 'email'>>;
+  unsetSiteFields?: Resolver<ResolversTypes['FlyingSite'], ParentType, ContextType, RequireFields<MutationUnsetSiteFieldsArgs, 'fields' | 'id'>>;
+  updateProfile?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateProfileArgs, 'input'>>;
   updateSite?: Resolver<ResolversTypes['FlyingSite'], ParentType, ContextType, RequireFields<MutationUpdateSiteArgs, 'id' | 'input'>>;
 }>;
 
 export type QueryResolver<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  constants?: Resolver<ResolversTypes['AppConstants'], ParentType, ContextType>;
   site?: Resolver<Maybe<ResolversTypes['FlyingSite']>, ParentType, ContextType, RequireFields<QuerySiteArgs, 'id'>>;
   sites?: Resolver<Array<ResolversTypes['FlyingSite']>, ParentType, ContextType>;
   sitesByWindDirection?: Resolver<Array<ResolversTypes['FlyingSite']>, ParentType, ContextType, RequireFields<QuerySitesByWindDirectionArgs, 'directions'>>;
@@ -466,6 +532,7 @@ export interface WindDirectionScalarConfig extends GraphQLScalarTypeConfig<Resol
 export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   AccountCreationResult?: AccountCreationResultResolver<ContextType>;
   ActivationResponse?: ActivationResponseResolver<ContextType>;
+  AppConstants?: AppConstantsResolver<ContextType>;
   AuthPayload?: AuthPayloadResolver<ContextType>;
   DateTime?: GraphQLScalarType;
   FlyingSite?: FlyingSiteResolver<ContextType>;
@@ -474,6 +541,7 @@ export type Resolvers<ContextType = GraphQLContext> = ResolversObject<{
   LocalizedStringArray?: LocalizedStringArrayResolver<ContextType>;
   LocalizedText?: GraphQLScalarType;
   Location?: GraphQLScalarType;
+  MigrationResult?: MigrationResultResolver<ContextType>;
   Mutation?: MutationResolver<ContextType>;
   Query?: QueryResolver<ContextType>;
   TokenValidation?: TokenValidationResolver<ContextType>;

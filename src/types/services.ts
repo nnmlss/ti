@@ -24,3 +24,19 @@ export interface ProcessedImage {
     path: string;
   }>;
 }
+
+// ===== NODE.JS ERROR TYPES =====
+export interface NodeError extends Error {
+  code?: string;
+  errno?: number;
+  path?: string;
+  syscall?: string;
+}
+
+// ===== TEST MOCK TYPES =====
+export interface MockSharpInstance {
+  metadata: () => Promise<{ width: number; height: number; format: string }>;
+  resize: (width: number, height: number) => MockSharpInstance;
+  jpeg: (options: { quality: number }) => MockSharpInstance;
+  toFile: (path: string) => Promise<void>;
+}

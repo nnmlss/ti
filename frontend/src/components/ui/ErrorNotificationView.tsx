@@ -2,21 +2,7 @@ import { Dialog, DialogContent, Typography, Box, Button } from '@mui/material';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { GlobalErrorNotification } from '@components/ui/GlobalErrorNotification';
-
-interface ErrorNotificationViewProps {
-  isServerError: boolean;
-  errorNotification: {
-    open: boolean;
-    title: string | undefined;
-    message: string;
-    isRetrying: boolean;
-    showRetryButton: boolean;
-    showHomeButton: boolean;
-  };
-  onClose: () => void;
-  onRetry: () => void;
-  onGoHome: () => void;
-}
+import type { ErrorNotificationViewProps } from '@app-types';
 
 export function ErrorNotificationView({
   isServerError,

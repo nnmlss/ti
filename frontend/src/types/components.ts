@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { FlyingSite, WindDirection, AccessOptionId } from './sites';
 import type { AuthUser as AuthUserType, AccountCreationResult } from './auth';
-import type { SEOConfig } from './ui';
+import type { SEOConfig, NotificationState } from './ui';
 
 // ===== CONTAINER PROPS =====
 export interface SiteCardContainerProps {
@@ -335,4 +335,40 @@ export interface BottomNavigationBarProps {
   showWindFilter: boolean;
   onViewToggle: (view: 'map' | 'list') => void;
   onWindFilterToggle: () => void;
+}
+
+// ===== UI COMPONENT PROPS =====
+export interface ErrorNotificationViewProps {
+  isServerError: boolean;
+  errorNotification: {
+    open: boolean;
+    title: string | undefined;
+    message: string;
+    isRetrying: boolean;
+    showRetryButton: boolean;
+    showHomeButton: boolean;
+  };
+  onClose: () => void;
+  onRetry: () => void;
+  onGoHome: () => void;
+}
+
+export interface NotificationDialogProps {
+  notification: NotificationState;
+  onClose: () => void;
+}
+
+export interface WindDirectionFilterProps {
+  onClose: () => void;
+}
+
+export interface GalleryImageUploadProps {
+  onFilesSelected: (files: File[]) => void;
+  isUploading?: boolean;
+  error?: string | null;
+  maxFiles?: number;
+}
+
+export interface MainLayoutContainerProps {
+  children: React.ReactNode;
 }

@@ -11,6 +11,7 @@ import {
   generateThumbnailsForImage,
   deleteImageFiles,
 } from './imageService.js';
+import type { NodeError, MockSharpInstance } from '@types';
 
 // Mock dependencies
 vi.mock('fs/promises');
@@ -43,7 +44,7 @@ describe('imageService', () => {
       format: 'jpeg',
     });
 
-    mockSharp.mockReturnValue(mockSharpInstance as any);
+    mockSharp.mockReturnValue(mockSharpInstance as MockSharpInstance);
   });
 
   describe('constants', () => {
@@ -80,8 +81,8 @@ describe('imageService', () => {
       const originalName = 'test-image.jpg';
       const result = generateFilename(originalName);
 
-      // Should match pattern: timestamp-basename
-      expect(result).toMatch(/^\d+-test-image$/);
+      // Should match pattern: timestamp-basename.jpg
+      expect(result).toMatch(/^\d+-test-image\.jpg$/);
     });
 
     it('should handle different file extensions', () => {
@@ -93,18 +94,18 @@ describe('imageService', () => {
 
       testCases.forEach(({ input, basename }) => {
         const result = generateFilename(input);
-        expect(result).toMatch(new RegExp(`^\\d+-${basename}$`));
+        expect(result).toMatch(new RegExp(`^\\d+-${basename}\\.jpg$`));
       });
     });
 
     it('should handle filenames without extensions', () => {
       const result = generateFilename('filename');
-      expect(result).toMatch(/^\d+-filename$/);
+      expect(result).toMatch(/^\d+-filename\.jpg$/);
     });
 
     it('should handle complex filenames', () => {
       const result = generateFilename('my-complex_file (1).jpg');
-      expect(result).toMatch(/^\d+-my-complex_file \(1\)$/);
+      expect(result).toMatch(/^\d+-my-complex_file \(1\)\.jpg$/);
     });
   });
 
@@ -160,10 +161,11 @@ describe('imageService', () => {
       // Should call sharp for metadata
       expect(mockSharp).toHaveBeenCalledWith(buffer);
 
-      // Should write original file
-      expect(mockFs.writeFile).toHaveBeenCalledWith(
-        expect.stringContaining('/mock/gallery/'),
-        buffer
+      // Should call sharp toFile for original
+      const sharpInstance = mockSharp();
+      expect(sharpInstance.jpeg).toHaveBeenCalledWith({ quality: 96 });
+      expect(sharpInstance.toFile).toHaveBeenCalledWith(
+        expect.stringContaining('/mock/gallery/')
       );
 
       // Should create all image versions
@@ -225,7 +227,7 @@ describe('imageService', () => {
     it('should throw error if original file not found', async () => {
       const filename = 'missing-image.jpg';
 
-      const error = new Error('File not found') as any;
+      const error: NodeError = new Error('File not found');
       error.code = 'ENOENT';
       mockFs.access.mockRejectedValue(error);
 
@@ -271,7 +273,7 @@ describe('imageService', () => {
     it('should handle missing files gracefully', async () => {
       const filename = 'test-image.jpg';
 
-      const enoentError = new Error('File not found') as any;
+      const enoentError: NodeError = new Error('File not found');
       enoentError.code = 'ENOENT';
 
       mockFs.access.mockRejectedValue(enoentError);
@@ -286,7 +288,7 @@ describe('imageService', () => {
     it('should handle partial deletion failures', async () => {
       const filename = 'test-image.jpg';
 
-      const enoentError = new Error('File not found') as any;
+      const enoentError: NodeError = new Error('File not found');
       enoentError.code = 'ENOENT';
 
       mockFs.access

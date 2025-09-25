@@ -1,10 +1,10 @@
 import type { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '@models/user.js';
-import type { CustomError, AuthenticatedRequest } from '@types'
+import type { CustomError, AuthenticatedRequest, UserForToken, JWTPayload } from '@types'
 
 //Generate JWT token for authenticated user
-export const generateToken = (user: any): string => {
+export const generateToken = (user: UserForToken): string => {
   const payload = {
     id: user._id,
     email: user.email,
@@ -33,7 +33,7 @@ export const authenticate = async (
       return next(error);
     }
 
-    const decoded = jwt.verify(token, process.env['JWT_SECRET'] || 'fallback-secret') as any;
+    const decoded = jwt.verify(token, process.env['JWT_SECRET'] || 'fallback-secret') as JWTPayload;
 
     // Verify user still exists and is active
     const user = await User.findOne({ _id: decoded.id, isActive: true });

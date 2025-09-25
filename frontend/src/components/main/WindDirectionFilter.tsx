@@ -4,10 +4,7 @@ import AirIcon from '@mui/icons-material/Air';
 import { windDirections } from '@constants';
 import type { RootState } from '@store/store';
 import { setWindDirectionFilter, clearFilters } from '@store/slices/filterSlice';
-
-interface WindDirectionFilterProps {
-  onClose: () => void;
-}
+import type { WindDirectionFilterProps } from '@app-types';
 
 export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
   const dispatch = useDispatch();

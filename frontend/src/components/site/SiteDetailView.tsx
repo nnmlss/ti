@@ -10,6 +10,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
+import { ImageSlideshow } from './ImageSlideshow';
 import { compactButton } from '@/styles/buttonStyles';
 import type { SiteDetailViewProps } from '@app-types';
 
@@ -271,6 +272,20 @@ export function SiteDetailView({
 
           {/* Access Options & Location */}
           <Grid size={{ xs: 12, md: 6 }}>
+            {/* Image Gallery Slideshow */}
+            {(() => {
+              console.log(
+                '🔍 Checking gallery images:',
+                site.galleryImages?.length || 0,
+                site.galleryImages
+              );
+              return site.galleryImages && site.galleryImages.length > 0 ? (
+                <Box sx={{ mb: 3 }}>
+                  <ImageSlideshow images={site.galleryImages} />
+                </Box>
+              ) : null;
+            })()}
+
             {renderLocalizedText(site.access, '')}
             {renderLocalizedText(site.unique, '')}
           </Grid>

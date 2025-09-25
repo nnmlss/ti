@@ -372,3 +372,50 @@ export interface GalleryImageUploadProps {
 export interface MainLayoutContainerProps {
   children: React.ReactNode;
 }
+
+// ===== IMAGE SLIDESHOW TYPES =====
+import type { SxProps, Theme } from '@mui/material/styles';
+import type { GalleryImage } from './sites';
+
+// Slideshow Configuration Interface
+export interface SlideshowConfig {
+  autoPlayInterval: number;
+  transitionDuration: number;
+  transitionEasing: string;
+  transitionType: 'slide' | 'fade' | 'zoom';
+  pauseOnHover: boolean;
+  enableDrag: boolean;
+  minSwipeDistance: number;
+}
+
+// Image Slideshow Component Props
+export interface ImageSlideshowProps {
+  images: GalleryImage[];
+  config?: Partial<SlideshowConfig>;
+}
+
+// Image Slideshow Hook Result
+export interface ImageSlideshowHookResult {
+  currentIndex: number;
+  isPaused: boolean;
+  isTransitioning: boolean;
+  touchStart: number | null;
+  touchEnd: number | null;
+  setCurrentIndex: (index: number | ((prev: number) => number)) => void;
+  setIsPaused: (paused: boolean) => void;
+  setIsTransitioning: (transitioning: boolean) => void;
+  onTouchStart: (e: React.TouchEvent) => void;
+  onTouchMove: (e: React.TouchEvent) => void;
+  onTouchEnd: () => void;
+  getTransitionStyles: () => SxProps<Theme>;
+  getItemStyles: (itemIndex: number) => {
+    position: 'absolute';
+    top: number;
+    left: number;
+    transform: string;
+    transition: string;
+    width: string;
+    height: string;
+    zIndex: number;
+  };
+}

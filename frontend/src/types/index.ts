@@ -102,4 +102,7 @@ export type {
   WindDirectionFilterProps,
   GalleryImageUploadProps,
   MainLayoutContainerProps,
+  SlideshowConfig,
+  ImageSlideshowProps,
+  ImageSlideshowHookResult,
 } from './components';

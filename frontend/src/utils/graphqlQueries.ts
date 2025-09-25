@@ -38,9 +38,6 @@ export const SITE_DETAIL_FRAGMENT = gql`
       width
       height
       format
-      thumbnail
-      small
-      large
     }
     landingFields {
       description

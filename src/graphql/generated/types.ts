@@ -25,7 +25,6 @@ export type Scalars = {
 };
 
 export type AccountCreationResult = {
-  __typename?: 'AccountCreationResult';
   email: Scalars['String']['output'];
   id: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
@@ -33,18 +32,15 @@ export type AccountCreationResult = {
 };
 
 export type ActivationResponse = {
-  __typename?: 'ActivationResponse';
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
 };
 
 export type AppConstants = {
-  __typename?: 'AppConstants';
   activationTokenExpiryMinutes: Scalars['Int']['output'];
 };
 
 export type AuthPayload = {
-  __typename?: 'AuthPayload';
   message: Scalars['String']['output'];
   token: Scalars['String']['output'];
   user: User;
@@ -69,7 +65,6 @@ export type CreateSiteInput = {
 };
 
 export type FlyingSite = {
-  __typename?: 'FlyingSite';
   access: Maybe<Scalars['LocalizedText']['output']>;
   accessOptions: Array<Scalars['Int']['output']>;
   accomodations: Maybe<LocalizedStringArray>;
@@ -89,14 +84,10 @@ export type FlyingSite = {
 };
 
 export type GalleryImage = {
-  __typename?: 'GalleryImage';
   author: Maybe<Scalars['String']['output']>;
   format: Maybe<Scalars['String']['output']>;
   height: Maybe<Scalars['Int']['output']>;
-  large: Maybe<Scalars['String']['output']>;
   path: Scalars['String']['output'];
-  small: Maybe<Scalars['String']['output']>;
-  thumbnail: Maybe<Scalars['String']['output']>;
   width: Maybe<Scalars['Int']['output']>;
 };
 
@@ -104,15 +95,11 @@ export type GalleryImageInput = {
   author?: InputMaybe<Scalars['String']['input']>;
   format?: InputMaybe<Scalars['String']['input']>;
   height?: InputMaybe<Scalars['Int']['input']>;
-  large?: InputMaybe<Scalars['String']['input']>;
   path: Scalars['String']['input'];
-  small?: InputMaybe<Scalars['String']['input']>;
-  thumbnail?: InputMaybe<Scalars['String']['input']>;
   width?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type LandingFieldInfo = {
-  __typename?: 'LandingFieldInfo';
   description: Maybe<Scalars['LocalizedText']['output']>;
   location: Maybe<Scalars['Location']['output']>;
 };
@@ -123,7 +110,6 @@ export type LandingFieldInfoInput = {
 };
 
 export type LocalizedStringArray = {
-  __typename?: 'LocalizedStringArray';
   bg: Maybe<Array<Scalars['String']['output']>>;
   en: Maybe<Array<Scalars['String']['output']>>;
 };
@@ -144,7 +130,6 @@ export type LocationInput = {
 };
 
 export type MigrationResult = {
-  __typename?: 'MigrationResult';
   errors: Array<Scalars['String']['output']>;
   message: Scalars['String']['output'];
   sitesUpdated: Scalars['Int']['output'];
@@ -153,7 +138,6 @@ export type MigrationResult = {
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
   activateAccount: AuthPayload;
   createSite: FlyingSite;
   createUserAccounts: Array<AccountCreationResult>;
@@ -217,7 +201,6 @@ export type MutationUpdateSiteArgs = {
 };
 
 export type Query = {
-  __typename?: 'Query';
   constants: AppConstants;
   site: Maybe<FlyingSite>;
   sites: Array<FlyingSite>;
@@ -241,7 +224,6 @@ export type QueryValidateTokenArgs = {
 };
 
 export type TokenValidation = {
-  __typename?: 'TokenValidation';
   message: Scalars['String']['output'];
   valid: Scalars['Boolean']['output'];
 };
@@ -254,7 +236,6 @@ export type UpdateProfileInput = {
 };
 
 export type User = {
-  __typename?: 'User';
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
@@ -452,10 +433,7 @@ export type GalleryImageResolver<ContextType = GraphQLContext, ParentType extend
   author?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   format?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   height?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  large?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  small?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  thumbnail?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   width?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

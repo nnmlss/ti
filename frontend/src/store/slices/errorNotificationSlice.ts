@@ -1,18 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-
-export interface ErrorNotificationState {
-  open: boolean;
-  message: string;
-  title?: string;
-  retryAction?: {
-    type: string;
-    payload?: unknown;
-    onSuccess?: () => void;
-  };
-  isRetrying: boolean;
-  isServerError: boolean;
-}
+import type { ErrorNotificationState } from '@app-types';
 
 const initialState: ErrorNotificationState = {
   open: false,

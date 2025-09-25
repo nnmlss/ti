@@ -1,50 +1,29 @@
 import { useState, useCallback } from 'react';
+import type { UseImmediateAsyncOptions, UseImmediateAsyncReturn } from '@app-types';
 
 /**
  * Hook that provides immediate loading feedback for async operations.
  * Combines local state (for immediate feedback) with optional Redux state (for consistency).
- * 
+ *
  * @param options Configuration options
  * @returns Object with execute function and loading state
- * 
+ *
  * @example
  * ```typescript
  * const deleteAction = useImmediateAsync({
  *   onError: (error) => showNotification(`Delete failed: ${error.message}`)
  * });
- * 
+ *
  * const handleDelete = () => deleteAction.execute(async () => {
  *   await dispatch(deleteSiteThunk(siteId));
  *   onClose();
  * });
- * 
+ *
  * <Button disabled={deleteAction.isLoading}>
  *   {deleteAction.isLoading ? <CircularProgress size={20} /> : 'Delete'}
  * </Button>
  * ```
  */
-
-interface UseImmediateAsyncOptions {
-  /** Called when the async operation throws an error */
-  onError?: (error: Error) => void;
-  /** Called when the async operation completes successfully */
-  onSuccess?: () => void;
-  /** Optional Redux loading state to combine with local state */
-  externalLoading?: boolean;
-}
-
-interface UseImmediateAsyncReturn {
-  /** Execute an async operation with immediate loading feedback */
-  execute: (asyncFn: () => Promise<void>) => Promise<void>;
-  /** True if the operation is currently running (local + external state) */
-  isLoading: boolean;
-  /** True if the operation is running (local state only) */
-  isLocalLoading: boolean;
-  /** Error from the last operation, if any */
-  error: Error | null;
-  /** Reset the error state */
-  clearError: () => void;
-}
 
 export const useImmediateAsync = (
   options: UseImmediateAsyncOptions = {}

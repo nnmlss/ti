@@ -1,12 +1,5 @@
 import { useState, useCallback } from 'react';
-
-export interface ConfirmDialogState {
-  isOpen: boolean;
-  targetId: number | null;
-  confirm: (id: number, action: () => void | Promise<void>) => void;
-  handleConfirm: () => void;
-  handleCancel: () => void;
-}
+import type { ConfirmDialogState } from '@app-types';
 
 export const useConfirmDialog = (): ConfirmDialogState => {
   const [isOpen, setIsOpen] = useState(false);

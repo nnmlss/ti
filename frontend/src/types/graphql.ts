@@ -33,9 +33,6 @@ export interface GraphQLSite {
     width?: number | null;
     height?: number | null;
     format?: string | null;
-    thumbnail?: string | null;
-    small?: string | null;
-    large?: string | null;
   }> | null;
   landingFields?: Array<{
     description?: { bg?: string; en?: string } | null;

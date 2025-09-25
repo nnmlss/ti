@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
-
-interface CsrfResponse {
-  csrfToken: string;
-}
+import type { CsrfResponse } from '@app-types';
 
 export const useCsrfToken = () => {
   const [csrfToken, setCsrfToken] = useState<string | null>(null);

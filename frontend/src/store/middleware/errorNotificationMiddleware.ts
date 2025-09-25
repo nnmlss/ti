@@ -3,17 +3,7 @@ import { showErrorNotification, enableServerError } from '@store/slices/errorNot
 import { isHandledByCallback } from '@store/utils/thunkWithCallback';
 import { getLocalizedOperationName, getLocalizedErrorMessage } from '@store/utils/errorMessages';
 import { diagnoseConnectivityIssue } from '@utils/networkCheck';
-
-interface RejectedAction {
-  type: string;
-  payload?: string;
-  error?: { message?: string };
-  meta?: {
-    arg?: unknown;
-    requestId?: string;
-    rejectedWithValue?: boolean;
-  };
-}
+import type { RejectedAction } from '@app-types';
 
 // Middleware to automatically show error notifications when thunks are rejected
 export const errorNotificationMiddleware: Middleware =

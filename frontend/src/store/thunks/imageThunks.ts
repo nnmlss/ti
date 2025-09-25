@@ -1,26 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchWithCsrf } from '@utils/fetchWithCsrf';
-
-export interface ImageUploadResponse {
-  message: string;
-  image: {
-    path: string;
-    originalName: string;
-    mimetype: string;
-    size: number;
-    width?: number;
-    height?: number;
-    format?: string;
-    thumbnail?: string;
-    small?: string;
-    large?: string;
-  };
-}
-
-export interface ImageDeleteResponse {
-  message: string;
-  filename: string;
-}
+import type { ImageUploadResponse, ImageDeleteResponse } from '@app-types';
 
 // Thunk for uploading an image
 export const uploadImageThunk = createAsyncThunk(

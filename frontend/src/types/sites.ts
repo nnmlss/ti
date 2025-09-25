@@ -39,9 +39,6 @@ export interface GalleryImage {
   width?: number;
   height?: number;
   format?: string;
-  thumbnail?: string;
-  small?: string;
-  large?: string;
 }
 
 export interface GalleryImageItemProps {

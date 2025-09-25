@@ -1,11 +1,5 @@
 import type { AppDispatch } from '@store/store';
-import type { AsyncThunkAction } from '@reduxjs/toolkit';
-
-interface ThunkWithCallbackOptions {
-  thunkAction: AsyncThunkAction<unknown, unknown, object>;
-  onSuccess?: () => void;
-  onError?: (error: string) => void;
-}
+import type { ThunkWithCallbackOptions } from '@app-types';
 
 /**
  * Utility to dispatch thunks with success/error callbacks that survive the retry process

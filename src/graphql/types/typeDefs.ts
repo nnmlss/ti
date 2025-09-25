@@ -14,9 +14,6 @@ export const typeDefs = gql`
     width: Int
     height: Int
     format: String
-    thumbnail: String
-    small: String
-    large: String
   }
 
   type LandingFieldInfo {
@@ -63,9 +60,6 @@ export const typeDefs = gql`
     width: Int
     height: Int
     format: String
-    thumbnail: String
-    small: String
-    large: String
   }
 
   input LandingFieldInfoInput {

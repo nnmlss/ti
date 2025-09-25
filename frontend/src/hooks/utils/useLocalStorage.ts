@@ -1,13 +1,7 @@
 import { useState, useCallback } from 'react';
+import type { LocalStorageHook } from '@app-types';
 
 type StorageStrategy = 'local' | 'session';
-
-export interface LocalStorageHook<T> {
-  value: T;
-  setValue: (value: T | ((prev: T) => T)) => void;
-  removeValue: () => void;
-  hasValue: boolean;
-}
 
 export const useLocalStorage = <T>(
   key: string,

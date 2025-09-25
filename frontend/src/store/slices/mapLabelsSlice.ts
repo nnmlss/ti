@@ -1,11 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { getMapLabels, setMapLabels } from '@utils/preferences';
+import type { MapLabelsState } from '@app-types';
 
 // Map labels visibility state slice with localStorage integration
-interface MapLabelsState {
-  showLabels: boolean;
-}
 
 const initialState: MapLabelsState = {
   showLabels: getMapLabels(), // Initialize from localStorage

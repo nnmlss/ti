@@ -105,4 +105,6 @@ export type {
   SlideshowConfig,
   ImageSlideshowProps,
   ImageSlideshowHookResult,
+  SiteDetailMapProps,
+  SiteDetailMapContainerProps,
 } from './components';

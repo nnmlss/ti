@@ -16,47 +16,48 @@ export const theme = createTheme({
     fontFamily: 'comfortaa, sans-serif',
     h1: {
       fontFamily: 'comfortaalight, sans-serif',
-      fontSize: '2.5rem',
+      fontSize: '40px',
       [baseTheme.breakpoints.down('sm')]: {
-        fontSize: '2rem',
+        fontSize: '32px',
       },
     },
     h2: {
       fontFamily: 'comfortaalight, sans-serif',
-      fontSize: '2rem',
+      fontSize: '32px',
       [baseTheme.breakpoints.down('sm')]: {
-        fontSize: '1.75rem',
+        fontSize: '28px',
       },
     },
     h3: {
       fontFamily: 'comfortaalight, sans-serif',
-      fontSize: '1.75rem',
+      fontSize: '28px',
       [baseTheme.breakpoints.down('sm')]: {
-        fontSize: '1.5rem',
+        fontSize: '24px',
       },
     },
     h4: {
       fontFamily: 'comfortaalight, sans-serif',
-      fontSize: '1.5rem',
+      fontSize: '24px',
       [baseTheme.breakpoints.down('sm')]: {
-        fontSize: '1.25rem',
+        fontSize: '20px',
       },
     },
     h5: {
       fontFamily: 'comfortaalight, sans-serif',
-      fontSize: '1.25rem',
+      fontSize: '20px',
       [baseTheme.breakpoints.down('sm')]: {
-        fontSize: '1.1rem',
+        fontSize: '18px',
       },
     },
     h6: {
       fontFamily: 'comfortaalight, sans-serif',
-      fontSize: '1rem',
+      fontSize: '16px',
       [baseTheme.breakpoints.down('sm')]: {
-        fontSize: '0.9rem',
+        fontSize: '15px',
       },
     },
   },
+
   components: {
     MuiButton: {
       styleOverrides: {

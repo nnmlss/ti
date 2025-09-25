@@ -1,7 +1,12 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import { useImageSlideshow } from '@hooks/business/useImageSlideshow';
-import { getResponsiveImageSources, generateImageAltText, generateImageTitle, handleImageError } from '@utils/imageProcessing';
+import {
+  getResponsiveImageSources,
+  generateImageAltText,
+  generateImageTitle,
+  handleImageError,
+} from '@utils/imageProcessing';
 import type { GalleryImage, SlideshowConfig } from '@app-types';
 
 // Slideshow configuration constants - adapted from geomanch
@@ -82,9 +87,7 @@ export function ImageSlideshow({ images }: { images: GalleryImage[] }) {
 
   // If no images or only one image, render single image or nothing
   if (images.length <= 1) {
-    return images.length === 1 && images[0]
-      ? renderImageElement(images[0])
-      : null;
+    return images.length === 1 && images[0] ? renderImageElement(images[0]) : null;
   }
 
   return (
@@ -110,20 +113,19 @@ export function ImageSlideshow({ images }: { images: GalleryImage[] }) {
     >
       <Box sx={getTransitionStyles()}>
         {/* Reference image for container height - only visible for current image in slide mode */}
-        {SLIDESHOW_CONFIG.transitionType === 'slide' &&
-          images[currentIndex] && (
-            <Box
-              sx={{
-                visibility: 'hidden',
-                width: '100%',
-                margin: 0,
-                padding: 0,
-                lineHeight: 0,
-              }}
-            >
-              {renderImageElement(images[currentIndex])}
-            </Box>
-          )}
+        {SLIDESHOW_CONFIG.transitionType === 'slide' && images[currentIndex] && (
+          <Box
+            sx={{
+              visibility: 'hidden',
+              width: '100%',
+              margin: 0,
+              padding: 0,
+              lineHeight: 0,
+            }}
+          >
+            {renderImageElement(images[currentIndex])}
+          </Box>
+        )}
 
         {images.map((image, index) => {
           if (!image) return null;
@@ -147,8 +149,7 @@ export function ImageSlideshow({ images }: { images: GalleryImage[] }) {
             itemSpecificStyles = getItemStyles(index);
           } else if (SLIDESHOW_CONFIG.transitionType === 'zoom') {
             const isCurrentItem = index === currentIndex;
-            const isPrevItem =
-              index === prevIndex && prevIndex !== currentIndex;
+            const isPrevItem = index === prevIndex && prevIndex !== currentIndex;
 
             let scale = '1.2'; // Default: large/hidden
             let opacity = 0; // Default: hidden

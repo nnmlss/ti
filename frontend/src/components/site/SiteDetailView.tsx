@@ -11,6 +11,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import { ImageSlideshow } from './ImageSlideshow';
+import { SiteDetailMapContainer } from '@containers/SiteDetailMapContainer';
 import { compactButton } from '@/styles/buttonStyles';
 import type { SiteDetailViewProps } from '@app-types';
 
@@ -268,6 +269,7 @@ export function SiteDetailView({
 
               {/* Location */}
             </Box>
+            <SiteDetailMapContainer site={site} />
           </Grid>
 
           {/* Access Options & Location */}

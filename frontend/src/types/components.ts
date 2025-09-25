@@ -419,3 +419,14 @@ export interface ImageSlideshowHookResult {
     zIndex: number;
   };
 }
+
+// ===== SITE DETAIL MAP TYPES =====
+export interface SiteDetailMapProps {
+  coordinates: [number, number]; // [lat, lng]
+  siteName: string;
+  zoom?: number;
+}
+
+export interface SiteDetailMapContainerProps {
+  site: FlyingSite;
+}

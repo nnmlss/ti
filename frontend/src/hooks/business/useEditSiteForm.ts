@@ -177,13 +177,6 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
   };
 
   const onSubmit = async (formData: FormDataSite) => {
-    // Filter out images marked for deletion
-    const filteredFormData = {
-      ...formData,
-      galleryImages:
-        formData.galleryImages?.filter((img) => !imagesToDelete.has(img.path)) || [],
-    };
-
     // Delete ALL files that were marked for deletion (both new and existing)
     const filesToDelete = Array.from(imagesToDelete);
 
@@ -201,10 +194,22 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
       }
     }
 
+    // Filter out images marked for deletion and permanently update form data
+    const filteredImages = formData.galleryImages?.filter((img) => !imagesToDelete.has(img.path)) || [];
+    setValue('galleryImages', filteredImages);
+
+    const filteredFormData = {
+      ...formData,
+      galleryImages: filteredImages,
+    };
+
     // Transform form data to API format
     const cleanedFormData = toApiData(filteredFormData, site);
 
     const handleSuccess = () => {
+      // Clear the images to delete set after successful submission
+      setImagesToDelete(new Set());
+
       // Success callback - show success message and close modal after 3s
       setShowSuccessMessage(true);
       setTimeout(() => {

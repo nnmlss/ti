@@ -8,6 +8,9 @@ import type {
   FormLandingField,
   UpdatePayload,
 } from '@app-types';
+
+// Re-export FormDataSite for external use
+export type { FormDataSite };
 import { FORM_DEFAULTS } from '@constants';
 
 const initialFormState: FormDataSite = {
@@ -20,6 +23,8 @@ const initialFormState: FormDataSite = {
   accomodations: { bg: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY], en: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY] },
   alternatives: { bg: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY], en: [...FORM_DEFAULTS.EMPTY_STRING_ARRAY] },
   access: { bg: '', en: '' },
+  unique: { bg: '', en: '' },
+  monuments: { bg: '', en: '' },
   landingFields: [
     {
       description: { bg: '', en: '' },
@@ -99,6 +104,8 @@ export function toFormData(site?: FlyingSite): FormDataSite {
     accomodations: transformBilingualArray(site.accomodations),
     alternatives: transformBilingualArray(site.alternatives),
     access: transformLocalizedText(site.access),
+    unique: transformLocalizedText(site.unique),
+    monuments: transformLocalizedText(site.monuments),
     landingFields: transformLandingFields(site.landingFields),
     tracklogs: site.tracklogs?.length ? [...site.tracklogs] : FORM_DEFAULTS.EMPTY_STRING_ARRAY,
     localPilotsClubs: transformBilingualArray(site.localPilotsClubs),
@@ -142,9 +149,9 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
       const cleanImage: GalleryImage = {
         path: img.path,
         ...(img.author && { author: img.author }),
-        ...(img.width && { width: img.width }),
-        ...(img.height && { height: img.height }),
-        ...(img.format && { format: img.format }),
+        width: img.width || 0, // Required property with fallback
+        height: img.height || 0, // Required property with fallback
+        format: img.format || 'jpg', // Required property with fallback
       };
       return cleanImage;
     });
@@ -205,6 +212,40 @@ export function toApiData(formData: FormDataSite, originalSite?: FlyingSite): Up
   } else if (originalSite?.access?.bg || originalSite?.access?.en) {
     // If editing and access exists in DB but should be removed, use $unset
     cleanedFormData.$unset = { ...cleanedFormData.$unset, access: 1 };
+  }
+
+  // Handle unique field (LocalizedText)
+  const bgUnique = formData.unique.bg.trim();
+  const enUnique = formData.unique.en.trim();
+
+  if (bgUnique || enUnique) {
+    cleanedFormData.unique = {};
+    if (bgUnique) {
+      cleanedFormData.unique.bg = bgUnique;
+    }
+    if (enUnique) {
+      cleanedFormData.unique.en = enUnique;
+    }
+  } else if (originalSite?.unique?.bg || originalSite?.unique?.en) {
+    // If editing and unique exists in DB but should be removed, use $unset
+    cleanedFormData.$unset = { ...cleanedFormData.$unset, unique: 1 };
+  }
+
+  // Handle monuments field (LocalizedText)
+  const bgMonuments = formData.monuments.bg.trim();
+  const enMonuments = formData.monuments.en.trim();
+
+  if (bgMonuments || enMonuments) {
+    cleanedFormData.monuments = {};
+    if (bgMonuments) {
+      cleanedFormData.monuments.bg = bgMonuments;
+    }
+    if (enMonuments) {
+      cleanedFormData.monuments.en = enMonuments;
+    }
+  } else if (originalSite?.monuments?.bg || originalSite?.monuments?.en) {
+    // If editing and monuments exists in DB but should be removed, use $unset
+    cleanedFormData.$unset = { ...cleanedFormData.$unset, monuments: 1 };
   }
 
   // Handle landing fields

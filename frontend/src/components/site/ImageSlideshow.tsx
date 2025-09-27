@@ -9,9 +9,28 @@ import {
 } from '@utils/imageProcessing';
 import type { GalleryImage, SlideshowConfig } from '@app-types';
 
+// Helper function to calculate maximum height based on image aspect ratios
+function calculateMaxHeight(images: GalleryImage[], containerWidth: number = 800): number {
+  if (!images.length) return 0;
+
+  let maxHeight = 0;
+
+  for (const image of images) {
+    if (image.width && image.height) {
+      // Calculate height if image width is scaled to container width
+      const aspectRatio = image.width / image.height;
+      const scaledHeight = containerWidth / aspectRatio;
+      maxHeight = Math.max(maxHeight, scaledHeight);
+    }
+  }
+
+  // Fallback if no dimensions available - use 16:9 aspect ratio
+  return maxHeight > 0 ? maxHeight : containerWidth * (9 / 16);
+}
+
 // Slideshow configuration constants - adapted from geomanch
 const SLIDESHOW_CONFIG: SlideshowConfig = {
-  autoPlayInterval: 5500, // 5.5 seconds
+  autoPlayInterval: 3500, // 3.5 seconds
   transitionDuration: 960, // 0.96 seconds
   transitionEasing: 'ease-in-out', // CSS easing
   transitionType: 'zoom', // 'slide', 'fade', 'zoom' - using zoom for TakeOff Info
@@ -47,12 +66,13 @@ function renderImageElement(image: GalleryImage, siteName?: string): React.React
         title={generateImageTitle(image, siteName)}
         style={{
           width: '100%',
-          height: 'auto',
+          height: '100%', // Fill the fixed height container
           display: 'block', // Removes inline spacing
           margin: 0,
           padding: 0,
           verticalAlign: 'top', // Fallback for any remaining inline behavior
-          objectFit: 'cover', // Ensures proper aspect ratio
+          objectFit: 'cover', // Ensures proper aspect ratio while filling container
+          objectPosition: 'center', // Center the image within the container
         }}
         onError={handleImageError}
       />
@@ -62,6 +82,10 @@ function renderImageElement(image: GalleryImage, siteName?: string): React.React
 
 // Automatic slideshow component - adapted for TakeOff Info
 export function ImageSlideshow({ images }: { images: GalleryImage[] }) {
+  // Container ref to measure width
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = React.useState(800);
+
   // Use slideshow hook
   const {
     currentIndex,
@@ -77,11 +101,28 @@ export function ImageSlideshow({ images }: { images: GalleryImage[] }) {
   // Track previous index for zoom transition
   const [prevIndex, setPrevIndex] = React.useState(currentIndex);
 
+  // Measure container width and calculate fixed height
+  React.useEffect(() => {
+    const updateDimensions = () => {
+      const width = containerRef.current?.offsetWidth || 800;
+      setContainerWidth(width);
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
   React.useEffect(() => {
     if (currentIndex !== prevIndex) {
       setPrevIndex(currentIndex);
     }
   }, [currentIndex, prevIndex]);
+
+  // Calculate fixed height based on tallest image aspect ratio
+  const fixedHeight = React.useMemo(() => {
+    return calculateMaxHeight(images, containerWidth);
+  }, [images, containerWidth]);
 
   // If no images or only one image, render single image or nothing
   if (images.length <= 1) {
@@ -89,20 +130,20 @@ export function ImageSlideshow({ images }: { images: GalleryImage[] }) {
   }
 
   return (
-    <Box sx={{ position: 'relative', width: '100%' }}>
+    <Box ref={containerRef} sx={{ position: 'relative', width: '100%' }}>
       <Box
         sx={{
           position: 'relative',
           width: '100%',
           overflow: 'hidden',
-          height: 'auto',
+          height: `${fixedHeight}px`, // Fixed height based on tallest image
           margin: 0,
           padding: 0,
           lineHeight: 0, // Critical: removes spacing below images
           display: 'block',
           verticalAlign: 'top',
-          borderRadius: 1, // Add slight border radius for better appearance
-          boxShadow: 1, // Add subtle shadow
+          // borderRadius: 1, // Add slight border radius for better appearance
+          // boxShadow: 1, // Add subtle shadow
         }}
         onMouseEnter={() => SLIDESHOW_CONFIG.pauseOnHover && setIsPaused(true)}
         onMouseLeave={() => SLIDESHOW_CONFIG.pauseOnHover && setIsPaused(false)}

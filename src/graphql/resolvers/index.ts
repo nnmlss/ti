@@ -262,7 +262,16 @@ export const resolvers = {
           updateData.url = newUrl;
         }
 
-        const updatedSite = await Site.findOneAndUpdate({ _id: Number(id) }, updateData, {
+        // Extract $unset operations if present
+        const { $unset, ...normalUpdateData } = updateData;
+
+        // Build the MongoDB update query
+        const mongoUpdate: any = normalUpdateData;
+        if ($unset && Object.keys($unset).length > 0) {
+          mongoUpdate.$unset = $unset;
+        }
+
+        const updatedSite = await Site.findOneAndUpdate({ _id: Number(id) }, mongoUpdate, {
           new: true,
           runValidators: true,
         });

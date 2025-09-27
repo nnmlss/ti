@@ -62,12 +62,9 @@ function transformGraphQLSite(graphqlSite: GraphQLSite): FlyingSite {
       galleryImages: graphqlSite.galleryImages.map((img) => ({
         path: img.path,
         ...(img.author && { author: img.author }),
-        ...(img.width !== null && img.width !== undefined && { width: img.width }),
-        ...(img.height !== null && img.height !== undefined && { height: img.height }),
-        ...(img.format && { format: img.format }),
-        ...(img.thumbnail && { thumbnail: img.thumbnail }),
-        ...(img.small && { small: img.small }),
-        ...(img.large && { large: img.large }),
+        width: img.width || 0, // Use 0 as fallback, should never happen with proper upload
+        height: img.height || 0, // Use 0 as fallback, should never happen with proper upload
+        format: img.format || 'jpg', // Use 'jpg' as fallback, should never happen with proper upload
       }))
     }),
     ...(graphqlSite.access && { access: graphqlSite.access }),

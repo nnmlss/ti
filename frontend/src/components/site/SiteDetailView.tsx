@@ -8,10 +8,12 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import { ImageSlideshow } from './ImageSlideshow';
 import { SiteDetailMapContainer } from '@containers/SiteDetailMapContainer';
+import { SitesLinksListContainer } from '@containers/SitesLinksListContainer';
 import { compactButton } from '@/styles/buttonStyles';
 import type { SiteDetailViewProps } from '@app-types';
 
@@ -20,6 +22,8 @@ export function SiteDetailView({
   onOpenLocation,
   onOpenTracklog,
   onClose,
+  onEdit,
+  isAuthenticated,
 }: SiteDetailViewProps) {
   const renderLocalizedText = (
     text: { bg?: string; en?: string } | undefined,
@@ -182,145 +186,177 @@ export function SiteDetailView({
   };
 
   return (
-    <Card sx={{ maxWidth: { xs: '100vw', sm: '98vw' }, mx: 'auto', mb: 10 }}>
-      <CardContent sx={{ p: { xs: 1, md: 4 } }}>
-        {/* Back Button and Title Section */}
-        <Box sx={{ mb: 4 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: { xs: 'space-between', sm: 'space-arround' },
-              gap: { xs: 0, sm: 2 },
-              mb: 2,
-            }}
-          >
-            <Button
-              onClick={onClose}
-              sx={compactButton}
-              aria-label='Go back'
-              variant='outlined'
+    <>
+      <Card sx={{ maxWidth: { xs: '100vw', sm: '98vw' }, mx: 'auto', mb: 1 }}>
+        <CardContent sx={{ p: { xs: 1, md: 4 } }}>
+          {/* Back Button and Title Section */}
+          <Box sx={{ mb: 0 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: { xs: 'space-between', sm: 'space-arround' },
+                gap: { xs: 0, sm: 2 },
+                mb: 2,
+              }}
             >
-              <ArrowBackIcon />
-            </Button>
-
-            <Box sx={{ flex: 1, ml: { xs: 0, sm: 5 } }}>
-              <Typography
-                variant='h4'
-                component='h1'
-                gutterBottom
-                color='primary.main'
-                sx={{ mb: 0, textAlign: 'center' }}
-              >
-                {site.title.bg}
-              </Typography>
-              {site.title.en && (
-                <Typography
-                  variant='h5'
-                  component='h2'
-                  color='text.secondary'
-                  sx={{ textAlign: 'center' }}
+              <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+                <Button
+                  onClick={onClose}
+                  sx={{
+                    ...compactButton,
+                    display: { xs: 'flex' },
+                    mr: 0.5,
+                  }}
+                  aria-label='Go back'
+                  variant='outlined'
                 >
-                  {site.title.en}
-                </Typography>
-              )}
-            </Box>
+                  <ArrowBackIcon />
+                </Button>
+                {isAuthenticated && (
+                  <Button
+                    onClick={onEdit}
+                    sx={{
+                      ...compactButton,
+                      color: 'secondary.main',
+                      borderColor: 'secondary.main',
+                    }}
+                    aria-label='Edit site'
+                    variant='outlined'
+                  >
+                    <EditIcon />
+                  </Button>
+                )}
+              </Box>
 
-            <Box sx={{ mt: 0, mb: 5, display: 'flex', justifyContent: 'center' }}>
-              <Button
-                variant='contained'
-                startIcon={<LocationOnIcon sx={{ mr: { xs: -1, sm: 'unset' }, p: 0 }} />}
-                onClick={() => onOpenLocation(site.location.coordinates)}
-                sx={{
-                  textAlign: 'right',
-                  fontSize: { xs: '0.65rem', sm: 'unset' },
-                  paddingX: { sx: '5px!important' },
-                  ...compactButton,
-                }}
-              >
-                Google
-                <br />
-                Maps
-              </Button>
+              <Box sx={{ flex: 1, ml: { xs: 0, sm: 5 } }}>
+                <Typography
+                  variant='h4'
+                  component='h1'
+                  gutterBottom
+                  color='primary.main'
+                  sx={{ mb: 0, textAlign: 'center' }}
+                >
+                  {site.title.bg}
+                </Typography>
+                {site.title.en && (
+                  <Typography
+                    variant='h5'
+                    component='h2'
+                    color='text.secondary'
+                    sx={{ textAlign: 'center' }}
+                  >
+                    {site.title.en}
+                  </Typography>
+                )}
+              </Box>
+
+              <Box sx={{ mt: 0, mb: 0, display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  variant='contained'
+                  startIcon={<LocationOnIcon sx={{ mr: { xs: -1, sm: 'unset' }, p: 0 }} />}
+                  onClick={() => onOpenLocation(site.location.coordinates)}
+                  sx={{
+                    textAlign: 'right',
+                    fontSize: { xs: '0.65rem', sm: 'unset' },
+                    paddingX: { sx: '5px!important' },
+                    ...compactButton,
+                  }}
+                >
+                  Google
+                  <br />
+                  Maps
+                </Button>
+              </Box>
             </Box>
           </Box>
-        </Box>
 
-        {/* Basic Information */}
-        <Grid container spacing={4} sx={{ mb: 4 }}>
-          {/* Wind Directions & Altitude */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ textAlign: 'center' }}>
-              <WindDirectionCompass windDirections={site.windDirection} size={100} />
-              {site.altitude && (
-                <Typography variant='h6' sx={{ mt: 2 }}>
-                  {site.altitude}m
+          {/* Basic Information */}
+          <Grid container spacing={4} sx={{ mb: 4 }}>
+            <Grid size={{ xs: 12, md: 7 }}>
+              <Box sx={{ mb: 3, mt: 0, overflow: 'hidden' }}>
+                <SiteDetailMapContainer site={site} />
+              </Box>
+              {/* Wind Directions & Altitude */}
+              <Box sx={{ textAlign: 'center' }}>
+                <WindDirectionCompass windDirections={site.windDirection} size={100} />
+                {site.altitude && (
+                  <Typography variant='h6' sx={{ mt: 2 }}>
+                    {site.altitude}m
+                  </Typography>
+                )}
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant='h6' gutterBottom color='primary.main'>
+                  Възможности за достъп
                 </Typography>
-              )}
-            </Box>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant='h6' gutterBottom color='primary.main'>
-                Възможности за достъп
-              </Typography>
-              <AccessOptionsView
-                accessOptions={site.accessOptions}
-                size={60}
-                showLabels={true}
-              />
+                <AccessOptionsView
+                  accessOptions={site.accessOptions}
+                  size={60}
+                  showLabels={true}
+                />
 
-              {/* Location */}
-            </Box>
-            <SiteDetailMapContainer site={site} />
-          </Grid>
+                {/* Location */}
+              </Box>
+            </Grid>
 
-          {/* Access Options & Location */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            {/* Image Gallery Slideshow */}
-            {(() => {
-              console.log(
-                '🔍 Checking gallery images:',
-                site.galleryImages?.length || 0,
-                site.galleryImages
-              );
-              return site.galleryImages && site.galleryImages.length > 0 ? (
+            {/* Access Options & Location */}
+            <Grid size={{ xs: 12, md: 5 }}>
+              {/* Image Gallery Slideshow */}
+              {site.galleryImages && site.galleryImages.length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <ImageSlideshow images={site.galleryImages} />
                 </Box>
-              ) : null;
-            })()}
+              )}
 
-            {renderLocalizedText(site.access, '')}
-            {renderLocalizedText(site.unique, '')}
+              {renderLocalizedText(site.access, '')}
+              {renderLocalizedText(site.unique, '')}
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              {renderLandingFields()}
+              {renderLocalizedText(site.monuments, 'Забележителности')}
+              {renderBilingualArray(site.accomodations, 'Настаняване')}
+              {renderBilingualArray(site.alternatives, 'Други занимания')}
+              {renderBilingualArray(site.localPilotsClubs, 'Local Pilots Clubs')}
+            </Grid>
           </Grid>
 
-          <Grid size={{ xs: 12 }}>
-            {renderLandingFields()}
-            {renderLocalizedText(site.monuments, 'Забележителности')}
-            {renderBilingualArray(site.accomodations, 'Настаняване')}
-            {renderBilingualArray(site.alternatives, 'Други занимания')}
-            {renderBilingualArray(site.localPilotsClubs, 'Local Pilots Clubs')}
-          </Grid>
-        </Grid>
+          <Divider sx={{ my: 4 }} />
 
-        <Divider sx={{ my: 4 }} />
+          {/* Detailed Information */}
 
-        {/* Detailed Information */}
+          {renderTracklogs()}
+        </CardContent>
+        <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+          {/* <Button
+            onClick={onClose}
+            sx={{
+              ...compactButton,
+              display: { xs: 'flex', md: 'none' },
+            }}
+            aria-label='Go back'
+            variant='outlined'
+          >
+            <ArrowBackIcon />
+          </Button> */}
+          {isAuthenticated && (
+            <Button
+              onClick={onEdit}
+              sx={{
+                ...compactButton,
+                color: 'red',
+                borderColor: 'secondary.main',
+              }}
+              aria-label='Edit site'
+              variant='outlined'
+            >
+              <EditIcon />
+            </Button>
+          )}
+        </Box>
+      </Card>
 
-        {renderTracklogs()}
-      </CardContent>
-      <Button
-        onClick={onClose}
-        sx={{
-          ...compactButton,
-          mb: 5,
-          mx: 'auto!important',
-          position: 'relative',
-          display: { xs: 'flex', md: 'none' },
-        }}
-        aria-label='Go back'
-        variant='outlined'
-      >
-        <ArrowBackIcon />
-      </Button>
-    </Card>
+      <SitesLinksListContainer />
+    </>
   );
 }

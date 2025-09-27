@@ -193,7 +193,6 @@ export interface SiteCardContentProps {
   variant?: 'card' | 'popup';
 }
 
-
 export interface SiteDetailViewContainerProps {
   site: FlyingSite;
   onClose: () => void;
@@ -204,6 +203,8 @@ export interface SiteDetailViewProps {
   onOpenLocation: (coordinates: [number, number]) => void;
   onOpenTracklog: (url: string) => void;
   onClose: () => void;
+  onEdit: () => void;
+  isAuthenticated: boolean;
 }
 
 export interface EditSiteContainerProps {
@@ -221,10 +222,18 @@ export interface WindDirectionCompassProps {
   size?: number;
 }
 
-
 export interface AccessOptionsViewProps {
   accessOptions: AccessOptionId[];
-  size?: number | string | { xs?: number | string; sm?: number | string; md?: number | string; lg?: number | string; xl?: number | string };
+  size?:
+    | number
+    | string
+    | {
+        xs?: number | string;
+        sm?: number | string;
+        md?: number | string;
+        lg?: number | string;
+        xl?: number | string;
+      };
   showLabels?: boolean;
 }
 
@@ -260,6 +269,8 @@ export interface SiteDetailPageProps {
   site: FlyingSite | null;
   loading: 'idle' | 'pending' | 'success' | 'error';
   siteId: string;
+  notification: { title: string; message: string; } | null;
+  dismissNotification: () => void;
   onClose: () => void;
 }
 
@@ -318,7 +329,6 @@ export interface ProtectedRouteContainerProps {
 export interface ProtectedRouteProps {
   state: 'loading' | 'access-denied';
 }
-
 
 // ===== PAGE HEADER PROPS =====
 export interface PageHeaderProps {
@@ -423,10 +433,24 @@ export interface ImageSlideshowHookResult {
 // ===== SITE DETAIL MAP TYPES =====
 export interface SiteDetailMapProps {
   coordinates: [number, number]; // [lat, lng]
-  siteName: string;
-  zoom?: number;
+  markerTitle: string;
+  zoom: number;
+  isFullscreen: boolean;
+  onToggleFullscreen: () => void;
 }
 
 export interface SiteDetailMapContainerProps {
   site: FlyingSite;
+}
+
+// ===== SITES LINKS LIST TYPES =====
+export interface SitesLinksListContainerProps {
+  // Container has no props - gets everything from hooks
+  readonly _brand?: 'SitesLinksListContainerProps';
+}
+
+export interface SitesLinksListProps {
+  sites: FlyingSite[];
+  currentSiteId: number;
+  onSiteClick: (canonicalUrl: string) => void;
 }

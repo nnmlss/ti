@@ -135,4 +135,6 @@ export type {
   ImageSlideshowHookResult,
   SiteDetailMapProps,
   SiteDetailMapContainerProps,
+  SitesLinksListContainerProps,
+  SitesLinksListProps,
 } from './components';

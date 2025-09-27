@@ -1,11 +1,12 @@
 import { SiteDetailViewContainer as SiteDetailView } from '@containers/SiteDetailViewContainer';
 import { Container, CircularProgress, Alert, Box } from '@mui/material';
 import { SEOHead } from '@components/seo/SEOHead';
+import { NotificationDialog } from '@components/ui/NotificationDialog';
 import { extractSiteNameFromSlug } from '@utils/slugUtils';
 import { useParams } from 'react-router-dom';
 import type { SiteDetailPageProps } from '@app-types';
 
-export function SiteDetailPage({ site, loading, siteId, onClose }: SiteDetailPageProps) {
+export function SiteDetailPage({ site, loading, siteId, notification, dismissNotification, onClose }: SiteDetailPageProps) {
   const { slug } = useParams<{ slug?: string }>();
 
   // Extract site name from URL for SEO (before data loads)
@@ -61,6 +62,18 @@ export function SiteDetailPage({ site, loading, siteId, onClose }: SiteDetailPag
       >
         {renderContent()}
       </Container>
+
+      {notification && (
+        <NotificationDialog
+          notification={{
+            open: true,
+            severity: 'success',
+            title: notification.title,
+            message: notification.message,
+          }}
+          onClose={dismissNotification}
+        />
+      )}
     </>
   );
 }

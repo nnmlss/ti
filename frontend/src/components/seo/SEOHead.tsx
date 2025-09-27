@@ -30,10 +30,20 @@ export function SEOHead({ config, site }: SEOHeadProps) {
       }`
     : config.keywords || 'парапланер, парапланеризъм, bulgaria, paragliding';
 
-  // Default image for social sharing
-  const ogImage = site?.galleryImages?.[0]?.small 
-    ? `${window.location.origin}/gallery/small/${site.galleryImages[0].path}`
-    : `${window.location.origin}/assets/paragliding-bulgaria-og.jpg`;
+  // Default image for social sharing - convert to .jpg responsive version
+  const getImageForSharing = () => {
+    if (!site?.galleryImages?.[0]) {
+      return `${window.location.origin}/assets/paragliding-bulgaria-og.jpg`;
+    }
+
+    const originalPath = site.galleryImages[0].path;
+    // Extract just filename and convert to .jpg
+    const filename = originalPath.replace(/^.*\//, '');
+    const jpgFilename = filename.replace(/\.[^/.]+$/, '') + '.jpg';
+    return `${window.location.origin}/gallery/small/${jpgFilename}`;
+  };
+
+  const ogImage = getImageForSharing();
 
   return (
     <Helmet>
@@ -79,7 +89,7 @@ export function SEOHead({ config, site }: SEOHeadProps) {
               : undefined,
             url: pageUrl,
             ...(site.galleryImages?.[0] && {
-              image: `${window.location.origin}/gallery/large/${site.galleryImages[0].path}`,
+              image: `${window.location.origin}/gallery/large/${site.galleryImages[0].path.replace(/^.*\//, '').replace(/\.[^/.]+$/, '') + '.jpg'}`,
             }),
             touristType: 'Paragliding',
             isAccessibleForFree: true,

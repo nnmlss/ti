@@ -24,9 +24,10 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
       sx={{
         position: 'fixed',
         bottom: 65,
-        left: 0,
+        left: 'calc(50vw - 250px)',
         p: 1,
-        width: '100vw',
+        width: '250',
+        // maxWidth: '100%',
         zIndex: 1002,
         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
       }}

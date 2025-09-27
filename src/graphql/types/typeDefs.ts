@@ -11,9 +11,9 @@ export const typeDefs = gql`
   type GalleryImage {
     path: String!
     author: String
-    width: Int
-    height: Int
-    format: String
+    width: Int!
+    height: Int!
+    format: String!
   }
 
   type LandingFieldInfo {
@@ -57,9 +57,9 @@ export const typeDefs = gql`
   input GalleryImageInput {
     path: String!
     author: String
-    width: Int
-    height: Int
-    format: String
+    width: Int!
+    height: Int!
+    format: String!
   }
 
   input LandingFieldInfoInput {

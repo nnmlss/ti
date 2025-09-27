@@ -26,8 +26,21 @@ app.set('views', path.join(process.cwd(), 'src/views'));
 // Cookie parser MUST come before gate middleware
 app.use(cookieParser());
 
-// HTTP request logging
-app.use(morgan('combined', { stream: httpLogStream }));
+// HTTP request logging with URL decoding for Cyrillic characters
+morgan.token('decoded-url', (req) => {
+  return decodeURIComponent(req.url || '');
+});
+
+morgan.token('decoded-referrer', (req) => {
+  const referrer = req.headers['referrer'] || req.headers['referer'] || '-';
+  const referrerStr = Array.isArray(referrer) ? referrer[0] : referrer;
+  return referrerStr === '-' || !referrerStr ? referrerStr || '-' : decodeURIComponent(referrerStr);
+});
+
+// Custom format with decoded URLs
+const customFormat = ':remote-addr - - [:date[clf]] ":method :decoded-url HTTP/:http-version" :status :res[content-length] ":decoded-referrer" ":user-agent"';
+
+app.use(morgan(customFormat, { stream: httpLogStream }));
 
 // Apply gate middleware FIRST - before all security middleware (conditionally)
 // DISABLED: Gateway middleware temporarily disabled for production
@@ -59,7 +72,7 @@ app.use(
           'https://server.arcgisonline.com',
           'https://*.tile.openstreetmap.org',
           // Leaflet marker icons
-          'https://cdnjs.cloudflare.com'
+          'https://cdnjs.cloudflare.com',
         ],
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https://unpkg.com'],
         scriptSrcAttr: ["'unsafe-inline'"],
@@ -94,19 +107,44 @@ app.set('trust proxy', 1);
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  max: process.env['NODE_ENV'] === 'development' ? 1000 : 100, // Higher limit for development
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-app.use(limiter);
+// TEMPORARILY DISABLE rate limiting for development debugging
+if (process.env['NODE_ENV'] === 'production') {
+  app.use(limiter);
+}
 
 // Cookie parser moved to top of file
 
 // Body parsing with size limits
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// URL decoding middleware for Cyrillic/Unicode URLs
+app.use((req: express.Request, _res: express.Response, next: express.NextFunction) => {
+  try {
+    // Only decode if URL contains encoded characters and isn't already decoded
+    if (req.url.includes('%') && !req.url.match(/[а-я]/i)) {
+      req.url = decodeURIComponent(req.url);
+    }
+    if (req.originalUrl.includes('%') && !req.originalUrl.match(/[а-я]/i)) {
+      req.originalUrl = decodeURIComponent(req.originalUrl);
+    }
+
+    // Debug logging in development
+    if (process.env['NODE_ENV'] === 'development') {
+      console.log('URL handling:', { url: req.url, originalUrl: req.originalUrl });
+    }
+  } catch (error) {
+    // If URL is malformed, continue with original
+    console.warn('URL decoding failed:', error);
+  }
+  next();
+});
 
 // Gate access route (BEFORE CSRF protection to avoid blocking)
 // DISABLED: Route disabled along with gateway middleware
@@ -280,7 +318,7 @@ const startServer = async () => {
   } catch (error) {
     logger.warn('Email service initialization failed', {
       error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
   }
 
@@ -306,50 +344,51 @@ const startServer = async () => {
 };
 
 // Start server directly when running app.js (not via wrapper)
-startServer().then(app => {
-  const server = app.listen(3000, () => {
-    logger.info('Server started successfully', {
-      port: 3000,
-      environment: process.env['NODE_ENV'] || 'development',
-      graphqlEndpoint: 'http://localhost:3000/graphql'
+startServer()
+  .then((app) => {
+    const server = app.listen(3000, () => {
+      logger.info('Server started successfully', {
+        port: 3000,
+        environment: process.env['NODE_ENV'] || 'development',
+        graphqlEndpoint: 'http://localhost:3000/graphql',
+      });
     });
-  });
 
-  // Graceful shutdown handler
-  const gracefulShutdown = (signal: string) => {
-    logger.info('Graceful shutdown initiated', { signal });
+    // Graceful shutdown handler
+    const gracefulShutdown = (signal: string) => {
+      logger.info('Graceful shutdown initiated', { signal });
 
-    // Stop accepting new connections
-    server.close(async () => {
-      logger.info('HTTP server closed');
+      // Stop accepting new connections
+      server.close(async () => {
+        logger.info('HTTP server closed');
 
-      // Close database connections
-      try {
-        await mongoose.connection.close();
-        logger.info('Database connections closed');
-        logger.info('Graceful shutdown completed');
-        process.exit(0);
-      } catch (error) {
-        logger.error('Error during database shutdown', {
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined
-        });
+        // Close database connections
+        try {
+          await mongoose.connection.close();
+          logger.info('Database connections closed');
+          logger.info('Graceful shutdown completed');
+          process.exit(0);
+        } catch (error) {
+          logger.error('Error during database shutdown', {
+            error: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+          });
+          process.exit(1);
+        }
+      });
+
+      // Force close after 30 seconds if graceful shutdown hangs
+      setTimeout(() => {
+        logger.warn('Graceful shutdown timeout - forcing exit');
         process.exit(1);
-      }
-    });
+      }, 30000);
+    };
 
-    // Force close after 30 seconds if graceful shutdown hangs
-    setTimeout(() => {
-      logger.warn('Graceful shutdown timeout - forcing exit');
-      process.exit(1);
-    }, 30000);
-  };
-
-  // Register signal handlers
-  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
-}).catch(console.error);
+    // Register signal handlers
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  })
+  .catch(console.error);
 
 // Export Promise for production wrapper
 export default startServer();

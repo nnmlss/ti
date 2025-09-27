@@ -17,7 +17,7 @@ export interface CreateSiteArgs {
 
 export interface UpdateSiteArgs {
   id: string;
-  input: Partial<CreateSiteData>;
+  input: Partial<CreateSiteData> & { $unset?: Record<string, 1> };
 }
 
 export interface DeleteSiteArgs {

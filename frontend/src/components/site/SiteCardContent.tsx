@@ -40,7 +40,8 @@ export function SiteCardContent({
   const subtitleStyles = {
     textAlign: 'center',
     lineHeight: 1.1,
-    ...(isPopup && { color: 'text.secondary' }),
+    color: 'text.secondary',
+    fontSize: 13,
   };
 
   const actionsStyles = {

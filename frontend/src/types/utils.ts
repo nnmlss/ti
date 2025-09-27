@@ -11,6 +11,8 @@ export interface FormDataSite
     | 'location'
     | 'altitude'
     | 'access'
+    | 'unique'
+    | 'monuments'
     | 'accomodations'
     | 'alternatives'
     | 'localPilotsClubs'
@@ -23,6 +25,14 @@ export interface FormDataSite
   };
   altitude: string;
   access: {
+    bg: string;
+    en: string;
+  };
+  unique: {
+    bg: string;
+    en: string;
+  };
+  monuments: {
     bg: string;
     en: string;
   };

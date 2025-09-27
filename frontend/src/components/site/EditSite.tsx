@@ -9,7 +9,6 @@ import {
   Box,
   IconButton,
   CircularProgress,
-  Alert,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,7 +29,6 @@ function EditSite({ site, onClose }: EditSiteProps) {
     watch,
     isSubmitting,
     isFormValid,
-    showSuccessMessage,
     landingFields,
     tracklogsValues,
     galleryImages,
@@ -45,6 +43,7 @@ function EditSite({ site, onClose }: EditSiteProps) {
     handleImageUpload,
     handleImageDelete,
     handleImageUpdate,
+    handleCancel,
     isUploadingImages,
     galleryError,
     imagesToDelete,
@@ -173,6 +172,28 @@ function EditSite({ site, onClose }: EditSiteProps) {
             </Grid>
             <Grid component='div' size={{ xs: 12, md: 6 }}>
               <Controller
+                name={`landingFields.${index}.location.coordinates.1`}
+                control={control}
+                rules={{
+                  min: { value: -90, message: 'Latitude must be between -90 and 90' },
+                  max: { value: 90, message: 'Latitude must be between -90 and 90' },
+                }}
+                render={({ field: controllerField, fieldState }) => (
+                  <TextField
+                    {...controllerField}
+                    id={`landing-field-latitude-${index}`}
+                    fullWidth
+                    label='Latitude'
+                    type='number'
+                    slotProps={{ htmlInput: { step: 0.000001 } }}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid component='div' size={{ xs: 12, md: 6 }}>
+              <Controller
                 name={`landingFields.${index}.location.coordinates.0`}
                 control={control}
                 rules={{
@@ -188,28 +209,6 @@ function EditSite({ site, onClose }: EditSiteProps) {
                     type='number'
                     slotProps={{ htmlInput: { step: 0.0001 } }}
                     sx={{ mb: 1 }}
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid component='div' size={{ xs: 12, md: 6 }}>
-              <Controller
-                name={`landingFields.${index}.location.coordinates.1`}
-                control={control}
-                rules={{
-                  min: { value: -90, message: 'Latitude must be between -90 and 90' },
-                  max: { value: 90, message: 'Latitude must be between -90 and 90' },
-                }}
-                render={({ field: controllerField, fieldState }) => (
-                  <TextField
-                    {...controllerField}
-                    id={`landing-field-latitude-${index}`}
-                    fullWidth
-                    label='Latitude'
-                    type='number'
-                    slotProps={{ htmlInput: { step: 0.000001 } }}
                     error={!!fieldState.error}
                     helperText={fieldState.error?.message}
                   />
@@ -232,32 +231,6 @@ function EditSite({ site, onClose }: EditSiteProps) {
       </Button>
     </>
   );
-
-  // Show success message if submission was successful
-  if (showSuccessMessage) {
-    return (
-      <Container maxWidth='xs'>
-        <Paper elevation={0} sx={{ p: 4, my: 0 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 4 }}>
-            <Alert severity='success' sx={{ mb: 3, width: '100%' }}>
-              <Typography variant='h6' gutterBottom>
-                {site
-                  ? 'Успешна редакция на място за летене!'
-                  : 'Добавено ново място за летене!'}
-              </Typography>
-              <Typography variant='body2'>
-                Прозорецът ще се затвори автоматично след 3 секунди...
-              </Typography>
-            </Alert>
-
-            <Button onClick={onClose} variant='contained' sx={{ mt: 2 }}>
-              Затвори
-            </Button>
-          </Box>
-        </Paper>
-      </Container>
-    );
-  }
 
   return (
     <Container maxWidth='md' sx={{ pb: 5 }}>
@@ -361,30 +334,6 @@ function EditSite({ site, onClose }: EditSiteProps) {
           <Grid container spacing={2}>
             <Grid component='div' size={{ xs: 12, md: 4 }}>
               <Controller
-                name='location.coordinates.0'
-                control={control}
-                rules={{
-                  required: 'Longitude is required',
-                  min: { value: -180, message: 'Longitude must be between -180 and 180' },
-                  max: { value: 180, message: 'Longitude must be between -180 and 180' },
-                }}
-                render={({ field, fieldState }) => (
-                  <TextField
-                    {...field}
-                    id='location-longitude'
-                    fullWidth
-                    label='Longitude'
-                    type='number'
-                    slotProps={{ htmlInput: { step: 0.000001 } }}
-                    required
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid component='div' size={{ xs: 12, md: 4 }}>
-              <Controller
                 name='location.coordinates.1'
                 control={control}
                 rules={{
@@ -398,6 +347,30 @@ function EditSite({ site, onClose }: EditSiteProps) {
                     id='location-latitude'
                     fullWidth
                     label='Latitude'
+                    type='number'
+                    slotProps={{ htmlInput: { step: 0.000001 } }}
+                    required
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid component='div' size={{ xs: 12, md: 4 }}>
+              <Controller
+                name='location.coordinates.0'
+                control={control}
+                rules={{
+                  required: 'Longitude is required',
+                  min: { value: -180, message: 'Longitude must be between -180 and 180' },
+                  max: { value: 180, message: 'Longitude must be between -180 and 180' },
+                }}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    id='location-longitude'
+                    fullWidth
+                    label='Longitude'
                     type='number'
                     slotProps={{ htmlInput: { step: 0.000001 } }}
                     required
@@ -638,8 +611,17 @@ function EditSite({ site, onClose }: EditSiteProps) {
             error={galleryError}
           />
 
-          {/* Submit Button */}
-          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+          {/* Submit and Cancel Buttons */}
+          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
+            <Button
+              onClick={handleCancel}
+              variant='outlined'
+              size='large'
+              sx={{ px: 4, color: 'secondary.main', borderColor: 'secondary.main' }}
+              disabled={isSubmitting}
+            >
+              Откажи
+            </Button>
             <Button
               onClick={handleSubmit}
               variant='contained'

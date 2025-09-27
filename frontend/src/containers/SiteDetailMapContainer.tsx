@@ -1,8 +1,9 @@
-import React from 'react';
+import { useState } from 'react';
 import { SiteDetailMap } from '@components/site/SiteDetailMap';
 import type { SiteDetailMapContainerProps } from '@app-types';
 
 export function SiteDetailMapContainer({ site }: SiteDetailMapContainerProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
   // Extract business logic - coordinate transformation
   const getCoordinates = (): [number, number] => {
     // Site coordinates are stored as [longitude, latitude]
@@ -11,16 +12,23 @@ export function SiteDetailMapContainer({ site }: SiteDetailMapContainerProps) {
     return [lat, lng];
   };
 
-  // Get site display name
-  const getSiteName = (): string => {
-    return site.title.bg || site.title.en || 'Unnamed Site';
+  // Get site altitude for display
+  const getAltitudeText = (): string => {
+    return site.altitude ? `${site.altitude}m` : 'Няма данни за надморска височина';
+  };
+
+  // Handle fullscreen toggle
+  const handleToggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
   };
 
   return (
     <SiteDetailMap
       coordinates={getCoordinates()}
-      siteName={getSiteName()}
-      zoom={15}
+      markerTitle={`${getAltitudeText()} / ${getCoordinates()}`}
+      zoom={12}
+      isFullscreen={isFullscreen}
+      onToggleFullscreen={handleToggleFullscreen}
     />
   );
 }

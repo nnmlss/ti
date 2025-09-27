@@ -5,6 +5,7 @@ import type { GalleryImage } from '@app-types';
 /**
  * Get responsive image sources for a gallery image
  * Returns optimized image paths for different screen sizes
+ * Backend stores only 'path' but creates responsive versions as .jpg files
  */
 export const getResponsiveImageSources = (image: GalleryImage) => {
   // Helper to ensure path starts with / but doesn't have double /gallery/
@@ -14,14 +15,26 @@ export const getResponsiveImageSources = (image: GalleryImage) => {
     return `/gallery/${path}`;
   };
 
+  // Helper to extract just the filename and convert to .jpg
+  const getJpgFilename = (originalPath: string) => {
+    // Extract just the filename (remove any path prefixes)
+    const filename = originalPath.replace(/^.*\//, '');
+    // Remove any existing extension and add .jpg
+    const filenameWithoutExtension = filename.replace(/\.[^/.]+$/, '');
+    return `${filenameWithoutExtension}.jpg`;
+  };
+
+  // Get just the filename without path for responsive versions
+  const jpgFilename = getJpgFilename(image.path);
+
   return {
-    // Large image for desktop (high DPI screens)
-    largeSrc: image.large ? `/gallery/large/${image.large}` : normalizePath(image.path),
-    // Small image for mobile/tablet devices
-    smallSrc: image.small ? `/gallery/small/${image.small}` : normalizePath(image.path),
-    // Thumbnail for preview/loading states
-    thumbnailSrc: image.thumbnail ? `/gallery/thmb/${image.thumbnail}` : normalizePath(image.path),
-    // Original/fallback image
+    // Large image for desktop (high DPI screens) - always .jpg in /gallery/large/
+    largeSrc: image.large ? `/gallery/large/${image.large}` : `/gallery/large/${jpgFilename}`,
+    // Small image for mobile/tablet devices - always .jpg in /gallery/small/
+    smallSrc: image.small ? `/gallery/small/${image.small}` : `/gallery/small/${jpgFilename}`,
+    // Thumbnail for preview/loading states - always .jpg in /gallery/thmb/
+    thumbnailSrc: image.thumbnail ? `/gallery/thmb/${image.thumbnail}` : `/gallery/thmb/${jpgFilename}`,
+    // Original/fallback image - stored in /gallery/ with original name
     fallbackSrc: normalizePath(image.path)
   };
 };
@@ -137,7 +150,7 @@ export const handleImageError = (event: React.SyntheticEvent<HTMLImageElement, E
   img.style.display = 'none';
 
   // Optional: log the error for debugging
-  if (process.env['NODE_ENV'] === 'development') {
+  if (import.meta.env.DEV) {
     console.warn('Image failed to load:', img.src);
   }
 };

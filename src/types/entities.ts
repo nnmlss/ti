@@ -36,9 +36,9 @@ export interface Location {
 export interface GalleryImage {
   path: string;
   author?: string;
-  width?: number;
-  height?: number;
-  format?: string;
+  width: number;
+  height: number;
+  format: string;
   thumbnail?: string;
   small?: string;
   large?: string;

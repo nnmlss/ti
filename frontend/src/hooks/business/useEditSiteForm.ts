@@ -7,13 +7,11 @@ import { uploadImageThunk, deleteImageThunk } from '@store/thunks/imageThunks';
 import type { AppDispatch } from '@store/store';
 import { selectAllSitesLoadState } from '@store/slices/allSitesSlice';
 import { toFormData, toApiData, type FormDataSite } from '@utils/formDataTransforms';
-import { TIMEOUTS } from '@constants';
 import type { AccessOptionId, GalleryImage } from '@app-types';
-import { navigateToHome } from '@utils/navigation';
+import { getPostEditNavigationUrl } from '@utils/navigation';
 import type { FlyingSite, WindDirection } from '@app-types';
 
 export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) => {
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [galleryError, setGalleryError] = useState<string | null>(null);
   const [imagesToDelete, setImagesToDelete] = useState<Set<string>>(new Set());
@@ -25,7 +23,7 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
   // Initialize form with transformed data
   const form = useForm<FormDataSite>({
     defaultValues: toFormData(site),
-    mode: 'onChange',
+    mode: 'onBlur', // Change from 'onChange' to reduce lag
   });
 
   const {
@@ -132,12 +130,9 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
       const newImages: GalleryImage[] = uploadResults.map((result) => ({
         path: result.image.path,
         author: '',
-        ...(result.image.width !== undefined && { width: result.image.width }),
-        ...(result.image.height !== undefined && { height: result.image.height }),
-        ...(result.image.format !== undefined && { format: result.image.format }),
-        ...(result.image.thumbnail !== undefined && { thumbnail: result.image.thumbnail }),
-        ...(result.image.small !== undefined && { small: result.image.small }),
-        ...(result.image.large !== undefined && { large: result.image.large }),
+        width: result.image.width || 0, // Required property with fallback
+        height: result.image.height || 0, // Required property with fallback
+        format: result.image.format || 'jpg', // Required property with fallback
       }));
 
       setValue('galleryImages', [...galleryImages, ...newImages]);
@@ -195,7 +190,9 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
     }
 
     // Filter out images marked for deletion and permanently update form data
-    const filteredImages = formData.galleryImages?.filter((img) => !imagesToDelete.has(img.path)) || [];
+    const filteredImages =
+      formData.galleryImages?.filter((img: GalleryImage) => !imagesToDelete.has(img.path)) ||
+      [];
     setValue('galleryImages', filteredImages);
 
     const filteredFormData = {
@@ -210,15 +207,20 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
       // Clear the images to delete set after successful submission
       setImagesToDelete(new Set());
 
-      // Success callback - show success message and close modal after 3s
-      setShowSuccessMessage(true);
-      setTimeout(() => {
-        if (onModalClose) {
-          onModalClose(); // Use modal's own close function
-        } else {
-          navigate(navigateToHome()); // Fallback for non-modal usage
+      // Success callback - close modal and navigate with notification
+      if (onModalClose) {
+        onModalClose(); // Close modal first
+      }
+      // Navigate to site detail page with success notification
+      const navigationUrl = getPostEditNavigationUrl(site);
+      navigate(navigationUrl, {
+        state: {
+          notification: {
+            title: 'Успешно обновяване',
+            message: site ? 'Промените са запазени успешно' : 'Новото място е успешно създадено'
+          }
         }
-      }, TIMEOUTS.PASSWORD_VALIDATION_DELAY);
+      });
     };
 
     const handleError = (errorMessage: string) => {
@@ -283,6 +285,15 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
     // Error is now handled by Redux error middleware
   };
 
+  const handleCancel = () => {
+    if (onModalClose) {
+      onModalClose(); // Close modal first
+    }
+    // Always navigate to site detail page
+    const navigationUrl = getPostEditNavigationUrl(site);
+    navigate(navigationUrl);
+  };
+
   return {
     // Form controls
     form,
@@ -294,7 +305,6 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
     // State
     isSubmitting: isSubmitting || loadState.status === 'pending',
     isFormValid: isValid,
-    showSuccessMessage,
 
     // Field arrays (only for actual useFieldArray hooks)
     landingFields,
@@ -318,5 +328,6 @@ export const useEditSiteForm = (site?: FlyingSite, onModalClose?: () => void) =>
     handleImageUpload,
     handleImageDelete,
     handleImageUpdate,
+    handleCancel,
   };
 };

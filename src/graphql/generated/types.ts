@@ -85,18 +85,18 @@ export type FlyingSite = {
 
 export type GalleryImage = {
   author: Maybe<Scalars['String']['output']>;
-  format: Maybe<Scalars['String']['output']>;
-  height: Maybe<Scalars['Int']['output']>;
+  format: Scalars['String']['output'];
+  height: Scalars['Int']['output'];
   path: Scalars['String']['output'];
-  width: Maybe<Scalars['Int']['output']>;
+  width: Scalars['Int']['output'];
 };
 
 export type GalleryImageInput = {
   author?: InputMaybe<Scalars['String']['input']>;
-  format?: InputMaybe<Scalars['String']['input']>;
-  height?: InputMaybe<Scalars['Int']['input']>;
+  format: Scalars['String']['input'];
+  height: Scalars['Int']['input'];
   path: Scalars['String']['input'];
-  width?: InputMaybe<Scalars['Int']['input']>;
+  width: Scalars['Int']['input'];
 };
 
 export type LandingFieldInfo = {
@@ -431,10 +431,10 @@ export type FlyingSiteResolver<ContextType = GraphQLContext, ParentType extends 
 
 export type GalleryImageResolver<ContextType = GraphQLContext, ParentType extends ResolversParentTypes['GalleryImage'] = ResolversParentTypes['GalleryImage']> = ResolversObject<{
   author?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  format?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  height?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  format?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  width?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

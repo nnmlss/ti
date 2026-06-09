@@ -42,3 +42,6 @@ Thumbs.db
 # Images folder (user uploads)
 images/
 gallery/
+
+# Local documentation (not for version control)
+docs/

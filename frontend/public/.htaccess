@@ -1,0 +1,12 @@
+Options -MultiViews
+RewriteEngine On
+
+# Proxy backend routes to Node.js
+RewriteRule ^api/(.*) http://127.0.0.1:3000/api/$1 [P,L]
+RewriteRule ^graphql(.*) http://127.0.0.1:3000/graphql$1 [P,L]
+RewriteRule ^gallery/(.*) http://127.0.0.1:3000/gallery/$1 [P,L]
+
+# SPA fallback for React Router
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.html [L]

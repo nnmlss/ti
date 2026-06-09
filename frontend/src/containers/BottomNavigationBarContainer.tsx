@@ -70,7 +70,7 @@ export const BottomNavigationBarContainer: React.FC = () => {
         isListView={isListView}
         filter={filter}
         onViewToggle={handleViewToggle}
-        onWindFilterToggle={() => setShowWindFilter(true)}
+        onWindFilterToggle={() => setShowWindFilter(prev => !prev)}
         showWindFilter={showWindFilter}
       />
     </>

@@ -80,23 +80,10 @@ frontend/vite.config.ts                               # Vite config + chunk spli
 - ✅ **Phase 6** — Type Centralization (all interfaces in `frontend/src/types/`, 0 TS errors)
 - ✅ **Phase 7** — 12-Factor Phase 1 (`.env.example`, Winston logging, graceful shutdown, Admin CLI)
 - ✅ **Phase 7.1** — Image Slideshow + SitesLinksList + useAppInitialization hook
+- ✅ **Phase 8** — Wind filter toggle fixed (stopPropagation on mousedown prevents outside-click handler conflict)
 
 ## Pending Tasks
 
-### Phase 8 — Wind Filter Toggle Bug (MEDIUM)
-
-Button only opens the filter, never closes it. Outside-click closes it (workaround in place).
-
-**Root cause:** `frontend/src/containers/BottomNavigationBarContainer.tsx:73`
-```ts
-// current (broken) — always opens, never toggles
-onWindFilterToggle={() => setShowWindFilter(true)}
-```
-**Fix:**
-1. Change line 73 to `onWindFilterToggle={() => setShowWindFilter(prev => !prev)}`
-2. In `frontend/src/components/main/BottomNavigationBar.tsx`, find `onClick={showWindFilter ? undefined : onWindFilterToggle}` and change to `onClick={onWindFilterToggle}` (remove the `undefined` guard — the toggle now handles both states)
-
----
 
 ### Phase 9 — i18n / Internationalization (MEDIUM)
 

@@ -66,7 +66,8 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         <Box>
           {isHomePage && (
             <Button
-              onClick={showWindFilter ? undefined : onWindFilterToggle}
+              onClick={onWindFilterToggle}
+              onMouseDown={(e) => e.stopPropagation()}
               variant={filter?.windDirection ? 'contained' : 'text'}
               sx={{
                 color: showWindFilter

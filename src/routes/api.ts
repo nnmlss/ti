@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import mongoose from 'mongoose';
 import multer from 'multer';
 // import path from 'path';
 import { uploadImage, deleteImage, generateThumbnails } from '@controllers/image.js';
@@ -7,6 +8,20 @@ import { generateBuildGuidePDF } from '@controllers/pdfGenerator.js';
 import authRoutes from './auth.js';
 
 const router = Router();
+
+// GET /api/health - liveness + DB connectivity, for uptime monitoring.
+// Point UptimeRobot here (a PROXIED backend route): when Node is down, the
+// LiteSpeed proxy returns 502/503 and the monitor alerts — unlike `/`, which
+// the static SPA fallback always serves with 200. Dependency-light: only reads
+// the mongoose connection state, no model queries, so it's cheap at frequent
+// intervals (GET skips CSRF; won't trip the rate limit at normal cadence).
+router.get('/health', (_req, res) => {
+  const dbConnected = mongoose.connection.readyState === 1;
+  res.status(dbConnected ? 200 : 503).json({
+    status: dbConnected ? 'ok' : 'degraded',
+    db: dbConnected ? 'connected' : 'disconnected',
+  });
+});
 
 // Auth routes
 router.use('/auth', authRoutes);

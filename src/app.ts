@@ -195,9 +195,12 @@ const customHeaderProtection = (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  // Skip for GET requests, GraphQL and GraphiQL
+  // Skip safe methods (GET/HEAD/OPTIONS — non-mutating; HEAD is what
+  // UptimeRobot sends to /api/health), plus GraphQL and GraphiQL.
   if (
     req.method === 'GET' ||
+    req.method === 'HEAD' ||
+    req.method === 'OPTIONS' ||
     req.path.startsWith('/graphql') ||
     req.path.startsWith('/graphiql')
   ) {

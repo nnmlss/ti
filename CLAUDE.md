@@ -6,7 +6,8 @@
 - **Last Completed**: Phase 4.4 (OG meta injection) — **DEPLOYED + VERIFIED remotely**. Per-site previews confirmed working on Telegram, Viber, and Facebook (FB needs a one-time "Scrape Again" / re-post per URL, normal for a new domain).
 - **Canonical domain**: now `https://paragliding.borislav.space` (`ti.borislav.space` redirects here). `FRONTEND_URL` must be this value.
 - **Next Priority**: SEO essentially done for now. Remaining: Phase 4.3 (decided NOT needed — only social previews were wanted; Googlebot renders JS) and Phase 4.2/i18n (deferred — no `/en` for now). Then Phases 10/10.1/11.
-- **Uncommitted work** (as of 2026-06-14): `src/middleware/ogMetaMiddleware.ts` (new), `src/app.ts`, `frontend/index.html`, `frontend/src/components/seo/SEOHead.tsx`, `frontend/public/.htaccess`, `docs/DEVELOPMENT_GUIDE.md`. Not yet committed.
+- **Phase 11** (health check `/api/health`) — DONE + deployed; UptimeRobot confirmed Up. Included a CSRF fix exempting HEAD/OPTIONS (see Phase 11 section).
+- **Uncommitted**: `src/routes/api.ts` (health endpoint), `src/app.ts` (CSRF HEAD/OPTIONS exemption), `CLAUDE.md`. (Phase 4.4 SEO batch already committed + deployed.)
 
 ## Project Overview
 
@@ -130,20 +131,11 @@ Replace with Winston logger calls (`import { logger } from '@config/logger'`):
 
 ---
 
-### Phase 11 — Health check endpoint for uptime monitoring (MEDIUM)
+### Phase 11 — Health check endpoint for uptime monitoring — ✅ DONE + VERIFIED LIVE
 
-**Why:** The domain root serves the compiled `frontend/dist` directly via `.htaccess` SPA fallback. When the Node app is down, Apache still returns `index.html` (200) and React renders a client-side "under maintenance" modal — so UptimeRobot sees 200 and never alerts. The `.htaccess` proxies `/api/*` and `/graphql` to Node via `[P]`, so a request to a proxied route returns Apache's 502/503 when Node is down. Monitor a proxied backend route, NOT `/`.
+`GET /api/health` in `src/routes/api.ts` (inline handler) returns `200 { status:'ok', db:'connected' }` when `mongoose.connection.readyState === 1`, else `503 { status:'degraded', db:'disconnected' }`. Dependency-light (connection state only). UptimeRobot points at `https://paragliding.borislav.space/api/health` (a LiteSpeed-proxied route → 502/503 when Node is down, unlike `/` which serves static 200). Confirmed Up.
 
-**Implementation:**
-1. Add `GET /api/health` to `src/routes/api.ts` (deeper check — verifies Mongo connection, not just process liveness).
-2. Use `mongoose.connection.readyState === 1` to confirm DB is connected.
-   - DB up → `200 { status: 'ok', db: 'connected' }`
-   - DB not connected → `503 { status: 'degraded', db: 'disconnected' }`
-3. Keep it dependency-light — no model queries, just connection state, so the check stays cheap at frequent intervals.
-4. Passes existing CSRF middleware (GET requests are skipped) and won't trip the 100 req/15min rate limit at normal check intervals.
-5. Point UptimeRobot at `https://<domain>/api/health` — Node down → Apache proxy returns 502/503 → alert fires.
-
-**Note:** A client-side HTTP 403 is impossible — the maintenance modal renders after a 200 static response; JS cannot change the already-sent status code.
+**Gotcha fixed during this work:** UptimeRobot uses **HEAD** by default, but the CSRF middleware (`src/app.ts` `customHeaderProtection`) only exempted `GET` → HEAD got **403**. Fix: exempt safe methods `GET`/`HEAD`/`OPTIONS` from the CSRF header check. Applies to all `/api` routes, not just health.
 
 ---
 

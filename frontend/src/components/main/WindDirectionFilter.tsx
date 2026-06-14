@@ -1,12 +1,18 @@
 import { Box, Button, Paper, Typography } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import AirIcon from '@mui/icons-material/Air';
 import { windDirections } from '@constants';
+import { localizeWindDirection } from '@utils/windDirection';
+import { LanguageSwitcher } from '@components/main/LanguageSwitcher';
+import type { AppLanguage } from '@app-types';
 import type { RootState } from '@store/store';
 import { setWindDirectionFilter, clearFilters } from '@store/slices/filterSlice';
 import type { WindDirectionFilterProps } from '@app-types';
 
 export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
+  const { t, i18n } = useTranslation();
+  const lang: AppLanguage = i18n.language === 'en' ? 'en' : 'bg';
   const dispatch = useDispatch();
   const selectedFilter = useSelector((state: RootState) => state.filter.windDirection);
 
@@ -33,9 +39,12 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
       }}
     >
-      <Typography variant='subtitle2' sx={{ mb: 1, textAlign: 'center' }}>
-        Филтрирай по посока на вятъра
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1, mx: 0.5 }}>
+        <Typography variant='subtitle2' sx={{ flex: 1, textAlign: 'left' }}>
+          {t('windFilter.title')}
+        </Typography>
+        <LanguageSwitcher compact />
+      </Box>
 
       {/* Reset button */}
       <Button
@@ -44,7 +53,7 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
         size='small'
         sx={{ mb: 2, width: '100%' }}
       >
-        Всички <AirIcon sx={{ ml: 0.5 }} />
+        {t('windFilter.all')} <AirIcon sx={{ ml: 0.5 }} />
       </Button>
 
       {/* Wind direction buttons in a grid */}
@@ -72,7 +81,7 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
               color: selectedFilter === direction ? 'white' : 'primary.main',
             }}
           >
-            {direction}
+            {localizeWindDirection(direction, lang)}
           </Button>
         ))}
       </Box>

@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SiteCard } from '@components/site/SiteCard';
 import { DeleteConfirmDialogContainer } from '@containers/DeleteConfirmDialogContainer';
+import { useLanguage } from '@hooks/ui/useLanguage';
+import { getCanonicalSiteUrl } from '@utils/slugUtils';
 import type { SiteCardContainerProps, DeleteDialogState } from '@app-types';
 
 export const SiteCardContainer: React.FC<SiteCardContainerProps> = ({ site }) => {
   const navigate = useNavigate();
+  const { current } = useLanguage();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Event handlers
@@ -18,7 +21,7 @@ export const SiteCardContainer: React.FC<SiteCardContainerProps> = ({ site }) =>
   };
 
   const handleViewDetails = () => {
-    navigate(`/парапланер-старт/${site.url}`);
+    navigate(getCanonicalSiteUrl(site, current));
   };
 
   const handleShowOnMap = () => {

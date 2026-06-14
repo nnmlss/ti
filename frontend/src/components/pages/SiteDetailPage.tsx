@@ -4,9 +4,11 @@ import { SEOHead } from '@components/seo/SEOHead';
 import { NotificationDialog } from '@components/ui/NotificationDialog';
 import { extractSiteNameFromSlug, getCanonicalSiteUrl } from '@utils/slugUtils';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { SiteDetailPageProps } from '@app-types';
 
 export function SiteDetailPage({ site, loading, siteId, notification, dismissNotification, onClose }: SiteDetailPageProps) {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug?: string }>();
 
   // Extract site name from URL for SEO (before data loads)
@@ -26,8 +28,7 @@ export function SiteDetailPage({ site, loading, siteId, notification, dismissNot
       <SiteDetailView site={site} onClose={onClose} />
     ) : (
       <Alert severity='warning'>
-        Не е намерена информация за място с <strong>ID: {siteId}</strong>. Или не съществува,
-        или има проблем с интернет връзката към сървъра.
+        {t('siteDetail.notFoundPre')} <strong>ID: {siteId}</strong>. {t('siteDetail.notFoundPost')}
       </Alert>
     );
   };

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { AuthProvider } from './contexts/AuthProvider';
+import './i18n';
 import App from './App';
 import './index.css';
 

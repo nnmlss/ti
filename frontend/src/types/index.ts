@@ -17,6 +17,9 @@ export type {
   UseConstantsReturn,
 } from './auth';
 
+// ===== I18N TYPES =====
+export type { AppLanguage, UseLanguageReturn, LanguageSwitcherProps } from './i18n';
+
 // ===== SITE DATA TYPES =====
 export type {
   WindDirection,

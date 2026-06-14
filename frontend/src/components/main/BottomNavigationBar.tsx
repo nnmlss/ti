@@ -6,7 +6,9 @@ import PublicIcon from '@mui/icons-material/Public';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import AirIcon from '@mui/icons-material/Air';
 import { UserIconGroup } from '@components/auth/UserIconGroup';
-import type { BottomNavigationBarProps } from '@app-types';
+import { useTranslation } from 'react-i18next';
+import { localizeWindDirection } from '@utils/windDirection';
+import type { AppLanguage, BottomNavigationBarProps } from '@app-types';
 
 export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   isAuthenticated,
@@ -17,6 +19,8 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   onViewToggle,
   onWindFilterToggle,
 }) => {
+  const { i18n } = useTranslation();
+  const lang: AppLanguage = i18n.language === 'en' ? 'en' : 'bg';
   return (
     <Box
       sx={{
@@ -83,7 +87,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
                 // mr: filter?.windDirection ? 2 : 1,
               }}
             >
-              {filter?.windDirection || <AirIcon />}
+              {filter?.windDirection ? localizeWindDirection(filter.windDirection, lang) : <AirIcon />}
             </Button>
           )}
           <>

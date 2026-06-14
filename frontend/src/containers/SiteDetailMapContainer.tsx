@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { SiteDetailMap } from '@components/site/SiteDetailMap';
 import type { SiteDetailMapContainerProps } from '@app-types';
 
 export function SiteDetailMapContainer({ site }: SiteDetailMapContainerProps) {
+  const { t } = useTranslation();
   const [isFullscreen, setIsFullscreen] = useState(false);
   // Extract business logic - coordinate transformation
   const getCoordinates = (): [number, number] => {
@@ -14,7 +16,7 @@ export function SiteDetailMapContainer({ site }: SiteDetailMapContainerProps) {
 
   // Get site altitude for display
   const getAltitudeText = (): string => {
-    return site.altitude ? `${site.altitude}m` : 'Няма данни за надморска височина';
+    return site.altitude ? `${site.altitude}m` : t('siteDetail.noAltitude');
   };
 
   // Handle fullscreen toggle

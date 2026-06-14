@@ -37,6 +37,9 @@ export default function AppRoutes() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path='/' element={<HomePage />} />
+          {/* /en home — keeps the typed /en in the URL and flips the session to
+              English (home itself isn't translated); avoids a blank screen. */}
+          <Route path='/en' element={<HomePage />} />
           <Route
             path='/add-site'
             element={
@@ -55,6 +58,8 @@ export default function AppRoutes() {
           />
           <Route path='/paragliding-site/:slug' element={<SiteDetailPage />} />
           <Route path='/парапланер-старт/:slug' element={<SiteDetailPage />} />
+          {/* English site-detail page — renders English (does NOT redirect to BG canonical) */}
+          <Route path='/en/paragliding-site/:slug' element={<SiteDetailPage />} />
           {/* Legacy route — kept so old shared links don't 404; redirects to canonical */}
           <Route path='/site/:id' element={<SiteDetailPage />} />
 

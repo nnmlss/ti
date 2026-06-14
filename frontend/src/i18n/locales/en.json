@@ -1,0 +1,19 @@
+{
+  "siteDetail": {
+    "accessTitle": "Access options",
+    "monuments": "Landmarks",
+    "accommodation": "Accommodation",
+    "alternatives": "Other activities",
+    "localPilotsClubs": "Local Pilots Clubs",
+    "landingFields": "Landing fields",
+    "tracklogs": "Tracklogs",
+    "tracklog": "Tracklog",
+    "noAltitude": "No altitude data",
+    "notFoundPre": "No information found for a site with",
+    "notFoundPost": "It either doesn't exist, or there's a problem with the connection to the server."
+  },
+  "windFilter": {
+    "title": "Filter by wind direction",
+    "all": "All"
+  }
+}

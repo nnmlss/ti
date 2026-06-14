@@ -8,9 +8,11 @@ import type { AppDispatch } from '@store/store';
 import type { FlyingSite } from '@app-types';
 import { LazyMap as SitesMap } from '@components/main/LazyMap';
 import { getSiteUrl } from '@utils/slugUtils';
+import { useLanguage } from '@hooks/ui/useLanguage';
 
 export function SitesMapContainer() {
   const navigate = useNavigate();
+  const { current } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
   const { isOpen, targetId, confirm, handleConfirm, handleCancel } = useConfirmDialog();
   const { sites, allSitesLoadState } = useSites();
@@ -29,7 +31,7 @@ export function SitesMapContainer() {
   };
 
   const handleViewDetails = (site: FlyingSite) => {
-    navigate(getSiteUrl(site));
+    navigate(getSiteUrl(site, current));
   };
 
   const handleShowOnMap = (coordinates: [number, number]) => {

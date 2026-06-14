@@ -37,7 +37,8 @@ export function useSiteDetailPage() {
   // Get all sites for SitesLinksList component (loaded by app initialization)
   const allSites = useSelector(selectAllSites);
 
-  // Load individual site data
+  // Load individual site data. The backend resolver handles BG `url`, numeric id
+  // and the /en English slug, so we just pass the route identifier through.
   useEffect(() => {
     const siteIdentifier = id || slug;
 

@@ -3,19 +3,22 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { getCanonicalSiteUrl } from '@utils/slugUtils';
+import { getLocalized } from '@utils/localizedText';
+import { useLanguage } from '@hooks/ui/useLanguage';
 import type { SitesLinksListProps, FlyingSite } from '@app-types';
 
 export function SitesLinksList({ sites, currentSiteId, onSiteClick }: SitesLinksListProps) {
-  // Sort sites alphabetically by Bulgarian title
-  const sortedSites = [...sites].sort((a, b) => {
-    const titleA = a.title.bg || a.title.en || '';
-    const titleB = b.title.bg || b.title.en || '';
-    return titleA.localeCompare(titleB, 'bg');
-  });
+  const { current } = useLanguage();
+  const localeTag = current === 'en' ? 'en' : 'bg';
+
+  // Sort sites alphabetically by the active-language title
+  const sortedSites = [...sites].sort((a, b) =>
+    getLocalized(a.title, current).localeCompare(getLocalized(b.title, current), localeTag)
+  );
 
   // Group sites by first letter
   const groupedSites = sortedSites.reduce((acc, site) => {
-    const title = site.title.bg || site.title.en || '';
+    const title = getLocalized(site.title, current);
     const firstLetter = title.charAt(0).toUpperCase();
 
     if (!acc[firstLetter]) {
@@ -48,7 +51,7 @@ export function SitesLinksList({ sites, currentSiteId, onSiteClick }: SitesLinks
         }}
       >
         {Object.entries(groupedSites)
-          .sort(([a], [b]) => a.localeCompare(b, 'bg'))
+          .sort(([a], [b]) => a.localeCompare(b, localeTag))
           .map(([letter, sitesInGroup], groupIndex) => (
             <React.Fragment key={letter}>
               {sitesInGroup.map((site, siteIndex) => {
@@ -57,10 +60,10 @@ export function SitesLinksList({ sites, currentSiteId, onSiteClick }: SitesLinks
                 return (
                 <React.Fragment key={site._id}>
                   <Link
-                    href={isCurrentSite ? undefined : getCanonicalSiteUrl(site)}
+                    href={isCurrentSite ? undefined : getCanonicalSiteUrl(site, current)}
                     onClick={isCurrentSite ? undefined : (e) => {
                       e.preventDefault();
-                      onSiteClick(getCanonicalSiteUrl(site));
+                      onSiteClick(getCanonicalSiteUrl(site, current));
                     }}
                     sx={{
                       cursor: isCurrentSite ? 'default' : 'pointer',
@@ -74,7 +77,7 @@ export function SitesLinksList({ sites, currentSiteId, onSiteClick }: SitesLinks
                       },
                     }}
                   >
-                    {site.title.bg || site.title.en}
+                    {getLocalized(site.title, current)}
                   </Link>
                   {!(
                     groupIndex === Object.keys(groupedSites).length - 1 &&

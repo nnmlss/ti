@@ -9,11 +9,16 @@ import Grid from '@mui/material/Grid';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
+import { useTranslation } from 'react-i18next';
 import { WindDirectionCompass } from './WindDirectionCompass';
 import { AccessOptionsView } from './AccessOptionsView';
 import { ImageSlideshow } from './ImageSlideshow';
+import { LanguageSwitcher } from '@components/main/LanguageSwitcher';
 import { SiteDetailMapContainer } from '@containers/SiteDetailMapContainer';
 import { SitesLinksListContainer } from '@containers/SitesLinksListContainer';
+import { useLanguage } from '@hooks/ui/useLanguage';
+import { getLocalized } from '@utils/localizedText';
+import { getCanonicalSiteUrl } from '@utils/slugUtils';
 import { compactButton } from '@/styles/buttonStyles';
 import type { SiteDetailViewProps } from '@app-types';
 
@@ -25,27 +30,25 @@ export function SiteDetailView({
   onEdit,
   isAuthenticated,
 }: SiteDetailViewProps) {
+  const { t } = useTranslation();
+  const { current } = useLanguage();
+
+  // Single-language body text: show the active language, fall back to the other.
   const renderLocalizedText = (
     text: { bg?: string; en?: string } | undefined,
     label: string
   ) => {
-    if (!text?.bg && !text?.en) return null;
+    const value = getLocalized(text, current);
+    if (!value) return null;
 
     return (
       <Box sx={{ mb: 3 }}>
-        <Typography variant='h6' gutterBottom color='primary.main'>
-          {label}
-        </Typography>
-        {text.bg && (
-          <Typography variant='body1'>
-            <strong>BG:</strong> {text.bg}
+        {label && (
+          <Typography variant='h6' gutterBottom color='primary.main'>
+            {label}
           </Typography>
         )}
-        {text.en && (
-          <Typography variant='body1'>
-            <strong>EN:</strong> {text.en}
-          </Typography>
-        )}
+        <Typography variant='body1'>{value}</Typography>
       </Box>
     );
   };
@@ -54,46 +57,24 @@ export function SiteDetailView({
     data: { bg?: string[]; en?: string[] } | undefined,
     label: string
   ) => {
-    const hasBg = data?.bg?.some((item) => item.trim());
-    const hasEn = data?.en?.some((item) => item.trim());
+    const active =
+      (current === 'en' ? data?.en : data?.bg)?.filter((item) => item.trim()) ?? [];
+    const fallback =
+      (current === 'en' ? data?.bg : data?.en)?.filter((item) => item.trim()) ?? [];
+    const items = active.length ? active : fallback;
 
-    if (!hasBg && !hasEn) return null;
+    if (!items.length) return null;
 
     return (
       <Box sx={{ mb: 3 }}>
         <Typography variant='h6' gutterBottom color='primary.main'>
           {label}
         </Typography>
-        <Grid container spacing={2}>
-          {hasBg && (
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant='subtitle2' gutterBottom>
-                Bulgarian:
-              </Typography>
-              {data!
-                .bg!.filter((item) => item.trim())
-                .map((item, index) => (
-                  <Typography key={index} variant='body2' sx={{ mb: 1 }}>
-                    • {item}
-                  </Typography>
-                ))}
-            </Grid>
-          )}
-          {hasEn && (
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant='subtitle2' gutterBottom>
-                English:
-              </Typography>
-              {data!
-                .en!.filter((item) => item.trim())
-                .map((item, index) => (
-                  <Typography key={index} variant='body2' sx={{ mb: 1 }}>
-                    • {item}
-                  </Typography>
-                ))}
-            </Grid>
-          )}
-        </Grid>
+        {items.map((item, index) => (
+          <Typography key={index} variant='body2' sx={{ mb: 1 }}>
+            • {item}
+          </Typography>
+        ))}
       </Box>
     );
   };
@@ -109,26 +90,16 @@ export function SiteDetailView({
     return (
       <Box sx={{ mb: 3 }}>
         <Typography variant='h6' gutterBottom color='primary.main'>
-          Кацалки / Landing Fields
+          {t('siteDetail.landingFields')}
         </Typography>
         {site.landingFields.map((field, index) => {
-          const hasBg = field.description?.bg?.trim();
-          const hasEn = field.description?.en?.trim();
+          const description = getLocalized(field.description, current);
 
-          if (!hasBg && !hasEn) return null;
+          if (!description && !field.location) return null;
 
           return (
             <Paper key={index} sx={{ p: 2, mb: 1 }}>
-              {hasBg && (
-                <Typography variant='body2' sx={{ mb: hasEn ? 1 : 0 }}>
-                  <strong>BG:</strong> {field.description?.bg}
-                </Typography>
-              )}
-              {hasEn && (
-                <Typography variant='body2'>
-                  <strong>EN:</strong> {field.description?.en}
-                </Typography>
-              )}
+              {description && <Typography variant='body2'>{description}</Typography>}
               {field.location && (
                 <Box sx={{ mt: 1 }}>
                   <Typography
@@ -167,7 +138,7 @@ export function SiteDetailView({
     return (
       <Box sx={{ mb: 3 }}>
         <Typography variant='h6' gutterBottom color='primary.main'>
-          Tracklogs
+          {t('siteDetail.tracklogs')}
         </Typography>
         {validTracklogs.map((tracklog, index) => (
           <Typography key={index} variant='body2' sx={{ mb: 1 }}>
@@ -177,7 +148,7 @@ export function SiteDetailView({
               onClick={() => onOpenTracklog(tracklog)}
               sx={{ mb: 0.5 }}
             >
-              Tracklog {index + 1}
+              {t('siteDetail.tracklog')} {index + 1}
             </Button>
           </Typography>
         ))}
@@ -229,6 +200,8 @@ export function SiteDetailView({
               </Box>
 
               <Box sx={{ flex: 1, ml: { xs: 0, sm: 5 } }}>
+                {/* Title stays bilingual; the active language leads as H1, the
+                    other follows as H2 (BG names match road signs/maps). */}
                 <Typography
                   variant='h4'
                   component='h1'
@@ -236,16 +209,16 @@ export function SiteDetailView({
                   color='primary.main'
                   sx={{ mb: 0, textAlign: 'center' }}
                 >
-                  {site.title.bg}
+                  {current === 'en' ? site.title.en || site.title.bg : site.title.bg}
                 </Typography>
-                {site.title.en && (
+                {(current === 'en' ? site.title.bg : site.title.en) && (
                   <Typography
                     variant='h5'
                     component='h2'
                     color='text.secondary'
                     sx={{ textAlign: 'center' }}
                   >
-                    {site.title.en}
+                    {current === 'en' ? site.title.bg : site.title.en}
                   </Typography>
                 )}
               </Box>
@@ -287,7 +260,7 @@ export function SiteDetailView({
               </Box>
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant='h6' gutterBottom color='primary.main'>
-                  Възможности за достъп
+                  {t('siteDetail.accessTitle')}
                 </Typography>
                 <AccessOptionsView
                   accessOptions={site.accessOptions}
@@ -314,18 +287,25 @@ export function SiteDetailView({
 
             <Grid size={{ xs: 12 }}>
               {renderLandingFields()}
-              {renderLocalizedText(site.monuments, 'Забележителности')}
-              {renderBilingualArray(site.accomodations, 'Настаняване')}
-              {renderBilingualArray(site.alternatives, 'Други занимания')}
-              {renderBilingualArray(site.localPilotsClubs, 'Local Pilots Clubs')}
+              {renderLocalizedText(site.monuments, t('siteDetail.monuments'))}
+              {renderBilingualArray(site.accomodations, t('siteDetail.accommodation'))}
+              {renderBilingualArray(site.alternatives, t('siteDetail.alternatives'))}
+              {renderBilingualArray(site.localPilotsClubs, t('siteDetail.localPilotsClubs'))}
             </Grid>
           </Grid>
 
-          <Divider sx={{ my: 4 }} />
+          <Divider sx={{ mt: 4, mb: 2 }} />
 
           {/* Detailed Information */}
 
           {renderTracklogs()}
+
+          {/* Language toggle at the pinky paraglider-wing spot, inside the card.
+              Navigates to the site's BG/EN URL so the route drives the language. */}
+          <LanguageSwitcher
+            bgUrl={getCanonicalSiteUrl(site, 'bg')}
+            enUrl={getCanonicalSiteUrl(site, 'en')}
+          />
         </CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
           {/* <Button

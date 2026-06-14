@@ -5,9 +5,10 @@
 - **Last Updated**: 2026-06-14
 - **Last Completed**: Phase 4.4 (OG meta injection) — **DEPLOYED + VERIFIED remotely**. Per-site previews confirmed working on Telegram, Viber, and Facebook (FB needs a one-time "Scrape Again" / re-post per URL, normal for a new domain).
 - **Canonical domain**: now `https://paragliding.borislav.space` (`ti.borislav.space` redirects here). `FRONTEND_URL` must be this value.
-- **Next Priority**: SEO essentially done for now. Remaining: Phase 4.3 (decided NOT needed — only social previews were wanted; Googlebot renders JS) and Phase 4.2/i18n (deferred — no `/en` for now). Then Phases 10/10.1/11.
+- **Next Priority**: SEO essentially done for now. Remaining: Phase 4.3 (decided NOT needed — only social previews were wanted; Googlebot renders JS) and Phase 4.2/i18n (deferred — no `/en` for now). Then Phases 9/10/10.1.
 - **Phase 11** (health check `/api/health`) — DONE + deployed; UptimeRobot confirmed Up. Included a CSRF fix exempting HEAD/OPTIONS (see Phase 11 section).
-- **Uncommitted**: `src/routes/api.ts` (health endpoint), `src/app.ts` (CSRF HEAD/OPTIONS exemption), `CLAUDE.md`. (Phase 4.4 SEO batch already committed + deployed.)
+
+> **RULE — never track git state in this file.** Do NOT mention commit hashes, "Uncommitted changes", "committed/not committed", or any git status in CLAUDE.md. It goes stale instantly and contradicts `git status`. Use `git status`/`git log` for that — this file is for project knowledge only.
 
 ## Project Overview
 
@@ -95,24 +96,72 @@ frontend/vite.config.ts                               # Vite config + chunk spli
 ## Pending Tasks
 
 
-### Phase 9 — i18n / Internationalization (MEDIUM)
+### Phase 9 — i18n / Language Switching (MEDIUM)
 
-Translate all UI strings to English as well, add BG/EN language switcher.
+Narrow, SEO-correct design: **only site-detail pages are translatable**; English lives at an `/en/`
+URL; Bulgarian stays exactly where it is. Library: **react-i18next** (detail-page strings only, not
+the whole app — do NOT use `<Trans>`; `t('key')` is enough).
 
-**Current state:** Site data is bilingual via `LocalizedText { bg, en }`. UI strings are hardcoded in Bulgarian with no translation infrastructure.
+**Current state:** Site data is bilingual via `LocalizedText { bg, en }`. UI strings are hardcoded
+in Bulgarian with no translation infrastructure.
 
-**Implementation:**
-1. Install `react-i18next` + `i18next` in `frontend/`
-2. Create `frontend/src/i18n/` with `bg.json` and `en.json` translation files and `index.ts` init
-3. Wrap `frontend/src/main.tsx` with i18next init (import `./i18n` before App)
-4. Add `LanguageSwitcher` component to `frontend/src/components/main/BottomNavigationBar.tsx`
-5. Persist selection under localStorage key `'ti_lang'`
-6. On language change update `document.documentElement.lang` (`'bg'` / `'en'`)
-7. Replace hardcoded strings across all components with `useTranslation()` hook calls
+#### Agreed rules (canonical spec)
 
-**Do NOT use:** `<Trans>` component for simple strings — `t('key')` is sufficient and keeps JSX clean.
+**Language state**
+1. Default is **Bulgarian everywhere**, every new browser session.
+2. Choice stored in **`sessionStorage` key `ti_lang`** (NOT localStorage) — resets to Bulgarian each
+   new browser session. The existing `preferences.ts` localStorage `language` key is NOT used for UI
+   language.
+3. On entry, language is derived from the **URL**: leading `/en` ⇒ English (and writes `ti_lang=en`);
+   no `/en` ⇒ Bulgarian. Crawlers (no session) get the right language from the URL alone.
+4. The app **never auto-adds `/en`** to non-detail URLs. If a user manually types `/en` on a
+   non-detail page, set English for the session but don't strip it / don't generate `/en` links for
+   it; next fresh visit there is Bulgarian again.
 
-**After Phase 9 ships:** complete Phase 4.2 (hreflang) in SEO Pending below.
+**Scope**
+5. **Only SITE DETAIL pages are translatable.** Home, add-site, edit, auth, admin, and especially
+   **Profile**, stay Bulgarian.
+
+**Switcher UI**
+6. A **plain text label `български : english`** at the bottom of every page, at the pinky
+   paraglider-wing graphic spot. **No flags, no icons, no buttons.**
+7. Clicking toggles language; on detail pages it also rewrites the URL to/from its `/en` form.
+
+**Always-bilingual elements (never collapse to one language)**
+8. **Site cards** (title + subtitle) always show **both** languages.
+9. The detail **page title/heading** always shows both languages, but the **order flips by mode**:
+   BG page → `H1=Bulgarian`, `H2=English`, `<title>` leads BG; EN page (`/en/...`) → `H1=English`,
+   `H2=Bulgarian`, `<title>` leads EN. (Bulgarian names match road signs/maps foreign pilots
+   navigate by, so BG stays visible everywhere.)
+
+**URL architecture (SEO)**
+10. **Only `/en/` is prefixed. No `/bg/`** — Bulgarian stays at its existing canonical (default at
+    root = `x-default`; single-dominant-language pattern).
+11. URL map:
+    | Language | URL | Behavior |
+    |---|---|---|
+    | BG (default, x-default) | `/парапланер-старт/:slug` | renders, self-canonical |
+    | EN | `/en/paragliding-site/:slug` | renders, self-canonical |
+    | Latin no-`/en` | `/paragliding-site/:slug` | **301 → BG canonical** |
+    | Legacy numeric | `/site/:id` | **301 → BG canonical** |
+12. `/site/` is **legacy numeric only** (`/site/:id`) — never `/site/slug`. Sole job: resolve an old
+    numeric link to the canonical slug URL.
+13. Each language page has a **self-referencing canonical** (EN→EN, BG→BG). Never canonical EN→BG
+    (de-indexes the English page).
+14. **hreflang** on both: `bg` ↔ BG URL, `en` ↔ EN URL, `x-default` → BG URL.
+15. Server `ogMetaMiddleware` + `.htaccess` must handle `/en/paragliding-site/` and inject
+    **English** OG/Twitter tags (`og:locale=en_US`, English title/description, `og:url` = the `/en`
+    URL). Otherwise shared English links show a Bulgarian preview.
+
+
+
+---
+
+### Phase 12 — 404 Not Found page (MEDIUM)
+
+Unknown URLs currently render a **blank page**: `frontend/src/components/ui/NotFoundHandler.tsx` only `console.log`s and returns `null` (wired as the catch-all `<Route path='*'>` in `AppRoutes.tsx`). Build a real 404 page; keep it bilingual via `t()` since i18n is now in place. Separate from the i18n work.
+
+**Content (TBD by user):** more than a bare "not found" — should carry **advertising/promo messages, contact information, and other details** (exact copy not yet decided). Treat it as a small marketing/landing surface, not just a stub + home link.
 
 ---
 
@@ -153,10 +202,10 @@ Only relevant if/when an English URL structure is built. Once i18n + `/en` route
 
 All implemented, deployed, and confirmed on `https://paragliding.borislav.space` (per-site previews render on Telegram, Viber, Facebook). Note: this **cannot** be tested via the Vite dev server (:5173, bypasses Express) nor on `localhost` (social crawlers can't reach it) — verification must be on the public domain.
 
-**A. Phase 4.1 — sitemap.xml + robots.txt at root** (committed)
+**A. Phase 4.1 — sitemap.xml + robots.txt at root**
 - `src/app.ts`: `GET /sitemap.xml` (reuses `generateSitemap`) and `GET /robots.txt` registered before the static middleware.
 
-**B. Site-detail URL rename `/site/:id` → `/paragliding-site/:slug`** (committed) — keyword-rich Latin URL for SEO; Bulgarian Cyrillic URL stays the canonical the site "opens on".
+**B. Site-detail URL rename `/site/:id` → `/paragliding-site/:slug`** — keyword-rich Latin URL for SEO; Bulgarian Cyrillic URL stays the canonical the site "opens on".
 - `frontend/src/AppRoutes.tsx`: added `/paragliding-site/:slug`; kept legacy `/site/:id` (redirects); `/парапланер-старт/:slug` is canonical.
 - `frontend/src/hooks/pages/useSiteDetailPage.ts`: redirects `/paragliding-site/*`, numeric slug, and legacy `/site/:id` to the Bulgarian canonical (`getCanonicalSiteUrl` → `/парапланер-старт/:slug`); guarded so the canonical route never self-redirects.
 - `frontend/src/components/pages/SiteDetailPage.tsx`: `rel=canonical` now uses `getCanonicalSiteUrl(site)` (Bulgarian) — fixed the old buggy plural `/sites/`.

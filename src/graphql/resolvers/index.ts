@@ -5,6 +5,7 @@ import { TokenService } from '@services/tokenService.js';
 import { EmailService } from '@services/emailService.js';
 import { generateToken } from '@middleware/auth.js';
 import { ACTIVATION_TOKEN_EXPIRY_MINUTES } from '@config/constants.js';
+import { enSlug } from '@utils/slug.js';
 import type { UserForToken } from '@types';
 import bcrypt from 'bcryptjs';
 import path from 'path';
@@ -133,6 +134,17 @@ export const resolvers = {
         // Fallback: try to find by numeric ID (for backward compatibility)
         if (/^\d+$/.test(id)) {
           site = await Site.findOne({ _id: Number(id) });
+          if (site) return site;
+        }
+
+        // Final fallback: English slug from the /en route — match the slugified
+        // English title (kept in sync with frontend getEnSlug + ogMetaMiddleware).
+        const candidates = await Site.find({}, '_id title url').lean<
+          Array<{ _id: number; title?: { bg?: string; en?: string }; url?: string }>
+        >();
+        const match = candidates.find((s) => enSlug(s) === id);
+        if (match) {
+          site = await Site.findOne({ _id: match._id });
           if (site) return site;
         }
 

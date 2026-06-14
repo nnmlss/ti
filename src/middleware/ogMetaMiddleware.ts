@@ -3,6 +3,7 @@ import path from 'path';
 import type { Request, Response, NextFunction } from 'express';
 import { Site } from '@models/sites.js';
 import { logger } from '@config/logger.js';
+import { enSlug } from '@utils/slug.js';
 import type { FlyingSite } from '@types';
 
 // Narrow projection of the fields needed to build social meta tags
@@ -12,8 +13,11 @@ type SiteMetaFields = Pick<
 >;
 
 // Site-detail URL prefixes whose HTML should receive per-site OG/Twitter tags.
-// Covers the Latin keyword route, the canonical Cyrillic route and the legacy route.
-const SITE_DETAIL_PREFIXES = ['/paragliding-site/', '/парапланер-старт/', '/site/'];
+// `/en/paragliding-site/` MUST come first (the others are substrings of the path
+// after the `/en` segment is stripped). Covers the English route, the Latin keyword
+// route, the canonical Cyrillic route and the legacy numeric route.
+const EN_PREFIX = '/en/paragliding-site/';
+const SITE_DETAIL_PREFIXES = [EN_PREFIX, '/paragliding-site/', '/парапланер-старт/', '/site/'];
 
 const OG_PLACEHOLDER = '<!-- __OG_META__ -->';
 const INDEX_HTML_PATH = path.join(process.cwd(), 'frontend/dist/index.html');
@@ -35,29 +39,44 @@ const getTemplate = async (): Promise<string> => {
   return cachedTemplate;
 };
 
-const buildMetaTags = (site: SiteMetaFields): string => {
+const buildMetaTags = (site: SiteMetaFields, lang: 'bg' | 'en'): string => {
   const baseUrl = process.env['FRONTEND_URL'] || 'https://paragliding.borislav.space';
-  const name = site.title?.bg || site.title?.en || '';
+  const isEn = lang === 'en';
+  const name = (isEn ? site.title?.en || site.title?.bg : site.title?.bg || site.title?.en) || '';
+  const suffix = ' - TakeOff Info paragliding.borislav.space';
 
-  const pageTitle = `Подробна информация за ${name} като място за летене с парапланер в България - TakeOff Info paragliding.borislav.space`;
-
-  const altitudePart = site.altitude ? ` на ${site.altitude}м височина` : '';
+  const altitudePart = site.altitude ? (isEn ? ` at ${site.altitude}m` : ` на ${site.altitude}м височина`) : '';
   const windPart = site.windDirection?.length
-    ? `Подходящи ветрове: ${site.windDirection.join(', ')}.`
+    ? isEn
+      ? ` Suitable winds: ${site.windDirection.join(', ')}.`
+      : `Подходящи ветрове: ${site.windDirection.join(', ')}.`
     : '';
-  const description = `Място за летене с парапланер ${name}${altitudePart}. ${windPart} Посоки на вятъра, подходящи за излитане, височина на старта, методи на достъп до София, старт за летене с парапланер.`;
+
+  const pageTitle = isEn
+    ? `Paragliding site ${name} in Bulgaria — takeoff info${suffix}`
+    : `Подробна информация за ${name} като място за летене с парапланер в България${suffix}`;
+
+  const description = isEn
+    ? `Paragliding takeoff ${name}${altitudePart}.${windPart} Wind directions, takeoff altitude and access methods for paragliding in Bulgaria.`
+    : `Място за летене с парапланер ${name}${altitudePart}. ${windPart} Посоки на вятъра, подходящи за излитане, височина на старта, методи на достъп до София, старт за летене с парапланер.`;
 
   const original = site.galleryImages?.[0]?.path;
   const imageUrl = original
     ? `${baseUrl}/gallery/small/${original.replace(/^.*\//, '').replace(/\.[^/.]+$/, '')}.jpg`
     : `${baseUrl}/assets/paragliding-bulgaria-og.jpg`;
 
-  // og:url points at the canonical Bulgarian URL (matches the SPA rel=canonical)
-  const pageUrl = `${baseUrl}/парапланер-старт/${site.url ?? ''}`;
-  const imageAlt = `Място за летене с парапланер ${name}`;
+  const bgUrl = `${baseUrl}/парапланер-старт/${site.url ?? ''}`;
+  const enUrl = `${baseUrl}/en/paragliding-site/${enSlug(site)}`;
+  // Self-referencing canonical + og:url for the page's own language.
+  const pageUrl = isEn ? enUrl : bgUrl;
+  const imageAlt = isEn ? `Paragliding site ${name} in Bulgaria` : `Място за летене с парапланер ${name}`;
 
   const e = escapeHtml;
   return [
+    `<link rel="canonical" href="${e(pageUrl)}" />`,
+    `<link rel="alternate" hreflang="bg" href="${e(bgUrl)}" />`,
+    `<link rel="alternate" hreflang="en" href="${e(enUrl)}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${e(bgUrl)}" />`,
     `<meta property="og:title" content="${e(pageTitle)}" />`,
     `<meta property="og:description" content="${e(description)}" />`,
     `<meta property="og:url" content="${e(pageUrl)}" />`,
@@ -67,8 +86,8 @@ const buildMetaTags = (site: SiteMetaFields): string => {
     `<meta property="og:image:width" content="960" />`,
     `<meta property="og:image:height" content="540" />`,
     `<meta property="og:image:alt" content="${e(imageAlt)}" />`,
-    `<meta property="og:locale" content="bg_BG" />`,
-    `<meta property="og:locale:alternate" content="en_US" />`,
+    `<meta property="og:locale" content="${isEn ? 'en_US' : 'bg_BG'}" />`,
+    `<meta property="og:locale:alternate" content="${isEn ? 'bg_BG' : 'en_US'}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${e(pageTitle)}" />`,
     `<meta name="twitter:description" content="${e(description)}" />`,
@@ -106,17 +125,25 @@ export const ogMetaMiddleware = async (
       return next();
     }
 
+    const lang: 'bg' | 'en' = prefix === EN_PREFIX ? 'en' : 'bg';
+
     const identifier = decodedPath.slice(prefix.length).split('/')[0];
     if (!identifier) {
       return next();
     }
 
-    const query = /^\d+$/.test(identifier) ? { _id: Number(identifier) } : { url: identifier };
+    const projection = 'title url altitude windDirection galleryImages';
 
-    const site = await Site.findOne(
-      query,
-      'title url altitude windDirection galleryImages'
-    ).lean<SiteMetaFields>();
+    let site: SiteMetaFields | null;
+    if (lang === 'en') {
+      // English slug isn't stored — match the slugified English title across sites
+      // (small dataset; crawler traffic is low). Falls through if nothing matches.
+      const candidates = await Site.find({}, projection).lean<SiteMetaFields[]>();
+      site = candidates.find((s) => enSlug(s) === identifier) ?? null;
+    } else {
+      const query = /^\d+$/.test(identifier) ? { _id: Number(identifier) } : { url: identifier };
+      site = await Site.findOne(query, projection).lean<SiteMetaFields>();
+    }
 
     if (!site) {
       return next();
@@ -127,7 +154,7 @@ export const ogMetaMiddleware = async (
       return next();
     }
 
-    res.type('html').send(template.replace(OG_PLACEHOLDER, buildMetaTags(site)));
+    res.type('html').send(template.replace(OG_PLACEHOLDER, buildMetaTags(site, lang)));
   } catch (error) {
     logger.error('OG meta injection failed', {
       path: req.path,

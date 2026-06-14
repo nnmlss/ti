@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import type { AccessOptionsViewProps } from '@app-types';
 import { accessOptions } from '@constants';
+import { useLanguage } from '@hooks/ui/useLanguage';
 
 // Import all access icons
 import access0Icon from '@assets/icons/access0.svg';
@@ -23,6 +24,8 @@ export function AccessOptionsView({
   size = 27,
   showLabels = false,
 }: AccessOptionsViewProps) {
+  const { current } = useLanguage();
+
   if (!accessOptionIds || accessOptionIds.length === 0) {
     return null;
   }
@@ -58,7 +61,7 @@ export function AccessOptionsView({
               <Box
                 component='img'
                 src={iconSrc}
-                alt={accessOption?.bg || `Access option ${id}`}
+                alt={accessOption?.[current] || `Access option ${id}`}
                 sx={{
                   objectFit: 'contain',
                   ...iconStyles,
@@ -69,9 +72,9 @@ export function AccessOptionsView({
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
-              {accessOption?.bg && (
+              {accessOption?.[current] && (
                 <Typography variant='caption' sx={{ textAlign: 'center', fontSize: '0.75rem' }}>
-                  {accessOption.bg}
+                  {accessOption[current]}
                 </Typography>
               )}
             </Box>
@@ -83,7 +86,7 @@ export function AccessOptionsView({
             key={id}
             component='img'
             src={iconSrc}
-            alt={accessOption?.bg || `Access option ${id}`}
+            alt={accessOption?.[current] || `Access option ${id}`}
             sx={{
               objectFit: 'contain',
               ...iconStyles,

@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import type { SEOHeadProps } from '@app-types';
 
 const DEFAULT_TITLE = 'Места за летене с парапланер в България';
-const SITE_SUFFIX = ' - TakeOff Info ti.borislav.space';
+const SITE_SUFFIX = ' - TakeOff Info paragliding.borislav.space';
 const DEFAULT_DESCRIPTION =
   'Информация за места за летене с парапланер в България. Посоки на вятъра, подходящи за излитане, височина на старта, методи за достъп до стартове за летене с парапланер в България.';
 

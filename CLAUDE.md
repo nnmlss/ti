@@ -3,8 +3,10 @@
 ## Current Session Status
 
 - **Last Updated**: 2026-06-14
-- **Last Completed**: Phase 4.1 — sitemap.xml + robots.txt served at root paths
-- **Next Priority**: SEO Pending Tasks (HIGHEST priority — see "SEO Pending Tasks"). Recommended order: Phase 4.4 → 4.3 → 4.2 (4.2 blocked on Phase 9 i18n). All other phases (9, 10, 10.1) come after SEO.
+- **Last Completed**: Phase 4.4 (OG meta injection) — **DEPLOYED + VERIFIED remotely**. Per-site previews confirmed working on Telegram, Viber, and Facebook (FB needs a one-time "Scrape Again" / re-post per URL, normal for a new domain).
+- **Canonical domain**: now `https://paragliding.borislav.space` (`ti.borislav.space` redirects here). `FRONTEND_URL` must be this value.
+- **Next Priority**: SEO essentially done for now. Remaining: Phase 4.3 (decided NOT needed — only social previews were wanted; Googlebot renders JS) and Phase 4.2/i18n (deferred — no `/en` for now). Then Phases 10/10.1/11.
+- **Uncommitted work** (as of 2026-06-14): `src/middleware/ogMetaMiddleware.ts` (new), `src/app.ts`, `frontend/index.html`, `frontend/src/components/seo/SEOHead.tsx`, `frontend/public/.htaccess`, `docs/DEVELOPMENT_GUIDE.md`. Not yet committed.
 
 ## Project Overview
 
@@ -69,6 +71,10 @@ frontend/vite.config.ts                               # Vite config + chunk spli
 
 - **Gate Middleware DISABLED** — CloudLinux/Passenger serves `frontend/dist/index.html` directly, bypassing Node.js for `/`. Re-enable: uncomment `src/app.ts` lines ~27-36, ~96-128, import line 13.
 - **Frontend proxy:** Vite proxies `/api` + `/graphql` to backend in dev
+- **OG meta for social crawlers** — `frontend/public/.htaccess` proxies site-detail page routes (`/paragliding-site/*` and the Cyrillic `/парапланер-старт/*`, matched in BOTH literal-UTF-8 and `%D0…` percent-encoded form — LiteSpeed decodes `%{REQUEST_URI}`) to Node, where `ogMetaMiddleware` injects per-site `og:*`/`twitter:*` tags. Must come BEFORE the SPA fallback. Trade-off: a direct hit to a site page returns 502 while Node is down (homepage/SPA still served statically) — accepted. The middleware does NOT gate on `Accept: text/html` (FB/WhatsApp send `Accept: */*`).
+- **Referrer-Policy** — Helmet is set to `strict-origin-when-cross-origin` (NOT the default `no-referrer`). OSM/OpenTopoMap tile servers 403 requests with no `Referer`; once site pages started routing through Node + Helmet, the default broke map tiles. Do not revert to `no-referrer`.
+- **Prod web server is LiteSpeed** (cPanel), not Apache — `.htaccess` rewrite/proxy behavior verified on the live server.
+- **Deploy reload** — prod backend is started manually via `node dist/app.js &` over SSH; cPanel Node App Manager "Restart" does NOT control it. Reload = `pkill -f "node dist/app.js"; node dist/app.js &`. Node caches `index.html` in memory, so a restart is REQUIRED after deploying a new `frontend/dist/index.html`.
 
 ## Completed Features
 
@@ -82,6 +88,8 @@ frontend/vite.config.ts                               # Vite config + chunk spli
 - ✅ **Phase 7.1** — Image Slideshow + SitesLinksList + useAppInitialization hook
 - ✅ **Phase 8** — Wind filter toggle fixed (stopPropagation on mousedown prevents outside-click handler conflict)
 - ✅ **Phase 4.1** — sitemap.xml + robots.txt served at root paths (`src/app.ts`, before static middleware)
+- ✅ **SEO URL rename** — site-detail Latin route is now `/paragliding-site/:slug` (was `/site/:id`); see "SEO Work Done This Session"
+- ✅ **Phase 4.4** — Express OG/Twitter meta injection — DEPLOYED + VERIFIED (Telegram/Viber/Facebook show per-site previews). LiteSpeed `.htaccess` proxies site-detail routes (incl. Cyrillic) to Node; Helmet `referrer-policy` set to `strict-origin-when-cross-origin` to keep OSM tiles working. See Technical Decisions.
 
 ## Pending Tasks
 
@@ -141,53 +149,39 @@ Replace with Winston logger calls (`import { logger } from '@config/logger'`):
 
 ## SEO Pending Tasks
 
-> **HIGHEST PRIORITY.** All SEO tasks take precedence over every other pending phase (9, 10, 10.1). Recommended order: **4.4 → 4.3 → 4.2**. Phase 4.2 (hreflang) stays blocked on Phase 9 i18n, so it is done last.
+> **STATUS (2026-06-14): SEO previews DONE + verified live.** Phase 4.1, URL rename, and Phase 4.4 are deployed and confirmed (Telegram/Viber/Facebook). Phase 4.3 was **decided against** (only social previews were wanted; Googlebot renders JS). Phase 4.2 (hreflang) is **deferred** — no `/en` for now (depends on Phase 9 i18n). So no SEO work is currently pending.
 
-### Phase 4.2 — hreflang alternate links — HIGH (depends on Phase 9)
+### Phase 4.2 — hreflang alternate links — DEFERRED (depends on Phase 9 i18n; no `/en` for now)
 
-Once i18n is in place, add `<link rel="alternate" hreflang="...">` tags to `frontend/src/components/seo/SEOHead.tsx`.
-
-**Implementation:** Inside the `<Helmet>` block add:
-```tsx
-<link rel="alternate" hreflang="bg" href={`https://ti.borislav.space${config.canonical ?? '/'}`} />
-<link rel="alternate" hreflang="en" href={`https://ti.borislav.space/en${config.canonical ?? '/'}`} />
-<link rel="alternate" hreflang="x-default" href={`https://ti.borislav.space${config.canonical ?? '/'}`} />
-```
-**Do after:** Phase 9 i18n ships and EN URL structure is decided.
+Only relevant if/when an English URL structure is built. Once i18n + `/en` routes exist, add `<link rel="alternate" hreflang="...">` tags to `frontend/src/components/seo/SEOHead.tsx` (use `https://paragliding.borislav.space` as the base, `/en` prefix for English, `x-default` → Bulgarian).
 
 ---
 
-### Phase 4.4 — Express meta tag injection for social sharing — HIGH
+### SEO Work Done This Session (2026-06-14) — DONE + VERIFIED LIVE
 
-React Helmet runs client-side — social crawlers (Facebook, WhatsApp, Telegram, Viber) scrape raw HTML without executing JS and get generic fallback tags from `index.html`. Site detail pages always show the generic title and image when shared on social media instead of the actual site name and photo.
+All implemented, deployed, and confirmed on `https://paragliding.borislav.space` (per-site previews render on Telegram, Viber, Facebook). Note: this **cannot** be tested via the Vite dev server (:5173, bypasses Express) nor on `localhost` (social crawlers can't reach it) — verification must be on the public domain.
 
-**What needs to be done:**
+**A. Phase 4.1 — sitemap.xml + robots.txt at root** (committed)
+- `src/app.ts`: `GET /sitemap.xml` (reuses `generateSitemap`) and `GET /robots.txt` registered before the static middleware.
 
-Create a dedicated Express middleware in `src/middleware/` that intercepts requests to site detail URLs (`/paragliding-site/:slug` and `/парапланер-старт/:slug`, plus legacy `/site/:id`) before they reach the static file middleware. The middleware should read `frontend/dist/index.html`, look up the site in MongoDB by URL slug, and replace a placeholder comment in the HTML with the correct OG and Twitter meta tags (title, description, image, url) for that specific site. If the site is not found or any error occurs, fall through to the normal static file serving.
+**B. Site-detail URL rename `/site/:id` → `/paragliding-site/:slug`** (committed) — keyword-rich Latin URL for SEO; Bulgarian Cyrillic URL stays the canonical the site "opens on".
+- `frontend/src/AppRoutes.tsx`: added `/paragliding-site/:slug`; kept legacy `/site/:id` (redirects); `/парапланер-старт/:slug` is canonical.
+- `frontend/src/hooks/pages/useSiteDetailPage.ts`: redirects `/paragliding-site/*`, numeric slug, and legacy `/site/:id` to the Bulgarian canonical (`getCanonicalSiteUrl` → `/парапланер-старт/:slug`); guarded so the canonical route never self-redirects.
+- `frontend/src/components/pages/SiteDetailPage.tsx`: `rel=canonical` now uses `getCanonicalSiteUrl(site)` (Bulgarian) — fixed the old buggy plural `/sites/`.
+- `src/controllers/sitemap.ts`: emits `/paragliding-site/<slug>` + `/парапланер-старт/<slug>` per site.
 
-Register the middleware in `src/app.ts` before the static file middleware (`app.use(express.static(...))` at line ~245) — order is critical, otherwise Express serves `index.html` directly and the middleware is never reached.
+**C. Phase 4.4 — Express OG/Twitter meta injection** (DEPLOYED + VERIFIED) — lets social crawlers (FB/WhatsApp/Telegram/Viber, no JS) get per-site tags instead of the generic fallback.
+- `src/middleware/ogMetaMiddleware.ts` (new): on `GET` (NO `Accept` gate — FB/WhatsApp send `Accept: */*`) for prefixes `/paragliding-site/`, `/парапланер-старт/`, `/site/`, looks up the site (`url` slug or numeric `_id`), reads+caches `frontend/dist/index.html`, replaces `<!-- __OG_META__ -->` with per-site og:*/twitter: tags. og:url = Bulgarian canonical; image `${FRONTEND_URL}/gallery/small/<file>.jpg`. Falls through to static serving on any miss/error.
+- `frontend/index.html`: `<!-- __OG_META__ -->` placeholder in `<head>` (Vite copies it to `dist/` on build). `<title>` suffix updated to `paragliding.borislav.space`.
+- `frontend/public/.htaccess`: proxies the site-detail page routes to Node (the part that makes the middleware actually run in prod — see Technical Decisions). The middleware alone is NOT enough; without this LiteSpeed serves the static `index.html` directly and the placeholder is never filled.
+- `src/app.ts`: `app.use(ogMetaMiddleware)` before `express.static`; Helmet `referrer-policy` set to `strict-origin-when-cross-origin` (keeps OSM tiles alive).
+- `frontend/src/components/seo/SEOHead.tsx`: client-side suffix also updated to `paragliding.borislav.space`.
 
-Add a `<!-- __OG_META__ -->` placeholder comment in `frontend/index.html` as the injection point — this is safer than searching for existing tag strings. Vite copies `index.html` to `frontend/dist/index.html` on build so the placeholder will be there in production.
+**Verified live:** sitemap/robots at root; `/paragliding-site/<slug>` redirects to Bulgarian canonical; per-site `og:` tags on both routes (curl with `facebookexternalhit` UA → 200 + tags, og:image fetchable); unknown slug falls through; Telegram/Viber/Facebook render the site card. FB note: a brand-new domain needs a one-time "Scrape Again" (or delete+repost) per URL — markup is correct.
 
-**Watch out for:**
-- Cyrillic URLs arrive percent-encoded in `req.path` — use `decodeURIComponent` before pattern matching
-- Escape special characters in site title/description before injecting into HTML attributes to prevent broken markup
-- Use `FRONTEND_URL` env var (already in `.env`) as the base URL for absolute image and page URLs
+### Phase 4.3 — Bot detection + pre-rendering — DECIDED AGAINST (not needed)
 
-**Do NOT use full SSR** — Redux async thunks + MUI emotion cache + React Router hydration makes full SSR a multi-week rewrite for no additional benefit over this approach.
-
----
-
-### Phase 4.3 — Bot detection + pre-rendering — HIGH
-
-Client-side React is invisible to crawlers that don't execute JS (Googlebot does, but others don't).
-
-**Options (pick one):**
-- **Prerender.io** — service-based, zero code change, add middleware in `src/app.ts`
-- **React Snap** — static pre-rendering at build time, generates HTML snapshots
-- **SSR migration** — full server-side rendering (large effort, highest quality)
-
-**Current risk:** Low — Googlebot renders JS. Only affects non-Google crawlers.
+The goal was social-share previews, which Phase 4.4 fully delivers. General non-JS search crawlers (Bing/DDG) are out of scope; Googlebot renders JS. Revisit only if non-Google organic search becomes a priority — then Prerender.io / React Snap / SSR.
 
 ---
 

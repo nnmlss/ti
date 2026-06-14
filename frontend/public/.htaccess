@@ -6,6 +6,14 @@ RewriteRule ^api/(.*) http://127.0.0.1:3000/api/$1 [P,L]
 RewriteRule ^graphql(.*) http://127.0.0.1:3000/graphql$1 [P,L]
 RewriteRule ^gallery/(.*) http://127.0.0.1:3000/gallery/$1 [P,L]
 
+# Proxy paragliding site-detail pages to Node so social crawlers receive
+# per-site Open Graph / Twitter meta (src/middleware/ogMetaMiddleware.ts).
+# Must come BEFORE the SPA fallback. The Cyrillic canonical route is matched
+# in its percent-encoded form (парапланер-старт); %{REQUEST_URI} is forwarded
+# verbatim to avoid re-encoding issues.
+RewriteCond %{REQUEST_URI} ^/(paragliding-site|парапланер-старт|%D0%BF%D0%B0%D1%80%D0%B0%D0%BF%D0%BB%D0%B0%D0%BD%D0%B5%D1%80-%D1%81%D1%82%D0%B0%D1%80%D1%82)/ [NC]
+RewriteRule ^ http://127.0.0.1:3000%{REQUEST_URI} [P,L]
+
 # SPA fallback for React Router
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

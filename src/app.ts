@@ -13,6 +13,7 @@ import { connectDB } from './config/database.js';
 import { EmailService } from './services/emailService.js';
 import { setupGraphQLBeforeRoutes } from './graphql/server.js';
 import { generateSitemap } from './controllers/sitemap.js';
+import { ogMetaMiddleware } from './middleware/ogMetaMiddleware.js';
 // import { gateMiddleware } from './middleware/gateMiddleware.js'; // DISABLED
 import path from 'path';
 import type { CustomError } from '@types';
@@ -81,6 +82,10 @@ app.use(
         workerSrc: ["'self'", 'blob:'],
       },
     },
+    // OSM/OpenTopoMap tile servers block requests with no Referer. Helmet's
+    // default `no-referrer` broke map tiles once site pages started routing
+    // through Node. Send the origin as Referer on cross-origin requests.
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     crossOriginEmbedderPolicy: false,
   })
 );
@@ -250,6 +255,10 @@ app.get('/robots.txt', (_req, res) => {
   const baseUrl = process.env['FRONTEND_URL'] || 'https://paragliding.borislav.space';
   res.type('text/plain').send(`User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml`);
 });
+
+// SEO: inject per-site OG/Twitter tags for social crawlers (no JS) on site-detail
+// pages. MUST come before the static middleware, else index.html is served directly.
+app.use(ogMetaMiddleware);
 
 // Serve frontend static files
 app.use(express.static(path.join(process.cwd(), 'frontend/dist')));

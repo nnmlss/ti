@@ -24,10 +24,11 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
       sx={{
         position: 'fixed',
         bottom: 65,
-        left: 'calc(50vw - 250px)',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: 'clamp(360px, 100vw, 500px)',
+        boxSizing: 'border-box',
         p: 1,
-        width: '250',
-        // maxWidth: '100%',
         zIndex: 1002,
         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
       }}
@@ -61,9 +62,13 @@ export function WindDirectionFilter({ onClose }: WindDirectionFilterProps) {
             variant={selectedFilter === direction ? 'contained' : 'outlined'}
             size='small'
             sx={{
-              minWidth: 40,
-              fontSize: '0.75rem',
-              py: 0.5,
+              minWidth: 0,
+              px: 0,
+              fontSize: '13px',
+              fontFamily: 'comfortaabold',
+              fontWeight: 'normal',
+              lineHeight: 1,
+              py: 0.75,
               color: selectedFilter === direction ? 'white' : 'primary.main',
             }}
           >

@@ -53,8 +53,10 @@ export default function AppRoutes() {
               </ProtectedRoute>
             }
           />
-          <Route path='/site/:id' element={<SiteDetailPage />} />
+          <Route path='/paragliding-site/:slug' element={<SiteDetailPage />} />
           <Route path='/парапланер-старт/:slug' element={<SiteDetailPage />} />
+          {/* Legacy route — kept so old shared links don't 404; redirects to canonical */}
+          <Route path='/site/:id' element={<SiteDetailPage />} />
 
           {/* Auth Routes - standalone pages */}
           <Route path='/activate' element={<ActivationRequest />} />

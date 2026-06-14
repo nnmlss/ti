@@ -163,7 +163,7 @@ React Helmet runs client-side — social crawlers (Facebook, WhatsApp, Telegram,
 
 **What needs to be done:**
 
-Create a dedicated Express middleware in `src/middleware/` that intercepts requests to site detail URLs (`/sites/:id` and `/парапланер-старт/:id`) before they reach the static file middleware. The middleware should read `frontend/dist/index.html`, look up the site in MongoDB by URL slug, and replace a placeholder comment in the HTML with the correct OG and Twitter meta tags (title, description, image, url) for that specific site. If the site is not found or any error occurs, fall through to the normal static file serving.
+Create a dedicated Express middleware in `src/middleware/` that intercepts requests to site detail URLs (`/paragliding-site/:slug` and `/парапланер-старт/:slug`, plus legacy `/site/:id`) before they reach the static file middleware. The middleware should read `frontend/dist/index.html`, look up the site in MongoDB by URL slug, and replace a placeholder comment in the HTML with the correct OG and Twitter meta tags (title, description, image, url) for that specific site. If the site is not found or any error occurs, fall through to the normal static file serving.
 
 Register the middleware in `src/app.ts` before the static file middleware (`app.use(express.static(...))` at line ~245) — order is critical, otherwise Express serves `index.html` directly and the middleware is never reached.
 

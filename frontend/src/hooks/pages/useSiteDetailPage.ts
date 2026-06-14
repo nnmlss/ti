@@ -50,21 +50,20 @@ export function useSiteDetailPage() {
     };
   }, [dispatch, id, slug]);
 
-  // Handle redirect from numeric URLs to canonical slug URLs
+  // Redirect non-canonical URLs to the Bulgarian canonical (/парапланер-старт/:slug).
+  // The Latin keyword route and legacy numeric route exist for SEO/back-compat only;
+  // the site always "opens on" the Bulgarian URL. Guarded so the canonical route
+  // never redirects to itself (no loop).
   useEffect(() => {
     // Only redirect after site is successfully loaded and we're not already loading
     if (site && loading === 'success') {
-      if (slug && isNumericSlug(slug)) {
-        // If we accessed via numeric slug (/sites/123), redirect to canonical URL
-        const canonicalUrl = getCanonicalSiteUrl(site);
-        navigate(canonicalUrl, { replace: true });
-      } else if (id) {
-        // If we accessed via old route (/site/123), redirect to canonical URL
+      const isParaglidingSiteRoute = location.pathname.startsWith('/paragliding-site/');
+      if ((slug && isNumericSlug(slug)) || id || isParaglidingSiteRoute) {
         const canonicalUrl = getCanonicalSiteUrl(site);
         navigate(canonicalUrl, { replace: true });
       }
     }
-  }, [site, loading, id, slug, navigate]);
+  }, [site, loading, id, slug, location.pathname, navigate]);
 
   const dismissNotification = () => {
     setNotification(null);

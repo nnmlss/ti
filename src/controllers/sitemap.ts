@@ -22,7 +22,7 @@ ${sites
     const lastmod = new Date().toISOString();
     
     return `  <url>
-    <loc>${baseUrl}/sites/${url}</loc>
+    <loc>${baseUrl}/paragliding-site/${url}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

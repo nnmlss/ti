@@ -2,7 +2,7 @@ import { SiteDetailViewContainer as SiteDetailView } from '@containers/SiteDetai
 import { Container, CircularProgress, Alert, Box } from '@mui/material';
 import { SEOHead } from '@components/seo/SEOHead';
 import { NotificationDialog } from '@components/ui/NotificationDialog';
-import { extractSiteNameFromSlug } from '@utils/slugUtils';
+import { extractSiteNameFromSlug, getCanonicalSiteUrl } from '@utils/slugUtils';
 import { useParams } from 'react-router-dom';
 import type { SiteDetailPageProps } from '@app-types';
 
@@ -43,7 +43,7 @@ export function SiteDetailPage({ site, loading, siteId, notification, dismissNot
             description: `Подробна информация за място за летене ${
               site.title.bg || site.title.en
             }`,
-            ...(site.url && { canonical: `/sites/${site.url}` }),
+            ...(site.url && { canonical: getCanonicalSiteUrl(site) }),
           }}
           site={site}
         />

@@ -12,6 +12,7 @@ import authRouter from './routes/auth.js';
 import { connectDB } from './config/database.js';
 import { EmailService } from './services/emailService.js';
 import { setupGraphQLBeforeRoutes } from './graphql/server.js';
+import { generateSitemap } from './controllers/sitemap.js';
 // import { gateMiddleware } from './middleware/gateMiddleware.js'; // DISABLED
 import path from 'path';
 import type { CustomError } from '@types';
@@ -240,6 +241,15 @@ app.use('/api', apiRouter);
 
 // Serve static images - must come after API routes
 app.use('/gallery', express.static(path.join(process.cwd(), 'gallery')));
+
+// SEO: serve sitemap.xml and robots.txt at root paths where crawlers expect them.
+// Must come before the static file middleware below, otherwise express.static
+// would shadow these routes if matching files ever existed in frontend/dist.
+app.get('/sitemap.xml', generateSitemap);
+app.get('/robots.txt', (_req, res) => {
+  const baseUrl = process.env['FRONTEND_URL'] || 'https://paragliding.borislav.space';
+  res.type('text/plain').send(`User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml`);
+});
 
 // Serve frontend static files
 app.use(express.static(path.join(process.cwd(), 'frontend/dist')));

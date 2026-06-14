@@ -2,9 +2,9 @@
 
 ## Current Session Status
 
-- **Last Updated**: 2026-06-09
-- **Last Completed**: CLAUDE.md refactored — DO NOT MODIFY section, architectural decisions quick-ref, actionable pending tasks
-- **Next Priority**: See Pending Tasks below
+- **Last Updated**: 2026-06-14
+- **Last Completed**: Phase 4.1 — sitemap.xml + robots.txt served at root paths
+- **Next Priority**: SEO Pending Tasks (HIGHEST priority — see "SEO Pending Tasks"). Recommended order: Phase 4.4 → 4.3 → 4.2 (4.2 blocked on Phase 9 i18n). All other phases (9, 10, 10.1) come after SEO.
 
 ## Project Overview
 
@@ -81,6 +81,7 @@ frontend/vite.config.ts                               # Vite config + chunk spli
 - ✅ **Phase 7** — 12-Factor Phase 1 (`.env.example`, Winston logging, graceful shutdown, Admin CLI)
 - ✅ **Phase 7.1** — Image Slideshow + SitesLinksList + useAppInitialization hook
 - ✅ **Phase 8** — Wind filter toggle fixed (stopPropagation on mousedown prevents outside-click handler conflict)
+- ✅ **Phase 4.1** — sitemap.xml + robots.txt served at root paths (`src/app.ts`, before static middleware)
 
 ## Pending Tasks
 
@@ -121,27 +122,28 @@ Replace with Winston logger calls (`import { logger } from '@config/logger'`):
 
 ---
 
-## SEO Pending Tasks
+### Phase 11 — Health check endpoint for uptime monitoring (MEDIUM)
 
-### Phase 4.1 — Fix sitemap/robots.txt root paths (QUICK WIN)
+**Why:** The domain root serves the compiled `frontend/dist` directly via `.htaccess` SPA fallback. When the Node app is down, Apache still returns `index.html` (200) and React renders a client-side "under maintenance" modal — so UptimeRobot sees 200 and never alerts. The `.htaccess` proxies `/api/*` and `/graphql` to Node via `[P]`, so a request to a proxied route returns Apache's 502/503 when Node is down. Monitor a proxied backend route, NOT `/`.
 
-Sitemap and robots.txt are served at `/api/sitemap.xml` and `/api/robots.txt`. Search engines expect them at `/sitemap.xml` and `/robots.txt`. No proxy rewrite exists.
+**Implementation:**
+1. Add `GET /api/health` to `src/routes/api.ts` (deeper check — verifies Mongo connection, not just process liveness).
+2. Use `mongoose.connection.readyState === 1` to confirm DB is connected.
+   - DB up → `200 { status: 'ok', db: 'connected' }`
+   - DB not connected → `503 { status: 'degraded', db: 'disconnected' }`
+3. Keep it dependency-light — no model queries, just connection state, so the check stays cheap at frequent intervals.
+4. Passes existing CSRF middleware (GET requests are skipped) and won't trip the 100 req/15min rate limit at normal check intervals.
+5. Point UptimeRobot at `https://<domain>/api/health` — Node down → Apache proxy returns 502/503 → alert fires.
 
-**Fix:** In `src/app.ts`, add two routes **before line 245** (before the static file middleware `app.use(express.static(...))`):
-```ts
-// Add import at top of file:
-import { generateSitemap } from '@controllers/sitemap.js';
-
-// Add before static middleware (line 245):
-app.get('/sitemap.xml', generateSitemap);
-app.get('/robots.txt', (_req, res) => {
-  const baseUrl = process.env['FRONTEND_URL'] || 'http://localhost:3000';
-  res.type('text/plain').send(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml`);
-});
+**Note:** A client-side HTTP 403 is impossible — the maintenance modal renders after a 200 static response; JS cannot change the already-sent status code.
 
 ---
 
-### Phase 4.2 — hreflang alternate links (depends on Phase 9)
+## SEO Pending Tasks
+
+> **HIGHEST PRIORITY.** All SEO tasks take precedence over every other pending phase (9, 10, 10.1). Recommended order: **4.4 → 4.3 → 4.2**. Phase 4.2 (hreflang) stays blocked on Phase 9 i18n, so it is done last.
+
+### Phase 4.2 — hreflang alternate links — HIGH (depends on Phase 9)
 
 Once i18n is in place, add `<link rel="alternate" hreflang="...">` tags to `frontend/src/components/seo/SEOHead.tsx`.
 
@@ -155,7 +157,7 @@ Once i18n is in place, add `<link rel="alternate" hreflang="...">` tags to `fron
 
 ---
 
-### Phase 4.4 — Express meta tag injection for social sharing (MEDIUM)
+### Phase 4.4 — Express meta tag injection for social sharing — HIGH
 
 React Helmet runs client-side — social crawlers (Facebook, WhatsApp, Telegram, Viber) scrape raw HTML without executing JS and get generic fallback tags from `index.html`. Site detail pages always show the generic title and image when shared on social media instead of the actual site name and photo.
 
@@ -176,7 +178,7 @@ Add a `<!-- __OG_META__ -->` placeholder comment in `frontend/index.html` as the
 
 ---
 
-### Phase 4.3 — Bot detection + pre-rendering (LOW)
+### Phase 4.3 — Bot detection + pre-rendering — HIGH
 
 Client-side React is invisible to crawlers that don't execute JS (Googlebot does, but others don't).
 

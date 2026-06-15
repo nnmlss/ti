@@ -9,6 +9,8 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '@store/store';
 import { toggleMapLabelsAction } from '@store/slices/mapLabelsSlice';
+import { useLanguage } from '@hooks/ui/useLanguage';
+import { getLocalized } from '@utils/localizedText';
 import { SiteCardContent } from '@components/site/SiteCardContent';
 import { DeleteConfirmDialogContainer as DeleteConfirmDialog } from '@containers/DeleteConfirmDialogContainer';
 import type { SitesMapProps } from '@app-types';
@@ -37,6 +39,7 @@ export function SitesMap({
 }: SitesMapProps) {
   const showLabels = useSelector((state: RootState) => state.mapLabels.showLabels);
   const dispatch = useDispatch();
+  const { current } = useLanguage();
   if (loading === 'pending' && sites.length === 0) {
     return (
       <Box
@@ -158,7 +161,7 @@ export function SitesMap({
                   offset={[-15, -7]}
                   opacity={1}
                 >
-                  {site.title.bg}
+                  {getLocalized(site.title, current)}
                 </Tooltip>
               )}
               <Popup maxWidth={280} minWidth={260}>

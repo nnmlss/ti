@@ -1,4 +1,8 @@
 {
+  "nav": {
+    "flyingSites": "Flying sites",
+    "addSite": "add site"
+  },
   "siteDetail": {
     "accessTitle": "Access options",
     "monuments": "Landmarks",

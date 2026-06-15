@@ -19,7 +19,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   onViewToggle,
   onWindFilterToggle,
 }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const lang: AppLanguage = i18n.language === 'en' ? 'en' : 'bg';
   return (
     <Box
@@ -54,7 +54,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
             display: { xs: 'none', sm: 'block' },
           }}
         >
-          Места за летене
+          {t('nav.flyingSites')}
         </Typography>
       )}
 
@@ -122,7 +122,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
               }}
             >
               <Box component='span' sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                добави старт
+                {t('nav.addSite')}
               </Box>
             </Button>
           </Box>

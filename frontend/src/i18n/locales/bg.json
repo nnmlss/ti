@@ -1,4 +1,8 @@
 {
+  "nav": {
+    "flyingSites": "Места за летене",
+    "addSite": "добави старт"
+  },
   "siteDetail": {
     "accessTitle": "Възможности за достъп",
     "monuments": "Забележителности",

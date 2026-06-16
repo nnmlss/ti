@@ -143,11 +143,11 @@ app.use((req: express.Request, _res: express.Response, next: express.NextFunctio
 
     // Debug logging in development
     if (process.env['NODE_ENV'] === 'development') {
-      console.log('URL handling:', { url: req.url, originalUrl: req.originalUrl });
+      logger.debug('URL handling', { url: req.url, originalUrl: req.originalUrl });
     }
   } catch (error) {
     // If URL is malformed, continue with original
-    console.warn('URL decoding failed:', error);
+    logger.warn('URL decoding failed', { error });
   }
   next();
 });
@@ -270,7 +270,7 @@ app.use(express.static(path.join(process.cwd(), 'frontend/dist')));
 // Global error handling middleware - must be after all routes
 app.use(
   (err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-    console.error('Unhandled error:', err);
+    logger.error('Unhandled error:', err);
 
     // Handle different error types
     if (err instanceof Error && err.name === 'ValidationError') {
@@ -410,7 +410,7 @@ startServer()
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
     process.on('SIGINT', () => gracefulShutdown('SIGINT'));
   })
-  .catch(console.error);
+  .catch((err) => logger.error('Server startup failed:', err));
 
 // Export Promise for production wrapper
 export default startServer();

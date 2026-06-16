@@ -5,8 +5,7 @@
 ## Current Session Status
 
 - **Last Updated**: 2026-06-15
-- **Last Completed**: Phase 9 (i18n / language switching) — BG default + English `/en` detail pages; tested locally, toggle bug found on prod + fixed. Full detail → `docs/IMPLEMENTATION_LOG.md`.
-- **Next Priority**: Phase 12 (404 page), then Phases 10 / 10.1.
+- **Last Completed**: Phase 9 (i18n / language switching) — BG default + English `/en` detail pages. Full detail → `docs/IMPLEMENTATION_LOG.md`.
 - **Canonical domain**: `https://paragliding.borislav.space` (`ti.borislav.space` redirects here). `FRONTEND_URL` must be this value.
 
 > **RULE — never track git state in this file.** No commit hashes, "Uncommitted changes", "committed/not committed", or any git status. It goes stale instantly. Use `git status`/`git log` instead.
@@ -74,7 +73,7 @@ frontend/vite.config.ts                               # Vite config + chunk spli
 
 ## Technical Decisions
 
-- **Gate Middleware DISABLED** — CloudLinux/Passenger serves `frontend/dist/index.html` directly, bypassing Node.js for `/`. Re-enable: uncomment `src/app.ts` lines ~27-36, ~96-128, import line 13.
+- **Gate Middleware DISABLED** — CloudLinux/Passenger serves `frontend/dist/index.html` directly, bypassing Node.js for `/`. Re-enable: uncomment the gate sections + the `gateMiddleware` import in `src/app.ts`.
 - **Frontend proxy:** Vite proxies `/api` + `/graphql` to backend in dev
 - **OG meta for social crawlers** — `frontend/public/.htaccess` proxies site-detail page routes (`/paragliding-site/*`, `/en/paragliding-site/*`, and the Cyrillic `/парапланер-старт/*`, matched in BOTH literal-UTF-8 and `%D0…` percent-encoded form — LiteSpeed decodes `%{REQUEST_URI}`) to Node, where `ogMetaMiddleware` injects per-site `og:*`/`twitter:*` tags. Must come BEFORE the SPA fallback. Trade-off: a direct hit to a site page returns 502 while Node is down (homepage/SPA still served statically) — accepted. The middleware does NOT gate on `Accept: text/html` (FB/WhatsApp send `Accept: */*`). Full detail → `docs/IMPLEMENTATION_LOG.md`.
 - **Referrer-Policy** — Helmet is set to `strict-origin-when-cross-origin` (NOT the default `no-referrer`). OSM/OpenTopoMap tile servers 403 requests with no `Referer`; once site pages started routing through Node + Helmet, the default broke map tiles. Do not revert to `no-referrer`.
@@ -93,36 +92,11 @@ Full spec + implementation detail → `docs/IMPLEMENTATION_LOG.md` (Phase 9). Th
 - **SEO:** self-referencing canonical per language (NEVER canonical EN→BG — de-indexes EN); hreflang `bg`/`en`/`x-default`→BG; `ogMetaMiddleware` + `.htaccess` inject English OG for `/en`.
 - **Always bilingual:** site cards + detail H1/H2 title (only H1/H2 *order* flips by mode). Detail compass keeps Latin N/E/S/W; wind **filter** localizes letters (С/И/Ю/З). Switcher = plain `български : english` text link.
 
-## Completed Features
-
-- ✅ **Phase 1** — Hybrid Container/Hooks Architecture (containers for complex, direct hooks for ≤15 lines logic)
-- ✅ **Phase 2** — Bundle + Font Optimization (MUI tree-shaking, Leaflet lazy load, WOFF2 preload, font-display swap)
-- ✅ **Phase 3** — Gate Middleware + Error Handling + LiteSpeed Compatibility (CommonJS wrapper, maintenance dialog)
-- ✅ **Phase 4 / 4.1 / 4.4** — SEO (React Helmet, sitemap+robots at root, Open Graph/Twitter injection, schema, dual-language URLs) — DEPLOYED + VERIFIED
-- ✅ **Phase 5** — User Management & Auth (stateless JWT, two-step registration, admin-controlled activation)
-- ✅ **Phase 6** — Type Centralization (all interfaces in `frontend/src/types/`, 0 TS errors)
-- ✅ **Phase 7 / 7.1** — 12-Factor Phase 1 (`.env.example`, Winston, graceful shutdown, Admin CLI) + Image Slideshow + SitesLinksList
-- ✅ **Phase 8** — Wind filter toggle fix (stopPropagation on mousedown)
-- ✅ **Phase 9** — i18n / language switching (BG default; English `/en` detail pages) — see "i18n Rules"
-- ✅ **Phase 11** — Health check `/api/health` for uptime monitoring (UptimeRobot Up; CSRF HEAD/OPTIONS exemption)
-
-> Per-feature detail (files, gotchas, verification) → `docs/IMPLEMENTATION_LOG.md`.
-
 ## Pending Tasks
 
 ### Phase 12 — 404 Not Found page (MEDIUM)
 
 Unknown URLs currently render a **blank page**: `frontend/src/components/ui/NotFoundHandler.tsx` only `console.log`s and returns `null` (catch-all `<Route path='*'>` in `AppRoutes.tsx`). Build a real 404 page; bilingual via `t()` (i18n now in place). **Content (TBD by user):** more than a bare "not found" — **advertising/promo messages, contact info, other details** (copy not yet decided). A small marketing/landing surface, not just a stub + home link.
-
-### Phase 10 — Semantic versioning (LOW)
-
-Add `npm version patch/minor/major` to release flow and tag commits — process discipline, no code changes.
-
-### Phase 10.1 — Clean up remaining console.log (LOW)
-
-Replace with Winston (`import { logger } from '@config/logger'`):
-- `src/app.ts` lines ~49–53, ~140–176, 251 (gate section — disabled but noisy)
-- `src/controllers/sitemap.ts:43` — `console.error` → `logger.error`
 
 ## Session Recovery Checklist
 

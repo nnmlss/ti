@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { Site } from '@models/sites.js';
 import { enSlug } from '@utils/slug.js';
+import { logger } from '@config/logger.js';
 import type { CustomError } from '@types';
 
 export const generateSitemap = async (_req: Request, res: Response) => {
@@ -51,7 +52,7 @@ ${alternates}
     res.set('Content-Type', 'application/xml');
     res.send(sitemap);
   } catch (error) {
-    console.error('Sitemap generation error:', error);
+    logger.error('Sitemap generation error:', error);
     const customError: CustomError = {
       message: 'Failed to generate sitemap',
       status: 500,

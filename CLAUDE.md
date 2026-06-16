@@ -1,14 +1,15 @@
 # CLAUDE.md
 
+> Brief summaries + durable rules only. Full changelog of completed work → `docs/IMPLEMENTATION_LOG.md`. System design/patterns/deployment → `docs/DEVELOPMENT_GUIDE.md`. (Both gitignored.)
+
 ## Current Session Status
 
 - **Last Updated**: 2026-06-15
-- **Last Completed**: Phase 9 (i18n / language switching) — BG default + English `/en` detail pages, language switcher, English slugs, SEO (self-canonical + hreflang + English OG). Implemented and tested locally; toggle bug found on prod and fixed. See Phase 9 section for the full ruleset + implementation notes.
+- **Last Completed**: Phase 9 (i18n / language switching) — BG default + English `/en` detail pages; tested locally, toggle bug found on prod + fixed. Full detail → `docs/IMPLEMENTATION_LOG.md`.
+- **Next Priority**: Phase 12 (404 page), then Phases 10 / 10.1.
 - **Canonical domain**: `https://paragliding.borislav.space` (`ti.borislav.space` redirects here). `FRONTEND_URL` must be this value.
-- **Next Priority**: Phase 12 (404 page), then Phases 10/10.1. SEO essentially done. Phase 4.2 (hreflang) was folded into Phase 9.
-- **Phase 11** (health check `/api/health`) — DONE + deployed; UptimeRobot confirmed Up. Included a CSRF fix exempting HEAD/OPTIONS (see Phase 11 section).
 
-> **RULE — never track git state in this file.** Do NOT mention commit hashes, "Uncommitted changes", "committed/not committed", or any git status in CLAUDE.md. It goes stale instantly and contradicts `git status`. Use `git status`/`git log` for that — this file is for project knowledge only.
+> **RULE — never track git state in this file.** No commit hashes, "Uncommitted changes", "committed/not committed", or any git status. It goes stale instantly. Use `git status`/`git log` instead.
 
 ## Project Overview
 
@@ -32,6 +33,8 @@ npm run check            # typecheck + lint
 npm run test:run         # run all tests once
 npm run build:preview    # build + start production servers
 ```
+
+Frontend `npm install` needs `--legacy-peer-deps` (react-helmet-async vs React 19 peer conflict).
 
 ## Key Files
 
@@ -67,195 +70,63 @@ frontend/vite.config.ts                               # Vite config + chunk spli
 7. **Architecture:** Container/Component for >15 lines business logic; direct hooks for simple/single-use components
 8. **Images:** All uploads converted to `.jpg`, 3 sizes auto-generated (thmb/small/large) in `/gallery/`
 9. **Logging:** Winston (`src/config/logger.ts`) — do NOT use `console.log` in new code
-10. **Bilingual:** Site data via `LocalizedText { bg, en }`; UI language is Bulgarian (i18n pending — see Pending Tasks)
+10. **Bilingual:** Site data via `LocalizedText { bg, en }`; UI i18n done in Phase 9 (BG default, English `/en` detail pages) — see "i18n Rules"
 
 ## Technical Decisions
 
 - **Gate Middleware DISABLED** — CloudLinux/Passenger serves `frontend/dist/index.html` directly, bypassing Node.js for `/`. Re-enable: uncomment `src/app.ts` lines ~27-36, ~96-128, import line 13.
 - **Frontend proxy:** Vite proxies `/api` + `/graphql` to backend in dev
-- **OG meta for social crawlers** — `frontend/public/.htaccess` proxies site-detail page routes (`/paragliding-site/*` and the Cyrillic `/парапланер-старт/*`, matched in BOTH literal-UTF-8 and `%D0…` percent-encoded form — LiteSpeed decodes `%{REQUEST_URI}`) to Node, where `ogMetaMiddleware` injects per-site `og:*`/`twitter:*` tags. Must come BEFORE the SPA fallback. Trade-off: a direct hit to a site page returns 502 while Node is down (homepage/SPA still served statically) — accepted. The middleware does NOT gate on `Accept: text/html` (FB/WhatsApp send `Accept: */*`).
+- **OG meta for social crawlers** — `frontend/public/.htaccess` proxies site-detail page routes (`/paragliding-site/*`, `/en/paragliding-site/*`, and the Cyrillic `/парапланер-старт/*`, matched in BOTH literal-UTF-8 and `%D0…` percent-encoded form — LiteSpeed decodes `%{REQUEST_URI}`) to Node, where `ogMetaMiddleware` injects per-site `og:*`/`twitter:*` tags. Must come BEFORE the SPA fallback. Trade-off: a direct hit to a site page returns 502 while Node is down (homepage/SPA still served statically) — accepted. The middleware does NOT gate on `Accept: text/html` (FB/WhatsApp send `Accept: */*`). Full detail → `docs/IMPLEMENTATION_LOG.md`.
 - **Referrer-Policy** — Helmet is set to `strict-origin-when-cross-origin` (NOT the default `no-referrer`). OSM/OpenTopoMap tile servers 403 requests with no `Referer`; once site pages started routing through Node + Helmet, the default broke map tiles. Do not revert to `no-referrer`.
 - **Prod web server is LiteSpeed** (cPanel), not Apache — `.htaccess` rewrite/proxy behavior verified on the live server.
 - **Deploy reload** — prod backend is started manually via `node dist/app.js &` over SSH; cPanel Node App Manager "Restart" does NOT control it. Reload = `pkill -f "node dist/app.js"; node dist/app.js &`. Node caches `index.html` in memory, so a restart is REQUIRED after deploying a new `frontend/dist/index.html`.
+
+## i18n Rules (must follow — Phase 9)
+
+Full spec + implementation detail → `docs/IMPLEMENTATION_LOG.md` (Phase 9). The durable rules:
+
+- **Scope:** ONLY site-detail pages are translatable. Home/add-site/edit/auth/admin/profile stay Bulgarian. Library: react-i18next, `t('key')` (no `<Trans>`).
+- **State:** BG default every new browser session. UI language in **`sessionStorage` key `ti_lang`** (NOT localStorage) — resets to BG each browser session.
+- **Resolution** (`resolveLanguageForPath` in `frontend/src/utils/language.ts`, applied by `useLanguageRouteSync`): detail pages are **URL-authoritative** (`/en/...` → English; any other detail URL → Bulgarian); non-detail pages follow session `ti_lang`. The toggle on a detail page **only navigates** (route-sync applies the language — don't also call `change()`).
+- **URLs:** only `/en/` is prefixed (no `/bg/`). BG canonical `/парапланер-старт/:slug`; EN `/en/paragliding-site/:slug` (English slug from `title.en`, `getEnSlug`); `/paragliding-site/:slug` + `/site/:id` 301 → BG canonical.
+- **English slug resolution:** the GraphQL `site` resolver matches a `title.en` slug as a final fallback (`src/utils/slug.ts` mirrors `slugUtils.ts`) — do not break this; it's what makes shared/reloaded `/en` links work.
+- **SEO:** self-referencing canonical per language (NEVER canonical EN→BG — de-indexes EN); hreflang `bg`/`en`/`x-default`→BG; `ogMetaMiddleware` + `.htaccess` inject English OG for `/en`.
+- **Always bilingual:** site cards + detail H1/H2 title (only H1/H2 *order* flips by mode). Detail compass keeps Latin N/E/S/W; wind **filter** localizes letters (С/И/Ю/З). Switcher = plain `български : english` text link.
 
 ## Completed Features
 
 - ✅ **Phase 1** — Hybrid Container/Hooks Architecture (containers for complex, direct hooks for ≤15 lines logic)
 - ✅ **Phase 2** — Bundle + Font Optimization (MUI tree-shaking, Leaflet lazy load, WOFF2 preload, font-display swap)
 - ✅ **Phase 3** — Gate Middleware + Error Handling + LiteSpeed Compatibility (CommonJS wrapper, maintenance dialog)
-- ✅ **Phase 4** — SEO (React Helmet, sitemap, Open Graph, TouristAttraction schema, dual-language URLs)
+- ✅ **Phase 4 / 4.1 / 4.4** — SEO (React Helmet, sitemap+robots at root, Open Graph/Twitter injection, schema, dual-language URLs) — DEPLOYED + VERIFIED
 - ✅ **Phase 5** — User Management & Auth (stateless JWT, two-step registration, admin-controlled activation)
 - ✅ **Phase 6** — Type Centralization (all interfaces in `frontend/src/types/`, 0 TS errors)
-- ✅ **Phase 7** — 12-Factor Phase 1 (`.env.example`, Winston logging, graceful shutdown, Admin CLI)
-- ✅ **Phase 7.1** — Image Slideshow + SitesLinksList + useAppInitialization hook
-- ✅ **Phase 8** — Wind filter toggle fixed (stopPropagation on mousedown prevents outside-click handler conflict)
-- ✅ **Phase 4.1** — sitemap.xml + robots.txt served at root paths (`src/app.ts`, before static middleware)
-- ✅ **SEO URL rename** — site-detail Latin route is now `/paragliding-site/:slug` (was `/site/:id`); see "SEO Work Done This Session"
-- ✅ **Phase 4.4** — Express OG/Twitter meta injection — DEPLOYED + VERIFIED (Telegram/Viber/Facebook show per-site previews). LiteSpeed `.htaccess` proxies site-detail routes (incl. Cyrillic) to Node; Helmet `referrer-policy` set to `strict-origin-when-cross-origin` to keep OSM tiles working. See Technical Decisions.
-- ✅ **Phase 9** — i18n / language switching (BG default; English `/en` detail pages only). react-i18next; session `ti_lang`; URL-authoritative detail pages; English slugs; self-canonical + hreflang + English server OG. Folds in Phase 4.2 (hreflang). See Phase 9 section for rules + implementation notes.
+- ✅ **Phase 7 / 7.1** — 12-Factor Phase 1 (`.env.example`, Winston, graceful shutdown, Admin CLI) + Image Slideshow + SitesLinksList
+- ✅ **Phase 8** — Wind filter toggle fix (stopPropagation on mousedown)
+- ✅ **Phase 9** — i18n / language switching (BG default; English `/en` detail pages) — see "i18n Rules"
+- ✅ **Phase 11** — Health check `/api/health` for uptime monitoring (UptimeRobot Up; CSRF HEAD/OPTIONS exemption)
+
+> Per-feature detail (files, gotchas, verification) → `docs/IMPLEMENTATION_LOG.md`.
 
 ## Pending Tasks
 
-
-### Phase 9 — i18n / Language Switching — ✅ DONE (tested locally; toggle bug found on prod + fixed)
-
-Narrow, SEO-correct design: **only site-detail pages are translatable**; English lives at an `/en/`
-URL; Bulgarian stays exactly where it is. Library: **react-i18next** (detail-page strings only, not
-the whole app — do NOT use `<Trans>`; `t('key')` is enough). Site data was already bilingual via
-`LocalizedText { bg, en }`; this added the UI-string + URL + SEO layer.
-
-#### Rules (canonical spec)
-
-**Language state**
-1. Default is **Bulgarian everywhere**, every new browser session.
-2. Choice stored in **`sessionStorage` key `ti_lang`** (NOT localStorage) — resets to Bulgarian each
-   new browser session. The existing `preferences.ts` localStorage `language` key is NOT used for UI
-   language.
-3. On entry, language is derived from the **URL**: leading `/en` ⇒ English (and writes `ti_lang=en`);
-   no `/en` ⇒ Bulgarian. Crawlers (no session) get the right language from the URL alone.
-4. The app **never auto-adds `/en`** to non-detail URLs. If a user manually types `/en` on a
-   non-detail page, set English for the session but don't strip it / don't generate `/en` links for
-   it; next fresh visit there is Bulgarian again.
-
-**Scope**
-5. **Only SITE DETAIL pages are translatable.** Home, add-site, edit, auth, admin, and especially
-   **Profile**, stay Bulgarian.
-
-**Switcher UI**
-6. A **plain text label `български : english`** at the bottom of every page, at the pinky
-   paraglider-wing graphic spot. **No flags, no icons, no buttons.**
-7. Clicking toggles language; on detail pages it also rewrites the URL to/from its `/en` form.
-
-**Always-bilingual elements (never collapse to one language)**
-8. **Site cards** (title + subtitle) always show **both** languages.
-9. The detail **page title/heading** always shows both languages, but the **order flips by mode**:
-   BG page → `H1=Bulgarian`, `H2=English`, `<title>` leads BG; EN page (`/en/...`) → `H1=English`,
-   `H2=Bulgarian`, `<title>` leads EN. (Bulgarian names match road signs/maps foreign pilots
-   navigate by, so BG stays visible everywhere.)
-
-**URL architecture (SEO)**
-10. **Only `/en/` is prefixed. No `/bg/`** — Bulgarian stays at its existing canonical (default at
-    root = `x-default`; single-dominant-language pattern).
-11. URL map:
-    | Language | URL | Behavior |
-    |---|---|---|
-    | BG (default, x-default) | `/парапланер-старт/:slug` | renders, self-canonical |
-    | EN | `/en/paragliding-site/:slug` | renders, self-canonical |
-    | Latin no-`/en` | `/paragliding-site/:slug` | **301 → BG canonical** |
-    | Legacy numeric | `/site/:id` | **301 → BG canonical** |
-12. `/site/` is **legacy numeric only** (`/site/:id`) — never `/site/slug`. Sole job: resolve an old
-    numeric link to the canonical slug URL.
-13. Each language page has a **self-referencing canonical** (EN→EN, BG→BG). Never canonical EN→BG
-    (de-indexes the English page).
-14. **hreflang** on both: `bg` ↔ BG URL, `en` ↔ EN URL, `x-default` → BG URL.
-15. Server `ogMetaMiddleware` + `.htaccess` must handle `/en/paragliding-site/` and inject
-    **English** OG/Twitter tags (`og:locale=en_US`, English title/description, `og:url` = the `/en`
-    URL). Otherwise shared English links show a Bulgarian preview.
-
-#### Implementation notes (how it actually works)
-
-- **Language resolution is per-page** (`frontend/src/utils/language.ts` → `resolveLanguageForPath`,
-  applied by `frontend/src/hooks/ui/useLanguageRouteSync.ts`, mounted in `MainLayoutContainer` so it
-  runs inside `<Router>`):
-  - **Detail pages are URL-authoritative** — `/en/...` → English; any other detail URL
-    (`/парапланер-старт/…`, incl. percent-encoded on reload) → Bulgarian. This makes toggling
-    deterministic and race-free.
-  - **Non-detail pages** (home, wind filter) follow the persisted session `ti_lang`, so an English
-    choice survives navigation until the browser session ends.
-- **The toggle** (`LanguageSwitcher.tsx`): on a detail page it **only navigates** to the other-language
-  URL (route-sync then applies the language — calling `change()` here too caused an intermediate
-  session write / flicker). The compact variant (no URL, used in the wind-filter title) switches in
-  place via `useLanguage().change`.
-- **English slugs** come from `title.en` (`getEnSlug` in `slugUtils.ts`; mirrored server-side in
-  `src/utils/slug.ts`). Resolution: the **GraphQL `site` resolver** (`src/graphql/resolvers/index.ts`)
-  matches an English slug as a final fallback, so direct/shared/reloaded `/en` links resolve without
-  depending on the client's `allSites` (this was the prod "site not found on reload" fix). Sites
-  without `title.en` fall back to the Bulgarian `url` slug.
-- **Navigation respects language**: list cards (`SiteCardContainer`) and map markers
-  (`SitesMapContainer`) build the detail URL with the current language.
-- **Always bilingual**: site cards (home/map) and the detail H1/H2 title keep both languages; only the
-  H1/H2 *order* flips by mode. Wind-direction letters stay Latin on the detail compass (Bulgarians
-  know N/E/S/W; the road-sign argument) but are localized (С/И/Ю/З) in the wind **filter**.
-- **Deploy**: frontend deps (`i18next`, `react-i18next`) are bundled into `frontend/dist` — no server
-  `npm install`. The `.htaccess` `/en/paragliding-site/` proxy ships in `frontend/dist`. Restart Node
-  after deploy (it caches `index.html`).
-
----
-
 ### Phase 12 — 404 Not Found page (MEDIUM)
 
-Unknown URLs currently render a **blank page**: `frontend/src/components/ui/NotFoundHandler.tsx` only `console.log`s and returns `null` (wired as the catch-all `<Route path='*'>` in `AppRoutes.tsx`). Build a real 404 page; keep it bilingual via `t()` since i18n is now in place. Separate from the i18n work.
-
-**Content (TBD by user):** more than a bare "not found" — should carry **advertising/promo messages, contact information, and other details** (exact copy not yet decided). Treat it as a small marketing/landing surface, not just a stub + home link.
-
----
+Unknown URLs currently render a **blank page**: `frontend/src/components/ui/NotFoundHandler.tsx` only `console.log`s and returns `null` (catch-all `<Route path='*'>` in `AppRoutes.tsx`). Build a real 404 page; bilingual via `t()` (i18n now in place). **Content (TBD by user):** more than a bare "not found" — **advertising/promo messages, contact info, other details** (copy not yet decided). A small marketing/landing surface, not just a stub + home link.
 
 ### Phase 10 — Semantic versioning (LOW)
 
-Add `npm version patch/minor/major` to release flow and tag commits — no code changes needed, just process discipline.
-
----
+Add `npm version patch/minor/major` to release flow and tag commits — process discipline, no code changes.
 
 ### Phase 10.1 — Clean up remaining console.log (LOW)
 
-Replace with Winston logger calls (`import { logger } from '@config/logger'`):
-
-- `src/app.ts` lines ~49–53, ~140–176, 251 (gate section — disabled code, but still noisy)
-- `src/controllers/sitemap.ts:43` — replace `console.error` with `logger.error`
-
----
-
-### Phase 11 — Health check endpoint for uptime monitoring — ✅ DONE + VERIFIED LIVE
-
-`GET /api/health` in `src/routes/api.ts` (inline handler) returns `200 { status:'ok', db:'connected' }` when `mongoose.connection.readyState === 1`, else `503 { status:'degraded', db:'disconnected' }`. Dependency-light (connection state only). UptimeRobot points at `https://paragliding.borislav.space/api/health` (a LiteSpeed-proxied route → 502/503 when Node is down, unlike `/` which serves static 200). Confirmed Up.
-
-**Gotcha fixed during this work:** UptimeRobot uses **HEAD** by default, but the CSRF middleware (`src/app.ts` `customHeaderProtection`) only exempted `GET` → HEAD got **403**. Fix: exempt safe methods `GET`/`HEAD`/`OPTIONS` from the CSRF header check. Applies to all `/api` routes, not just health.
-
----
-
-## SEO Pending Tasks
-
-> **STATUS: SEO previews DONE + verified live.** Phase 4.1, URL rename, and Phase 4.4 are deployed and confirmed (Telegram/Viber/Facebook). Phase 4.3 was **decided against** (only social previews were wanted; Googlebot renders JS). Phase 4.2 (hreflang) is **DONE** — implemented as part of Phase 9 (English `/en` detail pages now exist). No SEO work currently pending.
-
-### Phase 4.2 — hreflang alternate links — ✅ DONE (via Phase 9)
-
-`<link rel="alternate" hreflang="bg|en|x-default">` tags now emitted client-side in
-`frontend/src/components/seo/SEOHead.tsx` and server-side in `src/middleware/ogMetaMiddleware.ts`
-(and in the sitemap). See Phase 9.
-
----
-
-### SEO Work Done This Session (2026-06-14) — DONE + VERIFIED LIVE
-
-All implemented, deployed, and confirmed on `https://paragliding.borislav.space` (per-site previews render on Telegram, Viber, Facebook). Note: this **cannot** be tested via the Vite dev server (:5173, bypasses Express) nor on `localhost` (social crawlers can't reach it) — verification must be on the public domain.
-
-**A. Phase 4.1 — sitemap.xml + robots.txt at root**
-- `src/app.ts`: `GET /sitemap.xml` (reuses `generateSitemap`) and `GET /robots.txt` registered before the static middleware.
-
-**B. Site-detail URL rename `/site/:id` → `/paragliding-site/:slug`** — keyword-rich Latin URL for SEO; Bulgarian Cyrillic URL stays the canonical the site "opens on".
-- `frontend/src/AppRoutes.tsx`: added `/paragliding-site/:slug`; kept legacy `/site/:id` (redirects); `/парапланер-старт/:slug` is canonical.
-- `frontend/src/hooks/pages/useSiteDetailPage.ts`: redirects `/paragliding-site/*`, numeric slug, and legacy `/site/:id` to the Bulgarian canonical (`getCanonicalSiteUrl` → `/парапланер-старт/:slug`); guarded so the canonical route never self-redirects.
-- `frontend/src/components/pages/SiteDetailPage.tsx`: `rel=canonical` now uses `getCanonicalSiteUrl(site)` (Bulgarian) — fixed the old buggy plural `/sites/`.
-- `src/controllers/sitemap.ts`: emits `/paragliding-site/<slug>` + `/парапланер-старт/<slug>` per site.
-
-**C. Phase 4.4 — Express OG/Twitter meta injection** (DEPLOYED + VERIFIED) — lets social crawlers (FB/WhatsApp/Telegram/Viber, no JS) get per-site tags instead of the generic fallback.
-- `src/middleware/ogMetaMiddleware.ts` (new): on `GET` (NO `Accept` gate — FB/WhatsApp send `Accept: */*`) for prefixes `/paragliding-site/`, `/парапланер-старт/`, `/site/`, looks up the site (`url` slug or numeric `_id`), reads+caches `frontend/dist/index.html`, replaces `<!-- __OG_META__ -->` with per-site og:*/twitter: tags. og:url = Bulgarian canonical; image `${FRONTEND_URL}/gallery/small/<file>.jpg`. Falls through to static serving on any miss/error.
-- `frontend/index.html`: `<!-- __OG_META__ -->` placeholder in `<head>` (Vite copies it to `dist/` on build). `<title>` suffix updated to `paragliding.borislav.space`.
-- `frontend/public/.htaccess`: proxies the site-detail page routes to Node (the part that makes the middleware actually run in prod — see Technical Decisions). The middleware alone is NOT enough; without this LiteSpeed serves the static `index.html` directly and the placeholder is never filled.
-- `src/app.ts`: `app.use(ogMetaMiddleware)` before `express.static`; Helmet `referrer-policy` set to `strict-origin-when-cross-origin` (keeps OSM tiles alive).
-- `frontend/src/components/seo/SEOHead.tsx`: client-side suffix also updated to `paragliding.borislav.space`.
-
-**Verified live:** sitemap/robots at root; `/paragliding-site/<slug>` redirects to Bulgarian canonical; per-site `og:` tags on both routes (curl with `facebookexternalhit` UA → 200 + tags, og:image fetchable); unknown slug falls through; Telegram/Viber/Facebook render the site card. FB note: a brand-new domain needs a one-time "Scrape Again" (or delete+repost) per URL — markup is correct.
-
-### Phase 4.3 — Bot detection + pre-rendering — DECIDED AGAINST (not needed)
-
-The goal was social-share previews, which Phase 4.4 fully delivers. General non-JS search crawlers (Bing/DDG) are out of scope; Googlebot renders JS. Revisit only if non-Google organic search becomes a priority — then Prerender.io / React Snap / SSR.
-
----
+Replace with Winston (`import { logger } from '@config/logger'`):
+- `src/app.ts` lines ~49–53, ~140–176, 251 (gate section — disabled but noisy)
+- `src/controllers/sitemap.ts:43` — `console.error` → `logger.error`
 
 ## Session Recovery Checklist
 
 - [ ] Review "Current Session Status" above
-- [ ] `git status` for uncommitted changes
-- [ ] `npm run typecheck` to confirm clean state
+- [ ] `git status` for working-tree changes
+- [ ] `npm run check` to confirm clean state
 - [ ] Check "Pending Tasks" for next priority

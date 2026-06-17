@@ -6,6 +6,12 @@ RewriteRule ^api/(.*) http://127.0.0.1:3000/api/$1 [P,L]
 RewriteRule ^graphql(.*) http://127.0.0.1:3000/graphql$1 [P,L]
 RewriteRule ^gallery/(.*) http://127.0.0.1:3000/gallery/$1 [P,L]
 
+# SEO files — proxy to Node so crawlers get real robots.txt + dynamic sitemap
+# (sitemap is generated from the live DB; a static file would go stale).
+# Must come BEFORE the SPA fallback, else they resolve to index.html (200 HTML).
+RewriteRule ^robots\.txt$ http://127.0.0.1:3000/robots.txt [P,L]
+RewriteRule ^sitemap\.xml$ http://127.0.0.1:3000/sitemap.xml [P,L]
+
 # Proxy paragliding site-detail pages to Node so social crawlers receive
 # per-site Open Graph / Twitter meta (src/middleware/ogMetaMiddleware.ts).
 # Must come BEFORE the SPA fallback. The Cyrillic canonical route is matched

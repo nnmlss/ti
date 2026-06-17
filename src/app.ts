@@ -36,11 +36,14 @@ morgan.token('decoded-url', (req) => {
 morgan.token('decoded-referrer', (req) => {
   const referrer = req.headers['referrer'] || req.headers['referer'] || '-';
   const referrerStr = Array.isArray(referrer) ? referrer[0] : referrer;
-  return referrerStr === '-' || !referrerStr ? referrerStr || '-' : decodeURIComponent(referrerStr);
+  return referrerStr === '-' || !referrerStr
+    ? referrerStr || '-'
+    : decodeURIComponent(referrerStr);
 });
 
 // Custom format with decoded URLs
-const customFormat = ':remote-addr - - [:date[clf]] ":method :decoded-url HTTP/:http-version" :status :res[content-length] ":decoded-referrer" ":user-agent"';
+const customFormat =
+  ':remote-addr - - [:date[clf]] ":method :decoded-url HTTP/:http-version" :status :res[content-length] ":decoded-referrer" ":user-agent"';
 
 app.use(morgan(customFormat, { stream: httpLogStream }));
 
@@ -110,13 +113,27 @@ app.use(
 // Trust proxy for rate limiting and security headers
 app.set('trust proxy', 1);
 
+// Search-engine + social crawlers get a HIGHER finite ceiling (not exemption) so
+// legit crawl bursts (sitemap has 100+ URLs) aren't throttled. UA is spoofable, so
+// we never fully bypass — a faked crawler UA buys the bigger bucket, then still gets
+// cut off, capping DoS damage. Harden to reverse-DNS / IP-range verification if abused.
+const CRAWLER_UA =
+  /googlebot|bingbot|slurp|duckduckbot|yandex|applebot|facebookexternalhit|twitterbot|whatsapp/i;
+const isCrawler = (req: express.Request) => CRAWLER_UA.test(req.get('user-agent') ?? '');
+
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env['NODE_ENV'] === 'development' ? 1000 : 100, // Higher limit for development
+  // Dev: generous. Prod: 300/15min for humans, 1000/15min for (claimed) crawlers.
+  max: (req) =>
+    process.env['NODE_ENV'] === 'development' ? 1000 : isCrawler(req) ? 1000 : 320,
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  // Don't count static image reads — /gallery/* is proxied to Node (.htaccess) and a
+  // single page view pulls many images; they're cacheable static GETs, not an abuse
+  // vector. Excluding them keeps the human budget meaningful for real browsing.
+  skip: (req) => req.path.startsWith('/gallery'),
 });
 
 // TEMPORARILY DISABLE rate limiting for development debugging

@@ -70,7 +70,7 @@ router.get('/robots.txt', (_req, res) => {
   const robotsTxt = `User-agent: *
 Allow: /
 
-Sitemap: ${baseUrl}/api/sitemap.xml`;
+Sitemap: ${baseUrl}/sitemap.xml`;
 
   res.set('Content-Type', 'text/plain');
   res.send(robotsTxt);

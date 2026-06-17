@@ -76,6 +76,8 @@ frontend/vite.config.ts                               # Vite config + chunk spli
 - **Gate Middleware DISABLED** — CloudLinux/Passenger serves `frontend/dist/index.html` directly, bypassing Node.js for `/`. Re-enable: uncomment the gate sections + the `gateMiddleware` import in `src/app.ts`.
 - **Frontend proxy:** Vite proxies `/api` + `/graphql` to backend in dev
 - **OG meta for social crawlers** — `frontend/public/.htaccess` proxies site-detail page routes (`/paragliding-site/*`, `/en/paragliding-site/*`, and the Cyrillic `/парапланер-старт/*`, matched in BOTH literal-UTF-8 and `%D0…` percent-encoded form — LiteSpeed decodes `%{REQUEST_URI}`) to Node, where `ogMetaMiddleware` injects per-site `og:*`/`twitter:*` tags. Must come BEFORE the SPA fallback. Trade-off: a direct hit to a site page returns 502 while Node is down (homepage/SPA still served statically) — accepted. The middleware does NOT gate on `Accept: text/html` (FB/WhatsApp send `Accept: */*`). Full detail → `docs/IMPLEMENTATION_LOG.md`.
+- **SEO files (`robots.txt` / `sitemap.xml`)** — `frontend/public/.htaccess` proxies BOTH to Node (`RewriteRule ^robots\.txt$` / `^sitemap\.xml$` → `127.0.0.1:3000`), placed BEFORE the SPA fallback. Without these, crawlers hit the SPA fallback and get `index.html` (200 HTML) instead of the files. Sitemap is generated live from Mongo (`src/controllers/sitemap.ts`) — keep it dynamic, don't replace with a static file. Root routes are `app.ts` `/robots.txt` + `/sitemap.xml` (canonical); the `/api/*` variants are unused by crawlers.
+- **Rate limiting (`src/app.ts` `limiter`)** — global, prod-only, 15min window. Tiered `max`: **320/15min humans**, **1000/15min crawlers** (UA regex: googlebot/bingbot/yandex/etc + social). Crawlers get a higher *finite* bucket, NOT exemption — UA is spoofable, so a faked Googlebot still gets cut off (caps DoS). `/gallery/*` image reads are `skip`-ped (proxied to Node via `.htaccess`, many per page view, cacheable static GETs — counting them starved the human budget). Static JS/CSS/index.html don't count (LiteSpeed serves them, never reach Node). Harden crawler check to reverse-DNS / [official IP ranges](https://developers.google.com/search/apis/ipranges/googlebot.json) only if abused (YAGNI for now).
 - **Referrer-Policy** — Helmet is set to `strict-origin-when-cross-origin` (NOT the default `no-referrer`). OSM/OpenTopoMap tile servers 403 requests with no `Referer`; once site pages started routing through Node + Helmet, the default broke map tiles. Do not revert to `no-referrer`.
 - **Prod web server is LiteSpeed** (cPanel), not Apache — `.htaccess` rewrite/proxy behavior verified on the live server.
 - **Deploy reload** — prod backend is started manually via `node dist/app.js &` over SSH; cPanel Node App Manager "Restart" does NOT control it. Reload = `pkill -f "node dist/app.js"; node dist/app.js &`. Node caches `index.html` in memory, so a restart is REQUIRED after deploying a new `frontend/dist/index.html`.
@@ -93,6 +95,18 @@ Full spec + implementation detail → `docs/IMPLEMENTATION_LOG.md` (Phase 9). Th
 - **Always bilingual:** site cards + detail H1/H2 title (only H1/H2 *order* flips by mode). Detail compass keeps Latin N/E/S/W; wind **filter** localizes letters (С/И/Ю/З). Switcher = plain `български : english` text link.
 
 ## Pending Tasks
+
+### Search Console — indexing watch (FOLLOW-UP)
+
+Sitemap `https://paragliding.borislav.space/sitemap.xml` submitted 2026-06-17 → **Success, 105 pages discovered** (the initial "Couldn't fetch" was just transient pending state). Homepage indexed; detail pages still **"not indexed yet"** — normal for a new/small site, expect days–weeks. Reindex requested for homepage after the H1 + internal-links commit (`9ff37e2`). **Watch:** rate limit is 100 req/15min (`ratelimit-limit: 100;w=900`) — could throttle Googlebot crawl bursts; consider raising or allowlisting verified Googlebot. Don't spam "Request Indexing" (once per URL).
+
+### IndexNow — instant re-crawl ping on site changes (LOW/SEO)
+
+Goal: tell search engines (Bing/Yandex now; Google experimenting) immediately when a site is added/edited/deleted, instead of waiting for sitemap re-crawl. Implementation sketch:
+1. Generate a key (UUID hex), host it as `frontend/public/<key>.txt` containing the key as plain text (served statically — verifies ownership). Add `INDEXNOW_KEY` to `.env`.
+2. Small service `src/services/indexNow.ts` — `POST https://api.indexnow.org/indexnow` with `{ host, key, keyLocation, urlList }`. Use `FRONTEND_URL` for the host/base. Fire-and-forget, wrap in try/catch + `logger` (never block the mutation).
+3. Hook the BG canonical URL (+ `/en/...` variant) into the `createSite` / `updateSite` / `deleteSite` resolvers in `src/graphql/resolvers/index.ts` (lines ~211/251/+). Build URLs with the same slug utils used elsewhere (`src/utils/slug.ts`).
+4. No Google Cloud / OAuth needed (that's the heavier Search Console API alternative — skip unless we later want index-status reads).
 
 ### Phase 12 — 404 Not Found page (MEDIUM)
 

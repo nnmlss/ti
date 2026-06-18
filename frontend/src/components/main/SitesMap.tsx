@@ -103,9 +103,12 @@ export function SitesMap({
       <IconButton
         onClick={() => dispatch(toggleMapLabelsAction())}
         sx={{
-          position: 'fixed',
-          top: '60px',
-          right: '12px',
+          // Anchored to the relative hero Box (same as the Leaflet layers
+          // control), 10px from the right to line up under it. `fixed` + 12px
+          // drifted out of alignment once the page gained a vertical scrollbar.
+          position: 'absolute',
+          top: '64px',
+          right: '11px',
           zIndex: 1000,
           py: 1,
           px: 0,
@@ -123,7 +126,7 @@ export function SitesMap({
         {showLabels ? <VisibilityIcon /> : <VisibilityOffIcon />}
       </IconButton>
 
-      <MapContainer center={mapCenter} zoom={8} style={{ height: '100vh', width: '100vw' }}>
+      <MapContainer center={mapCenter} zoom={8} style={{ height: '100vh', width: '100%' }}>
         {/* Restore LayersControl positioned below our custom controls */}
         <LayersControl position='topright'>
           <LayersControl.BaseLayer checked name='Terrain'>

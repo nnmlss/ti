@@ -5,7 +5,14 @@ import type { RootState, AppDispatch } from '@store/store';
 import { loadSingleSiteThunk } from '@store/thunks/sitesThunks';
 import { clearCurrentSite } from '@store/slices/singleSiteSlice';
 import { selectAllSites } from '@store/slices/allSitesSlice';
-import { isNumericSlug, getCanonicalSiteUrl } from '@utils/slugUtils';
+import {
+  isNumericSlug,
+  getCanonicalSiteUrl,
+  getEnSlug,
+  generateSiteSlug,
+  extractSiteNameFromSlug,
+} from '@utils/slugUtils';
+import { getLocalized } from '@utils/localizedText';
 
 export function useSiteDetailPage() {
   const { id, slug } = useParams<{ id?: string; slug?: string }>();
@@ -36,6 +43,25 @@ export function useSiteDetailPage() {
 
   // Get all sites for SitesLinksList component (loaded by app initialization)
   const allSites = useSelector(selectAllSites);
+
+  // Resolve the real site name for the loading-state SEO title. The list is
+  // already in the store when arriving from the map/list, so we use the actual
+  // title (correct dashes/casing/language) instead of reconstructing it from the
+  // lossy slug. Slug reconstruction stays only as a cold-deep-link fallback.
+  const routeIdentifier = id || slug || '';
+  const isEnRoute = location.pathname.startsWith('/en/');
+  const fallbackSite = allSites.find((s) =>
+    isNumericSlug(routeIdentifier)
+      ? String(s._id) === routeIdentifier
+      : isEnRoute
+        ? getEnSlug(s) === routeIdentifier
+        : (s.url || generateSiteSlug(s.title)) === routeIdentifier
+  );
+  const fallbackName = fallbackSite
+    ? getLocalized(fallbackSite.title, isEnRoute ? 'en' : 'bg')
+    : slug
+      ? extractSiteNameFromSlug(slug)
+      : 'Място за летене';
 
   // Load individual site data. The backend resolver handles BG `url`, numeric id
   // and the /en English slug, so we just pass the route identifier through.
@@ -74,6 +100,7 @@ export function useSiteDetailPage() {
     site,
     loading,
     siteId: id || slug || '',
+    fallbackName,
     allSites,
     notification,
     dismissNotification,

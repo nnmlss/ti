@@ -269,6 +269,9 @@ export interface SiteDetailPageProps {
   site: FlyingSite | null;
   loading: 'idle' | 'pending' | 'success' | 'error';
   siteId: string;
+  // Real site name resolved from the already-loaded list (or the URL slug as a
+  // cold-deep-link fallback) — used for the SEO title shown while data loads.
+  fallbackName: string;
   notification: { title: string; message: string; } | null;
   dismissNotification: () => void;
   onClose: () => void;

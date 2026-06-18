@@ -4,6 +4,7 @@ import { SitesLinksListContainer } from '@containers/SitesLinksListContainer';
 import { WindDirectionFilter } from '@components/main/WindDirectionFilter';
 import { Box, Fade, Typography } from '@mui/material';
 import { SEOHead } from '@components/seo/SEOHead';
+import { HOME_TITLE } from '@utils/pageTitle';
 import type { HomePageProps } from '@app-types';
 
 export function HomePage({ isListView, showWindFilter, onWindFilterClose }: HomePageProps) {
@@ -13,7 +14,7 @@ export function HomePage({ isListView, showWindFilter, onWindFilterClose }: Home
     <>
       <SEOHead
         config={{
-          title: 'Места за летене с парапланер в България',
+          title: HOME_TITLE,
           description:
             'Информация за места за летене с парапланер в България. Посоки на вятъра, подходящи за излитане, височина на старта, методи за достъп до стартове за летене с парапланер в България.',
           keywords: 'парапланер, парапланеризъм, българия, карта, места за летене',

@@ -2,17 +2,15 @@ import { SiteDetailViewContainer as SiteDetailView } from '@containers/SiteDetai
 import { Container, CircularProgress, Alert, Box } from '@mui/material';
 import { SEOHead } from '@components/seo/SEOHead';
 import { NotificationDialog } from '@components/ui/NotificationDialog';
-import { extractSiteNameFromSlug, getCanonicalSiteUrl } from '@utils/slugUtils';
-import { useParams } from 'react-router-dom';
+import { getCanonicalSiteUrl } from '@utils/slugUtils';
+import { buildDetailTitle } from '@utils/pageTitle';
+import { useLanguage } from '@hooks/ui/useLanguage';
 import { useTranslation } from 'react-i18next';
 import type { SiteDetailPageProps } from '@app-types';
 
-export function SiteDetailPage({ site, loading, siteId, notification, dismissNotification, onClose }: SiteDetailPageProps) {
+export function SiteDetailPage({ site, loading, siteId, fallbackName, notification, dismissNotification, onClose }: SiteDetailPageProps) {
   const { t } = useTranslation();
-  const { slug } = useParams<{ slug?: string }>();
-
-  // Extract site name from URL for SEO (before data loads)
-  const fallbackSiteName = slug ? extractSiteNameFromSlug(slug) : 'Място за летене';
+  const { current } = useLanguage();
 
   const renderContent = () => {
     // Show loading while fetching individual site data
@@ -51,8 +49,11 @@ export function SiteDetailPage({ site, loading, siteId, notification, dismissNot
       ) : (
         <SEOHead
           config={{
-            title: `Подробна информация за ${fallbackSiteName} като място за летене с парапланер в България`,
-            description: `Подробна информация за място за летене ${fallbackSiteName} с парапланер в България. Посоки на вятъра, подходящи за излитане, височина на старта, методи на достъп до София, старт за летене с парапланер.`,
+            // Real name from the loaded list (falls back to the URL slug only on a
+            // cold deep-link), so the title shown while loading matches the loaded
+            // one exactly — no flash, dashes preserved.
+            title: buildDetailTitle(fallbackName, current === 'en'),
+            description: `Подробна информация за място за летене ${fallbackName} с парапланер в България. Посоки на вятъра, подходящи за излитане, височина на старта, методи на достъп до София, старт за летене с парапланер.`,
           }}
         />
       )}

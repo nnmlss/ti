@@ -39,11 +39,27 @@ const getTemplate = async (): Promise<string> => {
   return cachedTemplate;
 };
 
+// Active-language site name (mirrors the client `getLocalized` fallback).
+const siteName = (site: SiteMetaFields, lang: 'bg' | 'en'): string =>
+  (lang === 'en' ? site.title?.en || site.title?.bg : site.title?.bg || site.title?.en) || '';
+
+// Agreed title — the same string used for the browser tab, Google and every
+// social crawler. Kept short on purpose (long titles get rewritten by Google).
+//
+// ⚠️ DUPLICATED ON THE FRONTEND — keep in sync with `buildDetailTitle` in
+// `frontend/src/utils/pageTitle.ts` (the client renders the same title via
+// Helmet/useDocumentTitle). Frontend and backend are separate TS builds
+// (`rootDir` per tree) so they can't share a module — if you change a title
+// string here, change it there too.
+const buildTitle = (name: string, lang: 'bg' | 'en'): string =>
+  lang === 'en'
+    ? `Paragliding from ${name} | Flying takeoffs in Bulgaria`
+    : `Летене с парапланер от ${name} | Информация за стартове за парапланеризъм в България`;
+
 const buildMetaTags = (site: SiteMetaFields, lang: 'bg' | 'en'): string => {
   const baseUrl = process.env['FRONTEND_URL'] || 'https://paragliding.borislav.space';
   const isEn = lang === 'en';
-  const name = (isEn ? site.title?.en || site.title?.bg : site.title?.bg || site.title?.en) || '';
-  const suffix = ' - TakeOff Info paragliding.borislav.space';
+  const name = siteName(site, lang);
 
   const altitudePart = site.altitude ? (isEn ? ` at ${site.altitude}m` : ` на ${site.altitude}м височина`) : '';
   const windPart = site.windDirection?.length
@@ -52,9 +68,7 @@ const buildMetaTags = (site: SiteMetaFields, lang: 'bg' | 'en'): string => {
       : `Подходящи ветрове: ${site.windDirection.join(', ')}.`
     : '';
 
-  const pageTitle = isEn
-    ? `Paragliding site ${name} in Bulgaria — takeoff info${suffix}`
-    : `Подробна информация за ${name} като място за летене с парапланер в България${suffix}`;
+  const pageTitle = buildTitle(name, lang);
 
   const description = isEn
     ? `Paragliding takeoff ${name}${altitudePart}.${windPart} Wind directions, takeoff altitude and access methods for paragliding in Bulgaria.`
@@ -154,7 +168,13 @@ export const ogMetaMiddleware = async (
       return next();
     }
 
-    res.type('html').send(template.replace(OG_PLACEHOLDER, buildMetaTags(site, lang)));
+    // index.html carries the static Home <title>; swap it for the per-site title
+    // so crawlers (and the raw HTML) get the agreed copy, then inject OG/Twitter.
+    const pageTitle = escapeHtml(buildTitle(siteName(site, lang), lang));
+    const html = template
+      .replace(/<title>[\s\S]*?<\/title>/, `<title>${pageTitle}</title>`)
+      .replace(OG_PLACEHOLDER, buildMetaTags(site, lang));
+    res.type('html').send(html);
   } catch (error) {
     logger.error('OG meta injection failed', {
       path: req.path,

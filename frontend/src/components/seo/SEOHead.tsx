@@ -1,11 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '@hooks/ui/useLanguage';
+import { useDocumentTitle } from '@hooks/ui/useDocumentTitle';
 import { getLocalized } from '@utils/localizedText';
 import { getCanonicalSiteUrl } from '@utils/slugUtils';
+import { HOME_TITLE, buildDetailTitle } from '@utils/pageTitle';
 import type { SEOHeadProps } from '@app-types';
-
-const SITE_SUFFIX = ' - TakeOff Info paragliding.borislav.space';
-const DEFAULT_TITLE = 'Места за летене с парапланер в България';
 const DEFAULT_DESCRIPTION =
   'Информация за места за летене с парапланер в България. Посоки на вятъра, подходящи за излитане, височина на старта, методи за достъп до стартове за летене с парапланер в България.';
 
@@ -17,13 +16,14 @@ export function SEOHead({ config, site }: SEOHeadProps) {
   // Active-language site name (BG is the ultimate fallback)
   const name = getLocalized(site?.title, current);
 
-  const baseTitle = site
-    ? isEn
-      ? `Paragliding site ${name} in Bulgaria — takeoff info`
-      : `Подробна информация за ${name} като място за летене с парапланер в България`
-    : config.title || DEFAULT_TITLE;
+  // Agreed copy — one title for the tab, Google, and every social crawler
+  // (Telegram/Viber/Facebook/WhatsApp). Short on purpose: long titles get
+  // rewritten/truncated by Google.
+  const pageTitle = site ? buildDetailTitle(name, isEn) : config.title || HOME_TITLE;
 
-  const pageTitle = `${baseTitle}${SITE_SUFFIX}`;
+  // Helmet@2.0.5 doesn't update document.title on re-render (React 19) — set it
+  // imperatively so the tab stays correct on SPA nav + BG/EN toggle.
+  useDocumentTitle(pageTitle);
 
   const pageDescription = site
     ? isEn

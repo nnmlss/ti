@@ -96,6 +96,15 @@ Full spec + implementation detail → `docs/IMPLEMENTATION_LOG.md` (Phase 9). Th
 
 ## Pending Tasks
 
+### Per-page `<title>` (agreed titles — NOT implemented)
+
+Decided title strings (`{name}` = active-language site title):
+- Home: `Места за летене с парапланер в България - посоки на вятъра и друга полезна информация`
+- Detail BG: `Летене с парапланер от {name} | Информация за стартове в България`
+- Detail EN: `Paragliding from {name} | Flying takeoffs in Bulgaria`
+
+Same title must show in the user's tab AND in raw HTML (Google), and change on every page + BG/EN toggle. Known blocker: `react-helmet-async@2.0.5` doesn't update `document.title` on client re-render (React 19) — tab title stays stale on SPA nav / language switch.
+
 ### Search Console — indexing watch (FOLLOW-UP)
 
 Sitemap `https://paragliding.borislav.space/sitemap.xml` submitted 2026-06-17 → **Success, 105 pages discovered** (the initial "Couldn't fetch" was just transient pending state). Homepage indexed; detail pages still **"not indexed yet"** — normal for a new/small site, expect days–weeks. Reindex requested for homepage after the H1 + internal-links commit (`9ff37e2`). **Watch:** rate limit is 100 req/15min (`ratelimit-limit: 100;w=900`) — could throttle Googlebot crawl bursts; consider raising or allowlisting verified Googlebot. Don't spam "Request Indexing" (once per URL).
